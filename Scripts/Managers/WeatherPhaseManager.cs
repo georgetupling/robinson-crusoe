@@ -7,11 +7,17 @@ public class WeatherPhaseManager : MonoBehaviour
     static WeatherPhaseManager singleton;
     
     [SerializeField] Transform weatherArea;
+    [SerializeField] Transform popupArea;
     List<TokenController> weatherTokens = new List<TokenController>();
-    List<TokenController> weatherDice = new List<TokenController>();
+    List<DieType> weatherDice = new List<DieType>();
 
     int roofLevel;
     bool isWaitingOnRoofLevel;
+
+    int numberOfRainClouds = 0;
+    int numberOfSnowClouds = 0;
+
+    // numberOfClouds[0] is the number of rain clouds, numberOfClouds[1] is the number of snow clouds
 
     void Awake() {
         if (singleton == null) {
@@ -21,6 +27,7 @@ public class WeatherPhaseManager : MonoBehaviour
         }
         EventGenerator.Singleton.AddListenerToPhaseStartEvent(OnPhaseStartEvent);
         EventGenerator.Singleton.AddListenerToGetRoofLevelResponseEvent(OnGetRoofLevelResponseEvent);
+        EventGenerator.Singleton.AddListenerToDieRolledEvent(OnDieRolledEvent);
     }
 
     void OnPhaseStartEvent(Phase phaseStarted) {
@@ -28,6 +35,34 @@ public class WeatherPhaseManager : MonoBehaviour
             return;
         }
         StartCoroutine(ApplyWeatherPhase());
+    }
+
+    void OnDieRolledEvent(DieType dieType, int faceRolled) {
+        if (dieType == DieType.WhiteWeather) {
+            if (faceRolled < 2) {
+                numberOfSnowClouds += 1;
+            } else if (faceRolled < 4) {
+                numberOfSnowClouds += 2;
+            } else {
+                numberOfRainClouds += 2;
+            }
+        } else if (dieType == DieType.RedWeather) {
+            if (faceRolled < 1) {
+                EventGenerator.Singleton.RaiseLoseFoodEvent(1);
+            } else if (faceRolled < 3) {
+                EventGenerator.Singleton.RaiseLosePalisadeEvent(1);
+            } else if (faceRolled < 4) {
+                // TODO: combat against strength 3 beast
+            }
+        } else if (dieType == DieType.OrangeWeather) {
+            if (faceRolled < 1) {
+                numberOfSnowClouds += 1;
+            } else if (faceRolled < 4) {
+                numberOfRainClouds += 1;
+            } else {
+                numberOfRainClouds += 2;
+            }
+        }
     }
 
     IEnumerator ApplyWeatherPhase() {
@@ -38,10 +73,14 @@ public class WeatherPhaseManager : MonoBehaviour
         }
         GetWeatherTokens();
         GetWeatherDice();
-        // numberOfClouds[0] is the number of rain clouds, numberOfClouds[1] is the number of snow clouds
-        List<int> numberOfClouds = DiceRoller.RollWeatherDice(weatherDice);
-        int numberOfRainClouds = numberOfClouds[0];
-        int numberOfSnowClouds = numberOfClouds[1];
+
+        // Rolls the weather dice and waits for the user to close the popup
+        if (weatherDice.Count > 0) {
+            EventGenerator.Singleton.RaiseSpawnDicePopupEvent(weatherDice);
+        }
+        while (popupArea.childCount > 0) {
+            yield return null;
+        }
         foreach (TokenController token in weatherTokens) {
             if (token.tokenType == TokenType.Storm) {
                 EventGenerator.Singleton.RaiseLosePalisadeEvent(1);
@@ -84,8 +123,12 @@ public class WeatherPhaseManager : MonoBehaviour
 
     void GetWeatherDice() {
         foreach (TokenController token in weatherTokens) {
-            if (token.tokenType == TokenType.RedWeatherDie || token.tokenType == TokenType.WhiteWeatherDie || token.tokenType == TokenType.OrangeWeatherDie) {
-                weatherDice.Add(token);
+            if (token.tokenType == TokenType.RedWeatherDie) {
+                weatherDice.Add(DieType.RedWeather);
+            } else if (token.tokenType == TokenType.WhiteWeatherDie) {
+                weatherDice.Add(DieType.WhiteWeather);
+            } else if (token.tokenType == TokenType.OrangeWeatherDie) {
+                weatherDice.Add(DieType.OrangeWeather);
             }
         }
     }
@@ -97,5 +140,7 @@ public class WeatherPhaseManager : MonoBehaviour
         }
         weatherTokens.Clear();
         weatherDice.Clear();
+        numberOfRainClouds = 0;
+        numberOfSnowClouds = 0;
     }
 }

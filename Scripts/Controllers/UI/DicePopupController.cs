@@ -58,10 +58,15 @@ public class DicePopupController : MonoBehaviour
                     x = diceArea.rect.width * (i == 0 ? 0.5f : i == 1 ? 0.33f : 0.67f);
                     y = diceArea.rect.height * (i == 0 ? 0.33f : 0.67f);
                     break;
+                case 4:
+                    x = diceArea.rect.width * (i < 2 ? 0.33f : 0.67f);
+                    y = diceArea.rect.height * (i % 2 == 0 ? 0.33f : 0.67f);
+                    break;
                 default:
-                Debug.LogError($"Unable to position {dice.Count} dice. Defaulting to random positions.");
-                    x = Random.Range(-diceArea.rect.width, diceArea.rect.width);
-                    y = Random.Range(-diceArea.rect.height, diceArea.rect.height);
+                Debug.LogError($"Unable to position dice.");
+                    // Defaults to positioning the dice randomly -- will create overlaps!
+                    x = Random.Range(diceArea.rect.width * 0.2f, diceArea.rect.width * 0.8f);
+                    y = Random.Range(diceArea.rect.height * 0.2f, diceArea.rect.height * 0.8f);
                     break;
             }
 

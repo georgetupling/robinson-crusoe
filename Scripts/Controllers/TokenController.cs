@@ -20,12 +20,12 @@ public class TokenController : ComponentController
     // Moves tokens from the future resources area to the available resources area
 
     protected virtual void OnResourceEvent(string eventType, int amount) {
-        if (eventType == ResourceEvent.MakeResourcesAvailable && transform.parent == futureResourcesArea) {
+        if (transform != null && eventType == ResourceEvent.MakeResourcesAvailable && transform.parent == futureResourcesArea) {
             Vector3 initialLocalPosition = transform.localPosition;
             EventGenerator.Singleton.RaiseAnimationInProgressEvent(true);
             transform.SetParent(availableResourcesArea, true);
             transform.DOLocalMove(initialLocalPosition, 0.5f)
-                .OnComplete(() => {
+                .OnKill(() => {
                     TokenPositioner.PositionTokens(availableResourcesArea);
                     EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
                 });

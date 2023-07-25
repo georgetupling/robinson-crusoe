@@ -165,7 +165,13 @@ public class IslandTileController : ComponentController
         if (islandTileId != IslandTile.Id) {
             return;
         }
-        Source source = isRightSource ? IslandTile.Sources[1] : IslandTile.Sources[0];
+        Source source;
+        // Island tile 3 has its source on the right. All other tiles with only 1 source have it on the left.
+        if (islandTileId == 3) { 
+            source = IslandTile.Sources[0];
+        } else {
+            source = isRightSource ? IslandTile.Sources[1] : IslandTile.Sources[0];
+        } 
         List<TokenType> tokenTypes = new List<TokenType>();
         foreach (TokenController token in positionTokenMap.Values) {
             tokenTypes.Add(token.tokenType);
@@ -198,9 +204,9 @@ public class IslandTileController : ComponentController
     void RevealTile() {
         EventGenerator.Singleton.RaiseAnimationInProgressEvent(true);
         transform.DOMoveZ(transform.position.z - 0.3f, 0.5f)
-            .OnComplete(() => {
+            .OnKill(() => {
             transform.DORotate(new Vector3(0f, 0f, 0f), 0.5f)
-                .OnComplete(() => 
+                .OnKill(() => 
                 {
                 EventGenerator.Singleton.RaiseIslandTileRevealedEvent(this.ComponentId, IslandTile.Sprite);
                 EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);

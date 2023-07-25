@@ -60,7 +60,8 @@ public class GatherActionSpaceController : MonoBehaviour
             if (islandTileId != islandTile.Id) {
                 return;
             }
-            if (islandTile.Sources.Count < 2 && isRightSource) {
+            if (islandTile.Id == 3 && !isRightSource || islandTile.Sources.Count < 2 && isRightSource && islandTile.Id != 3) {
+                // Usually if there is only one source it is on the left, but island tile 3 is the opposite way round
                 return;
             }
             gameObject.SetActive(enable);

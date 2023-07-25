@@ -196,7 +196,13 @@ public class ActionResolver : MonoBehaviour
             }
             bool gatherIsSuccessful = true;
             if (actionAssignment.mustRoll) {
-                gatherIsSuccessful = DiceRoller.RollGatherDice(actionAssignment.playerIds[0], actionAssignment.islandTile.Id);
+                DiceRoller.Singleton.RollGatherDice(actionAssignment.playerIds[0], actionAssignment.islandTile.Id);
+                while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+                    yield return null;
+                }
+                if (!rolledSuccess) {
+                    gatherIsSuccessful = false;
+                }
             }
             if (gatherIsSuccessful) {
                 EventGenerator.Singleton.RaiseGatherSuccessEvent(actionAssignment.islandTile.Id, actionAssignment.isRightSource);
@@ -224,7 +230,13 @@ public class ActionResolver : MonoBehaviour
             }
             bool exploreIsSuccessful = true;
             if (actionAssignment.mustRoll) {
-                exploreIsSuccessful = DiceRoller.RollExploreDice(actionAssignment.playerIds[0], actionAssignment.locationId);
+                DiceRoller.Singleton.RollExploreDice(actionAssignment.playerIds[0], actionAssignment.locationId);
+                while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+                    yield return null;
+                }
+                if (!rolledSuccess) {
+                    exploreIsSuccessful = false;
+                }
             }
             if (exploreIsSuccessful) {
                 EventGenerator.Singleton.RaiseDrawIslandTileEvent(actionAssignment.locationId);

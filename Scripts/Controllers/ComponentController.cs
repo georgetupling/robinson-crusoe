@@ -38,19 +38,22 @@ public class ComponentController : MonoBehaviour
     // Movement
 
     protected void MoveToLocalPosition(Vector3 localPosition, MoveStyle moveStyle) {
+        if (transform == null) {
+            return;
+        }
         float duration = 0.75f;
         float height = -0.05f;
         EventGenerator.Singleton.RaiseAnimationInProgressEvent(true);
         switch(moveStyle) {
             case MoveStyle.Default:
                 transform.DOLocalMove(localPosition, duration)
-                    .OnComplete(() => {
+                    .OnKill(() => {
                         EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
                     });
                 break;
             case MoveStyle.Slow:
                 transform.DOLocalMove(localPosition, duration * 1.5f)
-                    .OnComplete(() => {
+                    .OnKill(() => {
                             EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
                         });
                 break;
@@ -59,9 +62,9 @@ public class ComponentController : MonoBehaviour
                 transform.DOLocalMoveY(localPosition.y, duration);
                 float totalHeight = Mathf.Min(transform.position.z + height, localPosition.z + height);
                 transform.DOLocalMoveZ(totalHeight, duration / 2)
-                    .OnComplete(() => {
+                    .OnKill(() => {
                         transform.DOLocalMoveZ(localPosition.z, duration / 2)
-                            .OnComplete(() => {
+                            .OnKill(() => {
                                 EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
                             });
                     });
@@ -72,19 +75,19 @@ public class ComponentController : MonoBehaviour
                 break;
             case MoveStyle.Fast:
                 transform.DOLocalMove(localPosition, duration * 0.5f)
-                    .OnComplete(() => {
+                    .OnKill(() => {
                             EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
                         });
                 break;
             case MoveStyle.ReturnPawn:
                 height = -0.3f;
                 transform.DOLocalMoveZ(height, duration / 3f)
-                    .OnComplete(() => {
+                    .OnKill(() => {
                         transform.DOLocalMoveX(localPosition.x, duration * 1.5f);
                         transform.DOLocalMoveY(localPosition.y, duration * 1.5f)
-                            .OnComplete(() => {
+                            .OnKill(() => {
                                 transform.DOLocalMoveZ(localPosition.z, duration / 3f)
-                                    .OnComplete(() => {
+                                    .OnKill(() => {
                                         EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
                                     });
                             });
@@ -139,6 +142,9 @@ public class ComponentController : MonoBehaviour
     }
 
     protected void TurnFace(float angle, bool withAnimation) {
+        if (transform == null) {
+            return;
+        }
         if (!withAnimation) {
             transform.eulerAngles = new Vector3(transform.eulerAngles.x, angle, transform.eulerAngles.z);
             return;
@@ -148,9 +154,9 @@ public class ComponentController : MonoBehaviour
         float duration = 0.75f;
         float initialZPosition = transform.localPosition.z;
         transform.DOLocalMoveZ(initialZPosition + height, duration / 3)
-            .OnComplete(() => {
+            .OnKill(() => {
                 transform.DORotate(new Vector3(transform.eulerAngles.x, angle, transform.eulerAngles.z), duration / 3)
-                    .OnComplete(() => {
+                    .OnKill(() => {
                         transform.DOLocalMoveZ(initialZPosition, duration / 3);
                         EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
                     });

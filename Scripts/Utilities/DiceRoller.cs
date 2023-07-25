@@ -52,96 +52,55 @@ public class DiceRoller : MonoBehaviour
                     EventGenerator.Singleton.RaiseLoseHealthEvent(playerId, 1);
                 }
                 break;
+            case DieType.GatherSuccess:
+                if (faceRolled < 1) {
+                    EventGenerator.Singleton.RaiseGainDeterminationEvent(playerId, 2);
+                }
+                break;
+            case DieType.GatherAdventure:
+                if (faceRolled < 3) {
+                    // TODO: raise an event to draw an adventure card
+                }
+                break;
+            case DieType.GatherDamage:
+                if (faceRolled < 1) {
+                    EventGenerator.Singleton.RaiseLoseHealthEvent(playerId, 1);
+                }
+                break;
+            case DieType.ExploreSuccess:
+                if (faceRolled < 1) {
+                    EventGenerator.Singleton.RaiseGainDeterminationEvent(playerId, 2);
+                }
+                break;
+            case DieType.ExploreAdventure:
+                if (faceRolled < 5) {
+                    // TODO: raise an event to draw an adventure card
+                }
+                break;
+            case DieType.ExploreDamage:
+                if (faceRolled < 3) {
+                    EventGenerator.Singleton.RaiseLoseHealthEvent(playerId, 1);
+                }
+                break;
         }
     }
 
     // Public methods
-
 
     public void RollBuildDice(int playerId) {
         this.playerId = playerId;
         EventGenerator.Singleton.RaiseSpawnDicePopupEvent(buildDice);
     }
 
-    // Legacy methods - to replace
-    
-    public static bool RollGatherDice(int playerId, int islandTileId) {
-        Debug.Log("Rolling gather dice...");
-        // Adventure die
-        int randInt = Random.Range(0, 2);
-        if (randInt == 0) {
-            // TODO - raise an adventure event for the rolling player
-        }
-        // Damage die
-        randInt = Random.Range(0, 6);
-        if (randInt == 0) {
-            EventGenerator.Singleton.RaiseLoseHealthEvent(playerId, 1);
-        }
-        // Success die
-        randInt = Random.Range(0, 6);
-        if (randInt == 0) {
-            EventGenerator.Singleton.RaiseGainDeterminationEvent(playerId, 2);
-        }
-        return randInt > 0 ? true : false;
+    public void RollGatherDice(int playerId, int islandTileId) {
+        this.playerId = playerId;
+        this.islandTileId = islandTileId;
+        EventGenerator.Singleton.RaiseSpawnDicePopupEvent(gatherDice);
     }
 
-    public static bool RollExploreDice(int playerId, int locationId) {
-        Debug.Log("Rolling explore dice...");
-        // Adventure die
-        int randInt = Random.Range(0, 2);
-        if (randInt == 0) {
-            // TODO - raise an adventure event for the rolling player
-        }
-        // Damage die
-        randInt = Random.Range(0, 6);
-        if (randInt == 0) {
-            EventGenerator.Singleton.RaiseLoseHealthEvent(playerId, 1);
-        }
-        // Success die
-        randInt = Random.Range(0, 6);
-        if (randInt == 0) {
-            EventGenerator.Singleton.RaiseGainDeterminationEvent(playerId, 2);
-        }
-        return randInt > 0 ? true : false;
-    }
-
-    public static List<int> RollWeatherDice(List<TokenController> diceToRoll) {
-        Debug.Log("Rolling weather dice...");
-        int numberOfRainClouds = 0;
-        int numberOfSnowClouds = 0;
-        foreach (TokenController token in diceToRoll) {
-            int randInt;
-            if (token.tokenType == TokenType.RedWeatherDie) {
-                randInt = Random.Range(0, 6);
-                if (randInt <= 1) {
-                    // Nothing happens
-                } else if (randInt <= 3) {
-                    EventGenerator.Singleton.RaiseLosePalisadeEvent(1);
-                } else if (randInt <= 4) {
-                    EventGenerator.Singleton.RaiseLoseFoodEvent(1);
-                } else if (randInt <= 5) {
-                    // TODO: combat with strength 3 beast
-                }
-            } else if (token.tokenType == TokenType.WhiteWeatherDie) {
-                randInt = Random.Range(0, 6);
-                if (randInt <= 1) {
-                    numberOfRainClouds += 2;
-                } else if (randInt <= 3) {
-                    numberOfSnowClouds += 1;
-                } else if (randInt <= 5) {
-                    numberOfSnowClouds += 2;
-                }
-            } else if (token.tokenType == TokenType.OrangeWeatherDie) {
-                randInt = Random.Range(0, 6);
-                if (randInt <= 2) {
-                    numberOfRainClouds += 1;
-                } else if (randInt <= 3) {
-                    numberOfSnowClouds += 1;
-                } else if (randInt <= 5) {
-                    numberOfRainClouds += 2;
-                }
-            }
-        }
-        return new List<int> { numberOfRainClouds, numberOfSnowClouds };
+    public void RollExploreDice(int playerId, int locationId) {
+        this.playerId = playerId;
+        this.locationId = locationId;
+        EventGenerator.Singleton.RaiseSpawnDicePopupEvent(exploreDice);
     }
 }

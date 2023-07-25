@@ -16,9 +16,9 @@ public abstract class CardController : ComponentController
     protected void RevealCard(Deck deckDrawnFrom, Card data) {
         EventGenerator.Singleton.RaiseAnimationInProgressEvent(true);
         transform.DOMoveZ(transform.position.z - 0.3f, 0.5f)
-            .OnComplete(() => {
+            .OnKill(() => {
                 transform.DORotate(new Vector3(0f, 180f, 0f), 0.5f)
-                    .OnComplete(() => {
+                    .OnKill(() => {
                     EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
                     EventGenerator.Singleton.RaiseCardRevealedEvent(deckDrawnFrom, data, this.ComponentId);
                     });

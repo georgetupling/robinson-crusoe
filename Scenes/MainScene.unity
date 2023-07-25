@@ -10972,6 +10972,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weatherArea: {fileID: 427436055}
+  popupArea: {fileID: 473154762}
 --- !u!114 &1667176986
 MonoBehaviour:
   m_ObjectHideFlags: 0
