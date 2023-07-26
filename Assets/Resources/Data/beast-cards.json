@@ -1,0 +1,130 @@
+[
+    {
+        "beastName": "Goats",
+        "strength": 4,
+        "spearsLostAfterFight": -1,
+        "foodGainedAfterFight": 3,
+        "hidesGainedAfterFight": 1,
+        "effectsAfterFight": []
+    },
+    {
+        "beastName": "Birds",
+        "strength": 1,
+        "spearsLostAfterFight": 0,
+        "foodGainedAfterFight": 2,
+        "hidesGainedAfterFight": 0,
+        "effectsAfterFight": []
+    },
+    {
+        "beastName": "Wild Dog",
+        "strength": 3,
+        "spearsLostAfterFight": 0,
+        "foodGainedAfterFight": 2,
+        "hidesGainedAfterFight": 1,
+        "effectsAfterFight": ["Lose2HealthUnlessMedicine"]
+    },
+    {
+        "beastName": "Fox",
+        "strength": 2,
+        "spearsLostAfterFight": 0,
+        "foodGainedAfterFight": 2,
+        "hidesGainedAfterFight": 1,
+        "effectsAfterFight": []
+    },
+    {
+        "beastName": "Tapir",
+        "strength": 3,
+        "spearsLostAfterFight": 1,
+        "foodGainedAfterFight": 2,
+        "hidesGainedAfterFight": 1,
+        "effectsAfterFight": []
+    },
+    {
+        "beastName": "Tiger",
+        "strength": 6,
+        "spearsLostAfterFight": 2,
+        "foodGainedAfterFight": 5,
+        "hidesGainedAfterFight": 2,
+        "effectsAfterFight": []
+    },
+    {
+        "beastName": "Boa",
+        "strength": 2,
+        "spearsLostAfterFight": 2,
+        "foodGainedAfterFight": 2,
+        "hidesGainedAfterFight": 0,
+        "effectsAfterFight": ["GainDiscoveryToken"]
+    },
+    {
+        "beastName": "Puma",
+        "strength": 5,
+        "spearsLostAfterFight": 0,
+        "foodGainedAfterFight": 2,
+        "hidesGainedAfterFight": 1,
+        "effectsAfterFight": ["Lose2HealthUnlessMedicine"]
+    },
+    {
+        "beastName": "Cheetah",
+        "strength": 4,
+        "spearsLostAfterFight": 1,
+        "foodGainedAfterFight": 2,
+        "hidesGainedAfterFight": 1,
+        "effectsAfterFight": []
+    },
+    {
+        "beastName": "Wild Pig",
+        "strength": 3,
+        "spearsLostAfterFight": 1,
+        "foodGainedAfterFight": 3,
+        "hidesGainedAfterFight": 1,
+        "effectsAfterFight": []
+    },
+    {
+        "beastName": "Iguana",
+        "strength": 4,
+        "spearsLostAfterFight": 1,
+        "foodGainedAfterFight": 3,
+        "hidesGainedAfterFight": 1,
+        "effectsAfterFight": ["LoseHealth"]
+    },
+    {
+        "beastName": "Gorilla",
+        "strength": 6,
+        "spearsLostAfterFight": 3,
+        "foodGainedAfterFight": 5,
+        "hidesGainedAfterFight": 2,
+        "effectsAfterFight": ["GainDiscoveryToken"]
+    },
+    {
+        "beastName": "Alligator",
+        "strength": 6,
+        "spearsLostAfterFight": 2,
+        "foodGainedAfterFight": 3,
+        "hidesGainedAfterFight": 0,
+        "effectsAfterFight": []
+    },
+    {
+        "beastName": "Chamois",
+        "strength": 5,
+        "spearsLostAfterFight": 1,
+        "foodGainedAfterFight": 3,
+        "hidesGainedAfterFight": 2,
+        "effectsAfterFight": []
+    },
+    {
+        "beastName": "Bear",
+        "strength": 6,
+        "spearsLostAfterFight": 1,
+        "foodGainedAfterFight": 5,
+        "hidesGainedAfterFight": 2,
+        "effectsAfterFight": []
+    },
+    {
+        "beastName": "Jaguar",
+        "strength": 5,
+        "spearsLostAfterFight": 0,
+        "foodGainedAfterFight": 4,
+        "hidesGainedAfterFight": 1,
+        "effectsAfterFight": ["Lose2HealthUnlessMedicine"]
+    }
+]
