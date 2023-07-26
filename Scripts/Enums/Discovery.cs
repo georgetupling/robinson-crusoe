@@ -1,0 +1,21 @@
+public enum Discovery
+{
+    Tobacco,
+    Candles,
+    NourishingLarvae,
+    OldMachete,
+    CrossSymbol,
+    ThornyBushes,
+    FallenTree,
+    SaltireSymbol,
+    Poison,
+    Treasure,
+    Goat,
+    TwoLinesSymbol,
+    Vegetables,
+    HealingHerbs,
+    LineSymbol,
+    LargeLeaves,
+    Herbs,
+    FailedToParse
+}
