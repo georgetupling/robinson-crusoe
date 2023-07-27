@@ -4,10 +4,14 @@
         "adventureType": "Gather",
         "adventureDescription": "You have found a nest with baby birds.",
         "adventureEffects": ["DecideDiscardOrGainFoodPerPlayer"],
+        "adventureHasDecision": true,
+        "adventureOptions": ["Discard", "Get 1 food per player"],
         "hasEvent": true,
         "eventName": "Angry Bird!",
         "eventDescription": "The mother of the nestlings find your camp and attacks it.",
         "eventEffects": ["LoseRoof"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "NestlingsMaterial"
     },
     {
@@ -15,10 +19,14 @@
         "adventureType": "Gather",
         "adventureDescription": "A viper hides in your clothes and you unknowingly bring it to your camp.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Snakebite",
         "eventDescription": "While you are making breakfast, suddenly something bites you in the necks.",
         "eventEffects": ["FirstPlayerLoses3HealthOr1HealthWithMedicine"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "ViperMaterial"
     },
     {
@@ -26,10 +34,14 @@
         "adventureType": "Gather",
         "adventureDescription": "You can't believe it. You have found something.",
         "adventureEffects": ["DrawDiscoveryToken"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
         "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "UnexpectedDiscoveryMaterial"
     },
     {
@@ -37,10 +49,14 @@
         "adventureType": "Gather",
         "adventureDescription": "While gathering resources, you can see clearly that the animals are preparing for a cold winter.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Ground Frost",
         "eventDescription": "The night is going to be extremely cold.",
         "eventEffects": ["SnowOnWeatherSpace"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "WinterIsComingMaterial"
     },
     {
@@ -48,10 +64,14 @@
         "adventureType": "Gather",
         "adventureDescription": "You spot the tracks of a big animal.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Predator Attacks!",
         "eventDescription": "In the evening, the camp is invaded by a big predator.",
         "eventEffects": ["RedDieOnWeatherSpace"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "PathOfAPredatorMaterial"
     },
     {
@@ -59,10 +79,14 @@
         "adventureType": "Gather",
         "adventureDescription": "Leaving the camp, you spot signs of a predator nearby.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Hungry Predator Attacks!",
         "eventDescription": "You're scared.",
         "eventEffects": ["HungryPredatorAttacksEffect"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "SignsOfAPredatorMaterial"
     },
     {
@@ -70,10 +94,14 @@
         "adventureType": "Gather",
         "adventureDescription": "When you arrive at your destination, you see a large number of birds.",
         "adventureEffects": ["AdditionalFoodOnTileGatheringFrom"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "It's All Vanished",
         "eventDescription": "Predators have moved into the area.",
         "eventEffects": ["ExhaustAllFoodOnTileGatheredFrom"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "NewFlockMaterial"
     },
     {
@@ -81,10 +109,14 @@
         "adventureType": "Gather",
         "adventureDescription": "You have found a pile of wood probably left here after some storm.",
         "adventureEffects": ["DecideDiscardOrGain3Wood"],
+        "adventureHasDecision": true,
+        "adventureOptions": ["Discard", "Get 3 wood"],
         "hasEvent": true,
         "eventName": "Collapse",
         "eventDescription": "The wood was too dry and the roof collapsed.",
         "eventEffects": ["LoseHalfRoof"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "NiceSurpriseMaterial"
     },
     {
@@ -92,10 +124,14 @@
         "adventureType": "Gather",
         "adventureDescription": "The resource you want to gather is the last in this source.",
         "adventureEffects": ["ExhaustSourceGatheredFrom"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
         "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "EndOfSourceMaterial"
     },
     {
@@ -103,10 +139,14 @@
         "adventureType": "Gather",
         "adventureDescription": "The resource you want to gather is the last in this source.",
         "adventureEffects": ["ExhaustSourceGatheredFrom"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
         "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "EndOfSourceMaterial"
     },
     {
@@ -114,10 +154,14 @@
         "adventureType": "Gather",
         "adventureDescription": "The resource you want to gather is the last in this source.",
         "adventureEffects": ["ExhaustSourceGatheredFrom"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
         "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "EndOfSourceMaterial"
     },
     {
@@ -125,10 +169,14 @@
         "adventureType": "Gather",
         "adventureDescription": "You went to bring some resources, but you also brough something else: bad news.",
         "adventureEffects": ["CoverTerrainOnTileGatheredFrom"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
         "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "UnexpectedTroublesMaterial"
     },
     {
@@ -136,10 +184,14 @@
         "adventureType": "Gather",
         "adventureDescription": "You wanted to impress your fellows. you have gathered more wood than you can carry.",
         "adventureEffects": ["DecideDiscardOrGainWoodAndGatherWoundOnArm"],
+        "adventureHasDecision": true,
+        "adventureOptions": ["Discard", "Get wood"],
         "hasEvent": true,
         "eventName": "Aching Arms",
         "eventDescription": "It hurts a lot!",
         "eventEffects": ["CharacterWithGatherWoundOnArmLoses1Health"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "UnbelievableEffortMaterial"
     },
     {
@@ -147,10 +199,14 @@
         "adventureType": "Gather",
         "adventureDescription": "Winter is reducing the amount of sources on the island.",
         "adventureEffects": ["ExhaustSourceOnTileGatheredFrom"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
-        "eventEffects": [""],
+        "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "WinterFreezingMaterial"
     },
     {
@@ -158,10 +214,14 @@
         "adventureType": "Gather",
         "adventureDescription": "You feel that something is watching you.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Unexpected Visit",
         "eventDescription": "The predator came after you.",
         "eventEffects": ["RedDieOnWeatherSpace"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "EyesInTheBushesMaterial"
     },
     {
@@ -169,10 +229,14 @@
         "adventureType": "Gather",
         "adventureDescription": "You have found a Spanish gold coin! You take it.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Curse",
         "eventDescription": "The gold was cursed",
         "eventEffects": ["RerollOnBuildGatherAndExploreActions"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "GoldCoinMaterial"
     },
     {
@@ -180,10 +244,14 @@
         "adventureType": "Gather",
         "adventureDescription": "Suddenly, a spider drops onto your head.",
         "adventureEffects": ["GatherWoundOnHead"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "A Bit in the Neck",
         "eventDescription": "Terrible pain penetrates your body.",
         "eventEffects": ["CharacterWithGatherWoundOnHeadOnlyHas1Action"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "SpiderMaterial"
     },
     {
@@ -191,10 +259,14 @@
         "adventureType": "Gather",
         "adventureDescription": "The area is devastated and the trees are demolished.",
         "adventureEffects": ["Gain2Wood", "TimeConsumingActionOnTileGatheredFrom"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "It Was Stormy Again",
         "eventDescription": "A dreadful storm destroyed this whole area.",
         "eventEffects": ["TurnFaceDownTileWithTimeConsumingAction"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "AfterTheHurricaneMaterial"
     },
     {
@@ -202,10 +274,14 @@
         "adventureType": "Gather",
         "adventureDescription": "It's your lucky day! You have found a very useful item in the bushes.",
         "adventureEffects": ["DecideDiscardOrGainEquipment"],
+        "adventureHasDecision": true,
+        "adventureOptions": ["Discard", "Get equipment"],
         "hasEvent": true,
         "eventName": "Reflections",
         "eventDescription": "You look at the item and you wonder what happened to its owner.",
         "eventEffects": ["LoseMorale"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "SurpriseInTheBushesMaterial"
     },
     {
@@ -213,10 +289,14 @@
         "adventureType": "Gather",
         "adventureDescription": "It looks like it's the last time you will be here.",
         "adventureEffects": ["GainExtraResourceOfTypeGatheredThenExhaustSource"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
-        "eventEffects": [""],
+        "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "ShortageMaterial"
     },
     {
@@ -224,10 +304,14 @@
         "adventureType": "Gather",
         "adventureDescription": "You have found some mushrooms on your way back to the camp.",
         "adventureEffects": ["DecideDiscardOrGainFoodPerPlayer"],
+        "adventureHasDecision": true,
+        "adventureOptions": ["Discard", "Get 1 food per player"],
         "hasEvent": true,
         "eventName": "Ilness",
         "eventDescription": "All night, you were suffering from these mushrooms.",
         "eventEffects": ["AllLoseHealthUnlessMedicine"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "MushroomsMaterial"
     },
     {
@@ -235,10 +319,14 @@
         "adventureType": "Gather",
         "adventureDescription": "You have eaten some fruit on your way back to the camp.",
         "adventureEffects": ["GatherWoundOnBelly"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Stomach Ache",
         "eventDescription": "You feel terrible, and can't even get out of bed.",
         "eventEffects": ["CharacterWithGatherWoundOnBellyCanOnlyRestUnlessMedicine"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "FruitMaterial"
     },
     {
@@ -246,10 +334,14 @@
         "adventureType": "Gather",
         "adventureDescription": "The resource you want to gather is the last in this source.",
         "adventureEffects": ["ExhaustSourceGatheredFrom"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
         "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "EndOfSourceMaterial"
     },
     {
@@ -257,10 +349,14 @@
         "adventureType": "Gather",
         "adventureDescription": "The resource you want to gather is the last in this source.",
         "adventureEffects": ["ExhaustSourceGatheredFrom"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
         "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "EndOfSourceMaterial"
     },
     {
@@ -268,10 +364,14 @@
         "adventureType": "Gather",
         "adventureDescription": "You have found furs in a cave.",
         "adventureEffects": ["DecideDiscardOrGain2Hide"],
+        "adventureHasDecision": true,
+        "adventureOptions": ["Discard", "Get 2 hide"],
         "hasEvent": true,
         "eventName": "Insects",
         "eventDescription": "There were ants hiding in the furs. They eat some of your food!",
         "eventEffects": ["IfPossible1LessFoodInProductionPhase"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "FursMaterial"
     },
     {
@@ -279,10 +379,14 @@
         "adventureType": "Gather",
         "adventureDescription": "After a windy night, you find a new path on the island. It leads you to a pirate's hideout.",
         "adventureEffects": ["DecideDiscardOrDraw2MysteryCardsResolveTreasure"],
+        "adventureHasDecision": true,
+        "adventureOptions": ["Discard", "Draw 2 treasure cards"],
         "hasEvent": true,
         "eventName": "Bad Luck!",
         "eventDescription": "The pirate's chest was cursed.",
         "eventEffects": ["AllPlayersOnly1Action"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "PiratesChestMaterial"
     },
     {
@@ -290,10 +394,14 @@
         "adventureType": "Gather",
         "adventureDescription": "Suddenly, you have fallen into a burrow.",
         "adventureEffects": ["GatherWoundOnLeg"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Swollen Ankle",
         "eventDescription": "Your ankle hurts so bad that you can't go outside camp.",
         "eventEffects": ["AllPlayersOnly1Action"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "TwistedAnkleMaterial"
     },
     {
@@ -301,10 +409,14 @@
         "adventureType": "Gather",
         "adventureDescription": "While walking through the forest you find a skeleton holding an old book which you take.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Dead Explorer's Memoirs",
         "eventDescription": "It was a sad read.",
         "eventEffects": ["LoseMorale", "DrawInventionCard"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "SkeletonMaterial"
     },
     {
@@ -312,10 +424,14 @@
         "adventureType": "Gather",
         "adventureDescription": "You see a storm coming towards the island.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Storm",
         "eventDescription": "It is best to have a place to hide.",
         "eventEffects": ["WindOnWeatherSpace"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "WeatherBreakdownMaterial"
     }
 ]

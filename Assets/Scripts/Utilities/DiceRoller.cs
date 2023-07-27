@@ -31,6 +31,7 @@ public class DiceRoller : MonoBehaviour
             Debug.LogError("Scene contains duplicate DiceRoller.");
         }
         EventGenerator.Singleton.AddListenerToDieRolledEvent(OnDieRolledEvent);
+        EventGenerator.Singleton.AddListenerToAdventureCardPopupClosedEvent(OnAdventureCardPopupClosedEvent);
     }
 
     // Listens for dice rolls and actions them
@@ -82,6 +83,24 @@ public class DiceRoller : MonoBehaviour
                     EventGenerator.Singleton.RaiseLoseHealthEvent(playerId, 1);
                 }
                 break;
+        }
+    }
+
+    void OnAdventureCardPopupClosedEvent(int componentId, AdventureCard adventureCard, int optionChosen) {
+        // Actions the drawn adventure card
+        foreach (CardEffect cardEffect in adventureCard.adventureEffects) {
+            // Sets the option chosen and the target of the effect
+            if (adventureCard.adventureHasDecision) {
+                cardEffect.SetOptionChosen(optionChosen);
+            }
+            if (cardEffect.targetType == TargetType.Player) {
+                cardEffect.SetTarget(playerId);
+            } else if (cardEffect.targetType == TargetType.IslandTile) {
+                cardEffect.SetTarget(islandTileId);
+            } else if (cardEffect.targetType == TargetType.Location) {
+                cardEffect.SetTarget(locationId);
+            }
+            cardEffect.ApplyEffect();
         }
     }
 

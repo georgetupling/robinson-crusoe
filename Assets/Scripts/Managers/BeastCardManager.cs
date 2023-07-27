@@ -28,9 +28,6 @@ public class BeastCardManager : MonoBehaviour
             return;
         }
         InitializeBeastCards();
-    }
-
-    void Start() {
         SpawnBeastDeck();
         EventGenerator.Singleton.AddListenerToDrawCardEvent(OnDrawCardEvent);
     }
@@ -50,7 +47,7 @@ public class BeastCardManager : MonoBehaviour
         foreach (BeastCard beastCard in beastCards) {
             BeastCardController newCard = Instantiate(beastCardPrefab, beastDeckArea, false);
             Vector3 localPosition = new Vector3(0, 0, (-1) * beastDeck.Count * CardThickness);
-            EventGenerator.Singleton.RaiseMoveComponentEvent(newCard.ComponentId, localPosition);
+            EventGenerator.Singleton.RaiseMoveComponentEvent(newCard.ComponentId, localPosition, MoveStyle.Instant);
             newCard.transform.eulerAngles = new Vector3(0, 180, 0);
             newCard.InitializeCard(beastCard);
             beastDeck.Push(newCard);

@@ -4,10 +4,14 @@
         "adventureType": "Build",
         "adventureDescription": "You work quickly, ignoring outside concerns.",
         "adventureEffects": ["DiscardOrTakeBuildAction"],
+        "adventureHasDecision": true,
+        "adventureOptions": ["Discard", "Take extra action"],
         "hasEvent": true,
         "eventName": "Haste Makes Waste",
         "eventDescription": "The construction collapses.",
         "eventEffects": ["LoseRoofOrPalisade"],
+        "eventHasDecision": true,
+        "eventOptions": ["Lose roof", "Lose palisade"],
         "materialName": "FastWorkMaterial"
     },
     {
@@ -15,10 +19,14 @@
         "adventureType": "Build",
         "adventureDescription": "Without a good workshop, work is very dangerous.",
         "adventureEffects": ["RerollOnBuildAction", "AdventureOnBuildAction"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
         "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "DangerousWorkMaterial"
     },
     {
@@ -26,10 +34,14 @@
         "adventureType": "Build",
         "adventureDescription": "Due to you being hurt, tired, and irritated, construction is going very slowly.",
         "adventureEffects": ["LoseDeterminationOrHealth"],
+        "adventureHasDecision": true,
+        "adventureOptions": ["Lose determination", "Lose health"],
         "hasEvent": true,
         "eventName": "Tools are Breaking",
         "eventDescription": "You're disappointed with the condition of your tools.",
         "eventEffects": ["AllLoseDetermination"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "UnmotivatedMaterial"
     },
     {
@@ -37,10 +49,14 @@
         "adventureType": "Build",
         "adventureDescription": "You have been stung by a bee.",
         "adventureEffects": ["BuildWoundOnBelly"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Shivers",
         "eventDescription": "It didn't look so bad at first.",
         "eventEffects": ["IfNoMedicinePlayerHasOnly1Action"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "StringMaterial"
     },
     {
@@ -48,10 +64,14 @@
         "adventureType": "Build",
         "adventureDescription": "You have found some weak branches. You think about saving them for future use.",
         "adventureEffects": ["DecideDiscardOrGain2Wood"],
+        "adventureHasDecision": true,
+        "adventureOptions": ["Discard", "Get 2 wood"],
         "hasEvent": true,
         "eventName": "Unsteady Construction",
         "eventDescription": "You don't feel safe.",
         "eventEffects": ["LoseMorale"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "SavingsMaterial"
     },
     {
@@ -59,10 +79,14 @@
         "adventureType": "Build",
         "adventureDescription": "You chase the monkeys away but they will come back.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Monkey Do",
         "eventDescription": "Monkeys come to your camp and jump all around.",
         "eventEffects": ["LoseHalfRoofOrPalisade"],
+        "eventHasDecision": true,
+        "eventOptions": ["Lose half roof", "Lose half palisade"],
         "materialName": "MonkeySeeMaterial"
     },
     {
@@ -70,10 +94,14 @@
         "adventureType": "Build",
         "adventureDescription": "The work is very hard and takes a long time.",
         "adventureEffects": ["TimeConsumingActionOnBuildAction"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
         "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "LaboriousWorkMaterial"
     },
     {
@@ -81,21 +109,29 @@
         "adventureType": "Build",
         "adventureDescription": "You feel that some of your ideas are impossible to do.",
         "adventureEffects": ["Discard3InventionCards"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
         "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "LackOfHopeMaterial"
     },
     {
         "adventureName": "Accident",
         "adventureType": "Build",
-        "adventureDescription": "Through carelessness you cut your elg with a tool. It may get worse.",
+        "adventureDescription": "Through carelessness you cut your leg with a tool. It may get worse.",
         "adventureEffects": ["BuildWoundOnLeg"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Gangrene",
         "eventDescription": "It's not healing. Do you have a cure, or is it too late?",
         "eventEffects": ["Lose3HealthOr1HealthIfHaveMedicine"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "AccidentMaterial"
     },
     {
@@ -103,10 +139,14 @@
         "adventureType": "Build",
         "adventureDescription": "While you are working, your camp is visited by a predator. It eats your food and escapes.",
         "adventureEffects": ["LoseFood"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Night Visit",
         "eventDescription": "The predator thinks that your camp is a source of free food.",
         "eventEffects": ["RedDieOnWeatherSpace"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "VisitOfAPredatorMaterial"
     },
     {
@@ -114,10 +154,14 @@
         "adventureType": "Build",
         "adventureDescription": "Sooner or later, you will need much stronger weapons.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Extensive Protection",
         "eventDescription": "As you expected, the island is very dangerous and you need to make better weapons.",
         "eventEffects": ["AdditionalWoodOnBuildWeaponAction"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "FearOfTheBeastsMaterial"
     },
     {
@@ -125,10 +169,14 @@
         "adventureType": "Build",
         "adventureDescription": "Wind rages along the camp throwing everything around.",
         "adventureEffects": ["LosePalisade"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Natural Palisade",
         "eventDescription": "Your camp became overgrown with bushes.",
         "eventEffects": ["GainPalisade"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "WindstormMaterial"
     },
     {
@@ -136,10 +184,14 @@
         "adventureType": "Build",
         "adventureDescription": "A predator visits your camp and attacks you.",
         "adventureEffects": ["FightStrength4Beast"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "What Goes Around, Comes Around",
         "eventDescription": "In the morning, you find the dead body of the predator that previously attacked you.",
         "eventEffects": ["Gain2Food", "Gain2Hide"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "PredatorInTheCampMaterial"
     },
     {
@@ -147,10 +199,14 @@
         "adventureType": "Build",
         "adventureDescription": "You feel sleepy. You decide to take a nap.",
         "adventureEffects": ["DecideDiscardOrGain2Health"],
+        "adventureHasDecision": true,
+        "adventureOptions": ["Discard", "Gain 2 health"],
         "hasEvent": true,
         "eventName": "Quarrel",
         "eventDescription": "Finally, someone can't stand your naps anymore and argument begins.",
         "eventEffects": ["LoseMorale"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "TiredMaterial"
     },
     {
@@ -158,10 +214,14 @@
         "adventureType": "Build",
         "adventureDescription": "You're working so hard that you get hungry.",
         "adventureEffects": ["IfPossibleLoseFood"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
-        "eventEffects": [""],
+        "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "HardWorkMaterial"
     },
     {
@@ -169,10 +229,14 @@
         "adventureType": "Build",
         "adventureDescription": "The work is very hard and takes a lot of time.",
         "adventureEffects": ["TimeConsumingActionOnBuildAction"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
-        "eventEffects": [""],
+        "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "LaboriousWorkMaterial"
     },
     {
@@ -180,10 +244,14 @@
         "adventureType": "Build",
         "adventureDescription": "You have cut your head and are angry.",
         "adventureEffects": ["Lose1Health", "Gain2Determination", "BuildWoundOnHead"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Headache",
         "eventDescription": "You have a big bruise on your head and an enormous headache.",
         "eventEffects": ["IfNoMedicineLose2Health"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "CutHeadMaterial"
     },
     {
@@ -191,10 +259,14 @@
         "adventureType": "Build",
         "adventureDescription": "You have so many belongings that the camp has become too small for you.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Enlarging the Camp",
         "eventDescription": "Now is the right time make your camp bigger.",
         "eventEffects": ["AdditionalWoodOnBuildShelterRoofAndPalisadeActions"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "YouNeedABiggerCampMaterial"
     },
     {
@@ -202,10 +274,14 @@
         "adventureType": "Build",
         "adventureDescription": "You have badly cut your hand.",
         "adventureEffects": ["BuildWoundOnArm"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Infection",
         "eventDescription": "Without medicine, it won't heal.",
         "eventEffects": ["IfNoMedicineLose2Health"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "NastyWoundMaterial"
     },
     {
@@ -213,10 +289,14 @@
         "adventureType": "Build",
         "adventureDescription": "While you are working a hungry beast visits your camp.",
         "adventureEffects": ["HungryPredatorEffect"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Revisit",
         "eventDescription": "Without medicine, it won't heal.",
         "eventEffects": ["RevisitEffect"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "HungryPredatorMaterial"
     },
     {
@@ -224,10 +304,14 @@
         "adventureType": "Build",
         "adventureDescription": "You're not used to working with hand-made tools.",
         "adventureEffects": ["LoseMorale"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "After Some Time",
         "eventDescription": "The tools are not the best, but by working hard you manage to achieve your goal.",
         "eventEffects": ["FirstPlayerGains2Determination"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "BreakdownMaterial"
     },
     {
@@ -235,10 +319,14 @@
         "adventureType": "Build",
         "adventureDescription": "The stick you used as a lever breaks.",
         "adventureEffects": ["LoseWeapon"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
-        "eventEffects": [""],
+        "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "BrokenLevelMaterial"
     },
     {
@@ -246,10 +334,14 @@
         "adventureType": "Build",
         "adventureDescription": "Your camp is made out of scraps and it is barely hanging on.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Bash!",
         "eventDescription": "No good roof can be made out of scraps.",
         "eventEffects": ["LoseHalfRoof"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "WeakConstructionMaterial"
     },
     {
@@ -257,10 +349,14 @@
         "adventureType": "Build",
         "adventureDescription": "Damn it!",
         "adventureEffects": ["IfPossibleLoseItem"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": false,
         "eventName": "",
         "eventDescription": "",
         "eventEffects": [],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "BrokenToolMaterial"
     },
     {
@@ -268,10 +364,14 @@
         "adventureType": "Build",
         "adventureDescription": "You get careless in your haste.",
         "adventureEffects": ["DecideDiscardOrDraw2DiscoveryTokens"],
+        "adventureHasDecision": true,
+        "adventureOptions": ["Discard", "Draw 2 discovery tokens"],
         "hasEvent": true,
         "eventName": "Crack",
         "eventDescription": "Next time, work more carefully.",
         "eventEffects": ["LosePalisade"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "InAHurryMaterial"
     },
     {
@@ -279,10 +379,14 @@
         "adventureType": "Build",
         "adventureDescription": "It's going to be a tough day. It's raining hard.",
         "adventureEffects": ["RainOnWeatherSpace"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "After the Rain",
         "eventDescription": "Your shelter was strong enough to protect you from the heavy rain.",
         "eventEffects": ["GainPalisade"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "DarkCloudsInTheSkyMaterial"
     },
     {
@@ -290,10 +394,14 @@
         "adventureType": "Build",
         "adventureDescription": "You debate about your future and come to realize some of your ideas will be impossible to create under these conditions.",
         "adventureEffects": ["Discard3InventionCards"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Lack of Ideas",
         "eventDescription": "You see a dark future for yourself...",
         "eventEffects": ["LoseMorale"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "ComingToTermsMaterial"
     },
     {
@@ -301,10 +409,14 @@
         "adventureType": "Build",
         "adventureDescription": "Some of your tools are slowly falling apart.",
         "adventureEffects": ["IfPossibleBlackMarkersOn2Items"],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Broken Tools",
         "eventDescription": "It's a miracle that they lasted so long.",
         "eventEffects": ["LoseMarkedItems"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "ToolsInspectionMaterial"
     },
     {
@@ -312,10 +424,14 @@
         "adventureType": "Build",
         "adventureDescription": "You take a break to strengthen the camp with vegetation. When it overgrows with grass, it will be even stronger.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "Stronger Construction",
         "eventDescription": "The grass and bushes made the palisade stronger.",
         "eventEffects": ["GainPalisade"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "ConstructionMaterial"
     },
     {
@@ -323,10 +439,14 @@
         "adventureType": "Build",
         "adventureDescription": "While working, you hear some scary howling from the bushes. After a while, the predator goes away.",
         "adventureEffects": [],
+        "adventureHasDecision": false,
+        "adventureOptions": [],
         "hasEvent": true,
         "eventName": "The Beast is Here!",
         "eventDescription": "The grass and bushes made the palisade stronger.",
         "eventEffects": ["GainPalisade"],
+        "eventHasDecision": false,
+        "eventOptions": [],
         "materialName": "HowlingInTheBushesMaterial"
     }
 ]

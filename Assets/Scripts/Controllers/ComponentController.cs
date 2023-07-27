@@ -41,7 +41,7 @@ public class ComponentController : MonoBehaviour
         if (transform == null) {
             return;
         }
-        float duration = 0.75f;
+        float duration = GameSettings.AnimationDuration;
         float height = -0.05f;
         EventGenerator.Singleton.RaiseAnimationInProgressEvent(true);
         switch(moveStyle) {

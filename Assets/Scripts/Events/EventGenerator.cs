@@ -131,6 +131,8 @@ public class EventGenerator : MonoBehaviour
 
     // Adventure Cards
     private UnityEvent<AdventureType> drawAdventureCardEvent = new UnityEvent<AdventureType>();
+    private UnityEvent<int, AdventureCard, int> adventureCardPopupClosedEvent = new UnityEvent<int, AdventureCard, int>();
+    private UnityEvent<CardController> shuffleIntoEventDeckEvent = new UnityEvent<CardController>();
 
     void Awake() {
         if (Singleton == null) {
@@ -1116,6 +1118,27 @@ public class EventGenerator : MonoBehaviour
     }
     public void AddListenerToDrawAdventureCardEvent(UnityAction<AdventureType> listener) {
         drawAdventureCardEvent.AddListener(listener);
+    }
+
+    // Adventure card popup closed
+
+    public void RaiseAdventureCardPopupClosedEvent(int componentId, AdventureCard adventureCard) {
+        adventureCardPopupClosedEvent.Invoke(componentId, adventureCard, 0);
+    }
+    public void RaiseAdventureCardPopupClosedEvent(int componentId, AdventureCard adventureCard, int optionChosen) {
+        adventureCardPopupClosedEvent.Invoke(componentId, adventureCard, optionChosen);
+    }
+    public void AddListenerToAdventureCardPopupClosedEvent(UnityAction<int, AdventureCard, int> listener) {
+        adventureCardPopupClosedEvent.AddListener(listener);
+    }
+
+    // Shuffle into event deck
+
+    public void RaiseShuffleIntoEventDeckEvent(CardController cardController) {
+        shuffleIntoEventDeckEvent.Invoke(cardController);
+    }
+    public void AddListenerToShuffleIntoEventDeckEvent(UnityAction<CardController> listener) {
+        shuffleIntoEventDeckEvent.AddListener(listener);
     }
     
 }

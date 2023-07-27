@@ -12,6 +12,9 @@ public class CardEffect : ScriptableObject, IEffectApplicable
     public TargetType targetType { get; protected set; }
     public int targetId { get; protected set; }
 
+    protected int optionChosen = 0;
+    // optionChosen is for "DECIDE" cards
+
     public static CardEffect CreateCardEffectInstance(string effectName) {
         CardEffect cardEffect = ScriptableObject.CreateInstance(effectName) as CardEffect;
         cardEffect.Initialize();
@@ -39,5 +42,9 @@ public class CardEffect : ScriptableObject, IEffectApplicable
             return;
         }
         this.targetId = targetId;
+    }
+
+    public void SetOptionChosen(int optionChosen) {
+        this.optionChosen = optionChosen;
     }
 }

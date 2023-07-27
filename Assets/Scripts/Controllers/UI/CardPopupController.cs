@@ -8,6 +8,9 @@ public class CardPopupController : ComponentController
 {
     [SerializeField] private Image cardImage;
     [SerializeField] private Button okayButton;
+    [SerializeField] private Button buttonPrefab;
+    [SerializeField] private Image background;
+    [SerializeField] private Transform buttonArea;
 
     private int componentIdOfCardController;
     private Card card;
@@ -50,11 +53,13 @@ public class CardPopupController : ComponentController
     }
 
     void SetUpButtonsForDrawingFromEventDeck() {
+        okayButton.gameObject.SetActive(true);
         okayButton.onClick.AddListener(() => {
             EventGenerator.Singleton.RaiseEnableMainUIEvent();
             if (card is EventCard eventCard) {
                 EventGenerator.Singleton.RaiseEventCardPopupClosedEvent(componentIdOfCardController);
             } else if (card is AdventureCard adventureCard) {
+                // TODO
                 EventGenerator.Singleton.RaiseDrawCardEvent(Deck.Event);
             }
             Destroy(gameObject);
@@ -62,12 +67,47 @@ public class CardPopupController : ComponentController
     }
 
     void SetUpButtonsForDrawingFromAdventureDeck() {
-        okayButton.onClick.AddListener(() => {
-            EventGenerator.Singleton.RaiseEnableMainUIEvent();
-            // TODO - raise event telling the DiceRoller to action the action card (n.b. the Diceroller stores the target info)
-            EventGenerator.Singleton.RaiseDestroyComponentEvent(componentIdOfCardController);
-            Destroy(gameObject);
-        });
+        AdventureCard adventureCard = card as AdventureCard;
+        if (adventureCard.adventureHasDecision) {
+            List<string> adventureOptions = adventureCard.adventureOptions;
+            RectTransform buttonTransform = buttonPrefab.GetComponent<RectTransform>();
+            float buttonHeight = buttonTransform.rect.height;
+            float gapBetweenButtons = 10f;
+            // Resizes the popup based on how many options there are
+            float width = background.rectTransform.sizeDelta.x;
+            float height = background.rectTransform.sizeDelta.y + ((buttonHeight + gapBetweenButtons) * (adventureOptions.Count - 1));
+            background.rectTransform.sizeDelta = new Vector2(width, height);
+            buttonArea.localPosition = new Vector3(0, buttonArea.localPosition.y - ((gapBetweenButtons) * (adventureOptions.Count - 1)), 0);
+            // Spawns buttons, sets their text, and adds listeners
+            for (int i = 0; i < adventureOptions.Count; i++) {
+                Button newButton = Instantiate(buttonPrefab, buttonArea, false);
+                RectTransform newButtonRectTransform = newButton.GetComponent<RectTransform>(); 
+                newButtonRectTransform.localPosition = new Vector3(0, i * (buttonHeight + gapBetweenButtons), 0);
+                TMP_Text newButtonText = newButtonRectTransform.GetChild(0).GetComponent<TMP_Text>();
+                newButtonText.text = adventureOptions[i];
+                // Shrinks the font size if the string is too long to fit
+                int characterThreshold = 15;
+                int smallerFontSize = 15;
+                if (adventureOptions[i].Length > characterThreshold) {
+                    newButtonText.fontSize = smallerFontSize;
+                }
+                newButton.onClick.AddListener(() => {
+                    EventGenerator.Singleton.RaiseAdventureCardPopupClosedEvent(componentIdOfCardController, adventureCard);
+                    EventGenerator.Singleton.RaiseEnableMainUIEvent();
+                    Destroy(gameObject);
+                });
+            }
+        } else {
+            // Sets up the Okay button if there isn't a decision to make
+            okayButton.gameObject.SetActive(true);
+            okayButton.onClick.AddListener(() => {
+                EventGenerator.Singleton.RaiseAdventureCardPopupClosedEvent(componentIdOfCardController, adventureCard);
+                EventGenerator.Singleton.RaiseEnableMainUIEvent();
+                Destroy(gameObject);
+            });
+        }
+        
+        
     }
 
 }

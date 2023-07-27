@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using DG.Tweening;
 
 /*
     This class manages the event deck and also plays a role in handling the event phase.
@@ -42,6 +43,7 @@ public class EventCardManager : MonoBehaviour
         InitializeEventCards();
         EventGenerator.Singleton.AddListenerToPhaseStartEvent(OnPhaseStartEvent);
         EventGenerator.Singleton.AddListenerToDrawCardEvent(OnDrawCardEvent);
+        EventGenerator.Singleton.AddListenerToShuffleIntoEventDeckEvent(OnShuffleIntoEventDeckEvent);
     }
 
     void Start() {
@@ -125,5 +127,24 @@ public class EventCardManager : MonoBehaviour
     void DrawCard() {
         CardController drawnCard = eventDeck.Pop();
         EventGenerator.Singleton.RaiseCardDrawnEvent(Deck.Event, drawnCard.ComponentId);
+    }
+
+    void OnShuffleIntoEventDeckEvent(CardController cardController) {
+        cardController.transform.SetParent(eventDeckArea, true);
+        float duration = GameSettings.AnimationDuration;
+        Vector3 topOfEventDeck = new Vector3(0, 0, (-1) * eventDeck.Count * CardThickness);
+        EventGenerator.Singleton.RaiseAnimationInProgressEvent(true);
+        cardController.transform.DOLocalMove(topOfEventDeck, duration)
+            .OnKill(() => {
+                eventDeck.Push(cardController);
+                StartCoroutine(WaitBrieflyThenShuffle(cardController));
+                EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
+            });
+    }
+
+    IEnumerator WaitBrieflyThenShuffle(CardController cardController) {
+        yield return new WaitForSeconds(0.25f);
+        cardController.transform.eulerAngles = Vector3.zero;
+        DeckShuffler.ShuffleDeck(eventDeck, CardThickness);
     }
 }
