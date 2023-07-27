@@ -4,7 +4,7 @@ public static class ResourceName
 {
     // Generates the correct sprite name for a given card name
     public static string GetSpriteName(string cardName) {
-        string[] words = cardName.Trim().Replace("'", "").Split(' ');
+        string[] words = cardName.Trim().Replace("'", "").Replace("!", "").Split(' ');
         if (words.Length == 0) {
             return "";
         }

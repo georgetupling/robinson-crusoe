@@ -174,6 +174,8 @@ public class ActionResolver : MonoBehaviour
                 } else {
                     Debug.Log("Build unsuccessful."); // For testing purposes
                 }
+            } else {
+                Debug.LogError("Unable to pay build costs.");
             }
             yield return new WaitForSeconds(delayBetweenActions);
         }

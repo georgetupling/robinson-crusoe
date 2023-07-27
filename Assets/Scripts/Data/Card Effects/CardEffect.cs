@@ -12,7 +12,7 @@ public class CardEffect : ScriptableObject, IEffectApplicable
     public TargetType targetType { get; protected set; }
     public int targetId { get; protected set; }
 
-    protected int optionChosen = 0;
+    protected int optionChosen = -1;
     // optionChosen is for "DECIDE" cards
 
     public static CardEffect CreateCardEffectInstance(string effectName) {

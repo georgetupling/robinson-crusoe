@@ -419,6 +419,9 @@ public class EventGenerator : MonoBehaviour
     public void RaiseGainWeaponEvent(int amount) {
         gainWeaponEvent.Invoke(amount);
     }
+    public void RaiseLoseWeaponEvent(int amount) {
+        gainWeaponEvent.Invoke(-amount);
+    }
     public void AddListenerToGainWeaponEvent(UnityAction<int> listener) {
         gainWeaponEvent.AddListener(listener);
     }

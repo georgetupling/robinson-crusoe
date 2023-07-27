@@ -245,6 +245,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 041d29cf3c31d4d458849b5275b04a1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buildAdventureDeckTokenArea: {fileID: 1397248064}
+  gatherAdventureDeckTokenArea: {fileID: 2041565702}
+  exploreAdventureDeckTokenArea: {fileID: 1071666001}
 --- !u!4 &28558152
 Transform:
   m_ObjectHideFlags: 0

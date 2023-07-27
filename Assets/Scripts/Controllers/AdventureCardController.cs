@@ -6,13 +6,11 @@ using DG.Tweening;
 public class AdventureCardController : CardController
 {
     private AdventureCard data;
-    private Transform eventDeckArea;
 
     protected override void Awake() {
         base.Awake();
         EventGenerator.Singleton.AddListenerToCardDrawnEvent(OnCardDrawnEvent);
         EventGenerator.Singleton.AddListenerToAdventureCardPopupClosedEvent(OnAdventureCardPopupClosedEvent);
-        eventDeckArea = GameObject.Find("EventDeckArea").transform;
     }
     
     protected override void Start() {
@@ -31,7 +29,7 @@ public class AdventureCardController : CardController
             return;
         }
         if (data.hasEvent) {
-            if (data.adventureHasDecision && data.adventureOptions[optionChosen] == "Discard") {
+            if (data.adventureHasDecision && data.adventureOptions.Count > optionChosen && data.adventureOptions[optionChosen] == "Discard") {
                 Destroy(gameObject);
                 return;
             }

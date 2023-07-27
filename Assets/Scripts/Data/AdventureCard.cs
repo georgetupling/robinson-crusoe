@@ -36,7 +36,13 @@ public class AdventureCard : Card
 
         // Selects the correct folder to load the Material from
         cardMaterial = Resources.Load<Material>(Path.Combine("Materials/Adventure Cards", data.materialName));
+        if (cardMaterial == null) {
+            Debug.LogError($"Failed to load {data.materialName}.");
+        }
         string spriteName = ResourceName.GetSpriteName(data.adventureName);
         cardSprite = Resources.Load<Sprite>(Path.Combine("Sprites/Adventure Cards", spriteName));
+        if (cardSprite == null) {
+            Debug.LogError($"Failed to load {spriteName}.");
+        }
     }
 }

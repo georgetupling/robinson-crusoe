@@ -53,17 +53,101 @@ public class CardPopupController : ComponentController
     }
 
     void SetUpButtonsForDrawingFromEventDeck() {
-        okayButton.gameObject.SetActive(true);
-        okayButton.onClick.AddListener(() => {
-            EventGenerator.Singleton.RaiseEnableMainUIEvent();
-            if (card is EventCard eventCard) {
-                EventGenerator.Singleton.RaiseEventCardPopupClosedEvent(componentIdOfCardController);
-            } else if (card is AdventureCard adventureCard) {
-                // TODO
-                EventGenerator.Singleton.RaiseDrawCardEvent(Deck.Event);
+        if (card is EventCard eventCard) {
+            if (!eventCard.eventHasDecision) {
+                okayButton.gameObject.SetActive(true);
+                okayButton.onClick.AddListener(() => {
+                    EventGenerator.Singleton.RaiseEventCardPopupClosedEvent(componentIdOfCardController);
+                    EventGenerator.Singleton.RaiseEnableMainUIEvent();
+                    Destroy(gameObject);
+                });
+            } else if (eventCard.eventHasDecision) {
+                List<string> eventOptions = eventCard.eventOptions;
+                RectTransform buttonTransform = buttonPrefab.GetComponent<RectTransform>();
+                float buttonHeight = buttonTransform.rect.height;
+                float gapBetweenButtons = 10f;
+                // Resizes the popup based on how many options there are
+                float width = background.rectTransform.sizeDelta.x;
+                float height = background.rectTransform.sizeDelta.y + ((buttonHeight + gapBetweenButtons) * (eventOptions.Count - 1));
+                background.rectTransform.sizeDelta = new Vector2(width, height);
+                buttonArea.localPosition = new Vector3(0, buttonArea.localPosition.y - ((buttonHeight * 0.5f) * (eventOptions.Count - 1)), 0);
+                // Spawns buttons, sets their text, and adds listeners
+                for (int i = 0; i < eventOptions.Count; i++) {
+                    Button newButton = Instantiate(buttonPrefab, buttonArea, false);
+                    RectTransform newButtonRectTransform = newButton.GetComponent<RectTransform>(); 
+                    newButtonRectTransform.localPosition = new Vector3(0, i * (buttonHeight + gapBetweenButtons), 0);
+                    TMP_Text newButtonText = newButtonRectTransform.GetChild(0).GetComponent<TMP_Text>();
+                    newButtonText.text = eventOptions[i];
+                    // Shrinks the font size if the string is too long to fit
+                    int characterThreshold = 15;
+                    int smallerFontSize = 15;
+                    if (eventOptions[i].Length > characterThreshold) {
+                        newButtonText.fontSize = smallerFontSize;
+                    }
+                    int optionIndex = i;
+                    newButton.onClick.AddListener(() => {
+                        // Sets the card effects to remember the option chosen
+                        foreach (CardEffect cardEffect in eventCard.eventEffects) {
+                            cardEffect.SetOptionChosen(optionIndex);
+                        }
+                        EventGenerator.Singleton.RaiseEventCardPopupClosedEvent(componentIdOfCardController);
+                        EventGenerator.Singleton.RaiseEnableMainUIEvent();
+                        Destroy(gameObject);
+                    });
+                }
             }
-            Destroy(gameObject);
-        });
+            
+        } else if (card is AdventureCard adventureCard) {
+            if (!adventureCard.eventHasDecision) {
+            okayButton.gameObject.SetActive(true);
+            okayButton.onClick.AddListener(() => {
+                    // Adventure cards apply their event effects and are then destroyed
+                    foreach (CardEffect cardEffect in adventureCard.eventEffects) {
+                        cardEffect.ApplyEffect();
+                    }
+                    EventGenerator.Singleton.RaiseDestroyComponentEvent(componentIdOfCardController);
+                    EventGenerator.Singleton.RaiseDrawCardEvent(Deck.Event);
+                    EventGenerator.Singleton.RaiseEnableMainUIEvent();
+                    Destroy(gameObject);
+            });
+            } else if (adventureCard.eventHasDecision) {
+                List<string> eventOptions = adventureCard.eventOptions;
+                RectTransform buttonTransform = buttonPrefab.GetComponent<RectTransform>();
+                float buttonHeight = buttonTransform.rect.height;
+                float gapBetweenButtons = 10f;
+                // Resizes the popup based on how many options there are
+                float width = background.rectTransform.sizeDelta.x;
+                float height = background.rectTransform.sizeDelta.y + ((buttonHeight + gapBetweenButtons) * (eventOptions.Count - 1));
+                background.rectTransform.sizeDelta = new Vector2(width, height);
+                buttonArea.localPosition = new Vector3(0, buttonArea.localPosition.y - ((buttonHeight * 0.5f) * (eventOptions.Count - 1)), 0);
+                // Spawns buttons, sets their text, and adds listeners
+                for (int i = 0; i < eventOptions.Count; i++) {
+                    Button newButton = Instantiate(buttonPrefab, buttonArea, false);
+                    RectTransform newButtonRectTransform = newButton.GetComponent<RectTransform>(); 
+                    newButtonRectTransform.localPosition = new Vector3(0, i * (buttonHeight + gapBetweenButtons), 0);
+                    TMP_Text newButtonText = newButtonRectTransform.GetChild(0).GetComponent<TMP_Text>();
+                    newButtonText.text = eventOptions[i];
+                    // Shrinks the font size if the string is too long to fit
+                    int characterThreshold = 15;
+                    int smallerFontSize = 15;
+                    if (eventOptions[i].Length > characterThreshold) {
+                        newButtonText.fontSize = smallerFontSize;
+                    }
+                    int optionIndex = i;
+                    newButton.onClick.AddListener(() => {
+                        // Immediately sets the chosen option and applies the effects
+                        foreach (CardEffect cardEffect in adventureCard.eventEffects) {
+                            cardEffect.SetOptionChosen(optionIndex);
+                            cardEffect.ApplyEffect();
+                        }
+                        EventGenerator.Singleton.RaiseDestroyComponentEvent(componentIdOfCardController);
+                        EventGenerator.Singleton.RaiseDrawCardEvent(Deck.Event);
+                        EventGenerator.Singleton.RaiseEnableMainUIEvent();
+                        Destroy(gameObject);
+                    });
+                }
+            }
+        }
     }
 
     void SetUpButtonsForDrawingFromAdventureDeck() {
@@ -77,7 +161,7 @@ public class CardPopupController : ComponentController
             float width = background.rectTransform.sizeDelta.x;
             float height = background.rectTransform.sizeDelta.y + ((buttonHeight + gapBetweenButtons) * (adventureOptions.Count - 1));
             background.rectTransform.sizeDelta = new Vector2(width, height);
-            buttonArea.localPosition = new Vector3(0, buttonArea.localPosition.y - ((gapBetweenButtons) * (adventureOptions.Count - 1)), 0);
+            buttonArea.localPosition = new Vector3(0, buttonArea.localPosition.y - ((buttonHeight + gapBetweenButtons) * 0.5f * (adventureOptions.Count - 1)), 0);
             // Spawns buttons, sets their text, and adds listeners
             for (int i = 0; i < adventureOptions.Count; i++) {
                 Button newButton = Instantiate(buttonPrefab, buttonArea, false);
@@ -91,8 +175,9 @@ public class CardPopupController : ComponentController
                 if (adventureOptions[i].Length > characterThreshold) {
                     newButtonText.fontSize = smallerFontSize;
                 }
+                int optionIndex = i;
                 newButton.onClick.AddListener(() => {
-                    EventGenerator.Singleton.RaiseAdventureCardPopupClosedEvent(componentIdOfCardController, adventureCard);
+                    EventGenerator.Singleton.RaiseAdventureCardPopupClosedEvent(componentIdOfCardController, card as AdventureCard, optionIndex);
                     EventGenerator.Singleton.RaiseEnableMainUIEvent();
                     Destroy(gameObject);
                 });
@@ -106,8 +191,6 @@ public class CardPopupController : ComponentController
                 Destroy(gameObject);
             });
         }
-        
-        
     }
 
 }

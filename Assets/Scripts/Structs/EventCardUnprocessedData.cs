@@ -7,6 +7,8 @@ public struct EventCardUnprocessedData {
         public string eventDescription;
         public string cardSymbol;
         public List<string> eventEffects;
+        public bool eventHasDecision;
+        public List<string> eventOptions;
         public string threatName;
         public List<string> threatItemRequirements;
         public int threatWeaponRequirement;

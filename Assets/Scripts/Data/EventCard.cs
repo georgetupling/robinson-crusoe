@@ -10,6 +10,8 @@ public class EventCard : Card
     public string eventDescription { get; private set; }
     public CardSymbol cardSymbol { get; private set; }
     public List<CardEffect> eventEffects { get; private set; }
+    public bool eventHasDecision { get; private set; }
+    public List<string> eventOptions { get; private set; }
     public string threatName { get; private set; }
     public List<Invention> threatItemRequirements { get; private set; }
     public int threatWeaponRequirement { get; private set; }
@@ -26,6 +28,8 @@ public class EventCard : Card
         eventDescription = data.eventDescription;
         cardSymbol = EnumParser.ParseCardSymbol(data.cardSymbol);
         eventEffects = CardEffectFactory.CreateCardEffectList(data.eventEffects);
+        eventHasDecision = data.eventHasDecision;
+        eventOptions = data.eventOptions;
         threatName = data.threatName;
         threatItemRequirements = EnumParser.ParseInventionList(data.threatItemRequirements);
         threatWeaponRequirement = data.threatWeaponRequirement;

@@ -57,7 +57,7 @@
         "eventEffects": ["IfNoMedicinePlayerHasOnly1Action"],
         "eventHasDecision": false,
         "eventOptions": [],
-        "materialName": "StringMaterial"
+        "materialName": "StingMaterial"
     },
     {
         "adventureName": "Savings",
@@ -144,7 +144,7 @@
         "hasEvent": true,
         "eventName": "Night Visit",
         "eventDescription": "The predator thinks that your camp is a source of free food.",
-        "eventEffects": ["RedDieOnWeatherSpace"],
+        "eventEffects": ["RedDieInWeatherSpace"],
         "eventHasDecision": false,
         "eventOptions": [],
         "materialName": "VisitOfAPredatorMaterial"
@@ -243,7 +243,7 @@
         "adventureName": "Cut Head",
         "adventureType": "Build",
         "adventureDescription": "You have cut your head and are angry.",
-        "adventureEffects": ["Lose1Health", "Gain2Determination", "BuildWoundOnHead"],
+        "adventureEffects": ["LoseHealth", "Gain2Determination", "BuildWoundOnHead"],
         "adventureHasDecision": false,
         "adventureOptions": [],
         "hasEvent": true,
@@ -327,7 +327,7 @@
         "eventEffects": [],
         "eventHasDecision": false,
         "eventOptions": [],
-        "materialName": "BrokenLevelMaterial"
+        "materialName": "BrokenLeverMaterial"
     },
     {
         "adventureName": "Weak Construction",
@@ -378,7 +378,7 @@
         "adventureName": "Dark Clouds in the Sky",
         "adventureType": "Build",
         "adventureDescription": "It's going to be a tough day. It's raining hard.",
-        "adventureEffects": ["RainOnWeatherSpace"],
+        "adventureEffects": ["RainInWeatherSpace"],
         "adventureHasDecision": false,
         "adventureOptions": [],
         "hasEvent": true,

@@ -69,7 +69,7 @@
         "hasEvent": true,
         "eventName": "Predator Attacks!",
         "eventDescription": "In the evening, the camp is invaded by a big predator.",
-        "eventEffects": ["RedDieOnWeatherSpace"],
+        "eventEffects": ["RedDieInWeatherSpace"],
         "eventHasDecision": false,
         "eventOptions": [],
         "materialName": "PathOfAPredatorMaterial"
@@ -219,7 +219,7 @@
         "hasEvent": true,
         "eventName": "Unexpected Visit",
         "eventDescription": "The predator came after you.",
-        "eventEffects": ["RedDieOnWeatherSpace"],
+        "eventEffects": ["RedDieInWeatherSpace"],
         "eventHasDecision": false,
         "eventOptions": [],
         "materialName": "EyesInTheBushesMaterial"
@@ -380,7 +380,7 @@
         "adventureDescription": "After a windy night, you find a new path on the island. It leads you to a pirate's hideout.",
         "adventureEffects": ["DecideDiscardOrDraw2MysteryCardsResolveTreasure"],
         "adventureHasDecision": true,
-        "adventureOptions": ["Discard", "Draw 2 treasure cards"],
+        "adventureOptions": ["Discard", "Draw 2 mystery cards"],
         "hasEvent": true,
         "eventName": "Bad Luck!",
         "eventDescription": "The pirate's chest was cursed.",
@@ -429,7 +429,7 @@
         "hasEvent": true,
         "eventName": "Storm",
         "eventDescription": "It is best to have a place to hide.",
-        "eventEffects": ["WindOnWeatherSpace"],
+        "eventEffects": ["WindInWeatherSpace"],
         "eventHasDecision": false,
         "eventOptions": [],
         "materialName": "WeatherBreakdownMaterial"

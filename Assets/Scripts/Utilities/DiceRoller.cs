@@ -23,6 +23,12 @@ public class DiceRoller : MonoBehaviour
     List<DieType> buildDice = new List<DieType> { DieType.BuildSuccess, DieType.BuildAdventure, DieType.BuildDamage };
     List<DieType> gatherDice = new List<DieType> { DieType.GatherSuccess, DieType.GatherAdventure, DieType.GatherDamage };
     List<DieType> exploreDice = new List<DieType> { DieType.ExploreSuccess, DieType.ExploreAdventure, DieType.ExploreDamage };
+    
+    // Transforms for checking tokens
+
+    [SerializeField] Transform buildAdventureDeckTokenArea;
+    [SerializeField] Transform gatherAdventureDeckTokenArea;
+    [SerializeField] Transform exploreAdventureDeckTokenArea;
 
     void Awake() {
         if (Singleton == null) {
@@ -44,7 +50,7 @@ public class DiceRoller : MonoBehaviour
                 }
                 break;
             case DieType.BuildAdventure:
-                if (faceRolled < 3) {
+                if (AdventureTokenRemoved(buildAdventureDeckTokenArea) || faceRolled < 3) {
                     EventGenerator.Singleton.RaiseDrawAdventureCardEvent(AdventureType.Build);
                 }
                 break;
@@ -59,7 +65,7 @@ public class DiceRoller : MonoBehaviour
                 }
                 break;
             case DieType.GatherAdventure:
-                if (faceRolled < 3) {
+                if (AdventureTokenRemoved(gatherAdventureDeckTokenArea) || faceRolled < 3) {
                     EventGenerator.Singleton.RaiseDrawAdventureCardEvent(AdventureType.Gather);
                 }
                 break;
@@ -74,8 +80,8 @@ public class DiceRoller : MonoBehaviour
                 }
                 break;
             case DieType.ExploreAdventure:
-                if (faceRolled < 5) {
-                    // TODO: raise an event to draw an adventure card
+                if (AdventureTokenRemoved(exploreAdventureDeckTokenArea) || faceRolled < 5) {
+                    EventGenerator.Singleton.RaiseDrawAdventureCardEvent(AdventureType.Explore);
                 }
                 break;
             case DieType.ExploreDamage:
@@ -121,5 +127,23 @@ public class DiceRoller : MonoBehaviour
         this.playerId = playerId;
         this.locationId = locationId;
         EventGenerator.Singleton.RaiseSpawnDicePopupEvent(exploreDice);
+    }
+
+    // Helper method that checks whether a particular adventure deck has an adventure token on it
+    // If it finds one, it destroys it
+
+    bool AdventureTokenRemoved(Transform tokenArea) {
+        for (int i = 0; i < tokenArea.childCount; i++) {
+            Transform childTransform = tokenArea.GetChild(i);
+            for (int j = 0; j < childTransform.childCount; j++) {
+                Transform grandchildTransform = childTransform.GetChild(j);
+                TokenController token = grandchildTransform.GetComponent<TokenController>();
+                if (token != null && (token.tokenType == TokenType.BuildAdventure || token.tokenType == TokenType.GatherAdventure || token.tokenType == TokenType.ExploreAdventure)) {
+                    EventGenerator.Singleton.RaiseDestroyComponentEvent(token.ComponentId);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
