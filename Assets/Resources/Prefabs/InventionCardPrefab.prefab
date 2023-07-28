@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 376680546935210210}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.07}
+  m_LocalPosition: {x: 0, y: 0, z: -0.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1759770559279582749}
   - component: {fileID: 9076189023303642936}
+  - component: {fileID: 428847645799771774}
   m_Layer: 0
   m_Name: InventionActionSpace
   m_TagString: ActionSpace
@@ -78,6 +79,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Type: 4
+--- !u!114 &428847645799771774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 524901129495547185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99e4ad6c6e4e45540914467db75499c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &729978091270665080
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,7 +115,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 729978091270665080}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.01, y: -0.005, z: -0.14}
+  m_LocalPosition: {x: 0.02, y: -0.05, z: -0.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -189,6 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d532a2dd7c30aa46aa574e5171d2c8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inventionCardTokenArea: {fileID: 658504193459665233}
 --- !u!1 &2632842375619302107
 GameObject:
   m_ObjectHideFlags: 0
@@ -414,3 +428,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tokenSpawner: {fileID: 5863879205574581927}
+  actionSpaceController: {fileID: 428847645799771774}

@@ -6,6 +6,7 @@ public class InventionCardTokenSpawner : MonoBehaviour
 {
     InventionCard inventionCard;
     int numberOfRequirements;
+    [SerializeField] Transform inventionCardTokenArea;
     
     // Positions for cards with only 1 requirement
     Transform centrePosition;
@@ -79,6 +80,10 @@ public class InventionCardTokenSpawner : MonoBehaviour
         if (inventionCard == null) {
             queuedInventionEvents.Add((invention, isBuilt));
             return;
+        }
+        if (invention == inventionCard.invention) {
+            // Disable the token area when the card is turned face down!
+            inventionCardTokenArea.gameObject.SetActive(!isBuilt);
         }
         if (!inventionCard.itemRequirements.Contains(invention)) {
             return;

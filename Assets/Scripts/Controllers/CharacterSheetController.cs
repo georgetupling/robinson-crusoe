@@ -46,6 +46,8 @@ public class CharacterSheetController : ComponentController
         EventGenerator.Singleton.AddListenerToInitializeCharacterSheetEvent(OnInitializeCharacterSheetEvent);
         EventGenerator.Singleton.AddListenerToDeterminationEvent(OnDeterminationEvent);
         EventGenerator.Singleton.AddListenerToGetFirstPlayerEvent(OnGetFirstPlayerEvent);
+        EventGenerator.Singleton.AddListenerToSpawnWoundTokenEvent(OnSpawnWoundTokenEvent);
+        EventGenerator.Singleton.AddListenerToDestroyWoundTokenEvent(OnDestroyWoundTokenEvent);
     }
 
     protected override void Start() {
@@ -94,6 +96,20 @@ public class CharacterSheetController : ComponentController
         }
     }
 
+    void OnSpawnWoundTokenEvent(int playerId, WoundType woundType, TokenType tokenType) {
+        if (playerId != this.playerId) {
+            return;
+        }
+        SpawnWoundToken(woundType, tokenType);
+    }
+
+    void OnDestroyWoundTokenEvent(int playerId, WoundType woundType, TokenType tokenType) {
+        if (playerId != this.playerId) {
+            return;
+        }
+        DestroyWoundToken(woundType, tokenType);
+    }
+
     // Co-routine that queries for the first player, pauses until it recieves an answer, and then spawns determination if appropriate
 
     IEnumerator HandleFirstPlayerDeterminationEvent(string eventType, int amount) {
@@ -123,7 +139,7 @@ public class CharacterSheetController : ComponentController
     void SpawnToken(TokenType tokenType) {
         Transform parentTransform = AssignParentTransform(tokenType);
         if (parentTransform == null) {
-            Debug.LogError($"No position available to spawn {tokenType} token on player {playerId + 1}'s character sheet.");
+            Debug.LogError($"No position available to spawn {tokenType} token on {GameSettings.PlayerNames[playerId]}'s character sheet.");
             return;
         }
         TokenController prefab = PrefabLoader.Singleton.GetPrefab(tokenType);
@@ -149,7 +165,53 @@ public class CharacterSheetController : ComponentController
                 return;
             }
         }
-        Debug.LogError($"Player {playerId + 1}'s character sheet does not have a {tokenType} token spawned.");
+        Debug.LogError($"{GameSettings.PlayerNames[playerId]}'s character sheet does not have a {tokenType} token spawned.");
+    }
+
+    // Method for spawning and destroying wound tokens
+
+    void SpawnWoundToken(WoundType woundType, TokenType tokenType) {
+        Transform parentTransform = AssignParentTransform(woundType, tokenType);
+        if (parentTransform == null) {
+            Debug.LogError($"No position available to spawn {tokenType} token on {GameSettings.PlayerNames[playerId]}'s character sheet.");
+            return;
+        }
+        TokenController prefab = PrefabLoader.Singleton.GetPrefab(tokenType);
+        if (prefab == null) {
+            Debug.LogError($"{tokenType} token prefab does not exist.");
+            return;
+        }
+        TokenController spawnedToken = Instantiate(prefab, parentTransform, false);
+        spawnedToken.transform.localPosition = Vector3.zero;
+        spawnedToken.transform.eulerAngles = new Vector3(0, 0, Random.Range(0, 180f));
+    }
+
+    void DestroyWoundToken(WoundType woundType, TokenType tokenType) {
+        Transform grandparentTransform;
+        if (woundType == WoundType.Head) {
+            grandparentTransform = headWoundPosition;
+        } else if (woundType == WoundType.Belly) {
+            grandparentTransform = bellyWoundPosition;
+        } else if (woundType == WoundType.Leg) {
+            grandparentTransform = legWoundPosition;
+        } else {
+            grandparentTransform = armWoundPosition;
+        }
+        if (grandparentTransform == null) {
+            Debug.LogError("grandparentTransform is null.");
+            return;
+        }
+        for (int i = 0; i < grandparentTransform.childCount; i++) {
+            Transform parentTransform = grandparentTransform.GetChild(i);
+            for (int j =0; j < parentTransform.childCount; j++) {
+                TokenController token = parentTransform.GetChild(j).GetComponent<TokenController>();
+                if (token != null && token.tokenType == tokenType) {
+                    Destroy(token.gameObject);
+                    return;
+                }
+            }
+        }
+        Debug.LogError($"{GameSettings.PlayerNames[playerId]}'s character sheet does not have a {tokenType} token spawned.");
     }
 
     // Helper methods
@@ -175,5 +237,33 @@ public class CharacterSheetController : ComponentController
             }
         }
         return false;
+    }
+
+    Transform AssignParentTransform(WoundType woundType, TokenType tokenType) {
+        if (tokenType != TokenType.BuildWound && tokenType != TokenType.GatherWound && tokenType != TokenType.ExploreWound) {
+            Debug.LogError($"{tokenType} is not a valid wound token type.");
+            return null;
+        }
+        Transform grandparentTransform;
+        if (woundType == WoundType.Head) {
+            grandparentTransform = headWoundPosition;
+        } else if (woundType == WoundType.Belly) {
+            grandparentTransform = bellyWoundPosition;
+        } else if (woundType == WoundType.Leg) {
+            grandparentTransform = legWoundPosition;
+        } else {
+            grandparentTransform = armWoundPosition;
+        }
+        if (grandparentTransform == null) {
+            Debug.LogError("grandparentTransform is null.");
+            return null;
+        }
+        for (int i = 0; i < grandparentTransform.childCount; i++) {
+            Transform parentTransform = grandparentTransform.GetChild(i);
+            if (parentTransform != null && parentTransform.childCount == 0) {
+                return parentTransform;
+            }
+        }
+        return null;
     }
 }

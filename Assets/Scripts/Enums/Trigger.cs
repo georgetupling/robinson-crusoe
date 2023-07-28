@@ -1,4 +1,5 @@
-public enum Trigger { 
+public enum Trigger {
+    None, 
     EndTurn, 
     StartTurn 
 }

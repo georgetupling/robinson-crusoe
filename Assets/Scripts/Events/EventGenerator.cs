@@ -41,6 +41,7 @@ public class EventGenerator : MonoBehaviour
     // Ongoing Effects
     private OngoingEffectEvent ongoingEffectEvent = new OngoingEffectEvent();
     private EffectIsActiveEvent effectIsActiveEvent = new EffectIsActiveEvent();
+    private UnityEvent<System.Type> endOngoingEffectByTypeEvent = new UnityEvent<System.Type>();
 
     // Shelter, Roof, Palisade, and Weapon
     private ShelterEvent shelterEvent = new ShelterEvent();
@@ -88,6 +89,8 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<int> returnActionPawnEvent = new UnityEvent<int>();
     private UnityEvent<int> destroyComponentEvent = new UnityEvent<int>();
     private UnityEvent<TokenType> spawnTokenInWeatherAreaEvent = new UnityEvent<TokenType>();
+    private UnityEvent<int, WoundType, TokenType> spawnWoundTokenEvent = new UnityEvent<int, WoundType, TokenType>();
+    private UnityEvent<int, WoundType, TokenType> destroyWoundTokenEvent = new UnityEvent<int, WoundType, TokenType>();
 
     // Discovery Tokens
     private InitializeDiscoveryTokenEvent initializeDiscoveryTokenEvent = new InitializeDiscoveryTokenEvent();
@@ -104,6 +107,10 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<bool, List<ActionAssignment>> actionsReadyToSubmitEvent = new UnityEvent<bool, List<ActionAssignment>>();
     private UnityEvent<bool> enableHuntingActionSpace = new UnityEvent<bool>();
     private UnityEvent<List<ActionAssignment>> actionsSubmittedEvent = new UnityEvent<List<ActionAssignment>>();
+    private UnityEvent<int> playerHasOnly1ActionThisTurnEvent = new UnityEvent<int>();
+    private UnityEvent<ActionPawnController> actionPawnInitializedEvent = new UnityEvent<ActionPawnController>();
+    private UnityEvent<int> playerCanOnlyRestThisTurnEvent = new UnityEvent<int>();
+    private UnityEvent<int> playerCanOnlyRestBuildOrMakeCampThisTurnEvent = new UnityEvent<int>();
 
     // Night Phase
     private UnityEvent<List<int>> playersEatingEvent = new UnityEvent<List<int>>(); // Used by the night phase popup to communicate which players are eating
@@ -370,6 +377,15 @@ public class EventGenerator : MonoBehaviour
     }
     public void AddListenerToEffectIsActiveEvent(UnityAction<string, int, System.Type, bool> listener) {
         effectIsActiveEvent.AddListener(listener);
+    }
+
+    // End ongoing effect by type
+
+    public void RaiseEndOngoingEffectByTypeEvent(System.Type ongoingEffectType) {
+        endOngoingEffectByTypeEvent.Invoke(ongoingEffectType);
+    }
+    public void AddListenerToEndOngoingEffectByTypeEvent(UnityAction<System.Type> listener) {
+        endOngoingEffectByTypeEvent.AddListener(listener);
     }
 
     // ShelterEvent
@@ -657,6 +673,24 @@ public class EventGenerator : MonoBehaviour
         spawnTokenInWeatherAreaEvent.AddListener(listener);
     }
 
+    // Spawn wound tokens
+
+    public void RaiseSpawnWoundTokenEvent(int playerId, WoundType woundType, TokenType tokenType) {
+        spawnWoundTokenEvent.Invoke(playerId, woundType, tokenType);
+    }
+    public void AddListenerToSpawnWoundTokenEvent(UnityAction<int, WoundType, TokenType> listener) {
+        spawnWoundTokenEvent.AddListener(listener);
+    }
+
+    // Destroy wound tokens
+
+    public void RaiseDestroyWoundTokenEvent(int playerId, WoundType woundType, TokenType tokenType) {
+        destroyWoundTokenEvent.Invoke(playerId, woundType, tokenType);
+    }
+    public void AddListenerToDestroyWoundTokenEvent(UnityAction<int, WoundType, TokenType> listener) {
+        destroyWoundTokenEvent.AddListener(listener);
+    }
+
     // InitializeDiscoveryTokenEvent
 
     public void RaiseInitializeDiscoveryTokenEvent(int componentId, DiscoveryToken discoveryToken) {
@@ -766,6 +800,42 @@ public class EventGenerator : MonoBehaviour
     }
     public void AddListenerToActionsSubmittedEvent(UnityAction<List<ActionAssignment>> listener) {
         actionsSubmittedEvent.AddListener(listener);
+    }
+
+    // Players has only 1 action this turn
+
+    public void RaisePlayerHasOnly1ActionThisTurnEvent(int playerId) {
+        playerHasOnly1ActionThisTurnEvent.Invoke(playerId);
+    }
+    public void AddListenerToPlayerHasOnly1ActionThisTurnEvent(UnityAction<int> listener) {
+        playerHasOnly1ActionThisTurnEvent.AddListener(listener);
+    }
+
+    // Action pawn initialized event (tells the ActionParser to add the ActionPawnController to its list)
+
+    public void RaiseActionPawnInitializedEvent(ActionPawnController actionPawn) {
+        actionPawnInitializedEvent.Invoke(actionPawn);
+    }
+    public void AddListenerToActionPawnInitializedEvent(UnityAction<ActionPawnController> listener) {
+        actionPawnInitializedEvent.AddListener(listener);
+    }
+
+    // Player can only rest this round
+
+    public void RaisePlayerCanOnlyRestThisTurnEvent(int playerId) {
+        playerCanOnlyRestThisTurnEvent.Invoke(playerId);
+    }
+    public void AddListenerToPlayerCanOnlyRestThisTurnEvent(UnityAction<int> listener) {
+        playerCanOnlyRestThisTurnEvent.AddListener(listener);
+    }
+
+    // Player can only rest, build, or make camp this turn
+
+    public void RaisePlayerCanOnlyRestBuildOrMakeCampThisTurnEvent(int playerId) {
+        playerCanOnlyRestBuildOrMakeCampThisTurnEvent.Invoke(playerId);
+    }
+    public void AddListenerToPlayerCanOnlyRestBuildOrMakeCampThisTurnEvent(UnityAction<int> listener) {
+        playerCanOnlyRestBuildOrMakeCampThisTurnEvent.AddListener(listener);
     }
 
     // Players eating

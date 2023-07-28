@@ -100,6 +100,9 @@ public class ActionResolver : MonoBehaviour
             if (costsPaid) {
                 List<CardEffect> successEffects = actionAssignment.isTwoActionThreat ? eventCard.successEffects2Action : eventCard.successEffects1Action;
                 foreach (CardEffect successEffect in successEffects) {
+                    if (successEffect.targetType == TargetType.Player) {
+                        successEffect.SetTarget(actionAssignment.playerIds[0]);
+                    }
                     successEffect.ApplyEffect();
                 }
                 EventGenerator.Singleton.RaiseDestroyComponentEvent(actionAssignment.eventCardControllerComponentId);
@@ -142,6 +145,9 @@ public class ActionResolver : MonoBehaviour
                 yield return null;
             }
             bool costsPaid = PayCosts(actionAssignment.resourceCosts, actionAssignment);
+            while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+                yield return null;
+            }
             if (costsPaid) {
                 bool buildIsSuccessful = true;
                 if (actionAssignment.mustRoll) {

@@ -89,7 +89,8 @@ public class ResourceManager : MonoBehaviour
             availableResources[resourceType] = 0;
         }
         if (availableResourceTokens.Count > 0) {
-            for (int i = 0; i < amount; i++) {
+            int numberOfTokensToDelete = Mathf.Clamp(amount, 0, availableResources[resourceType]);
+            for (int i = 0; i < numberOfTokensToDelete; i++) {
                 DeleteTokenOfType(resourceType, availableResourceTokens);
             }
         }
@@ -137,7 +138,19 @@ public class ResourceManager : MonoBehaviour
             case ResourceType.Wood: tokenType = TokenType.Wood; break;
             default: return;
         }
-        TokenController tokenToDelete = listOfTokens.Find(x => x.tokenType == tokenType);
+        TokenController tokenToDelete = null;
+        List<TokenController> nullTokens = new List<TokenController>();
+        foreach (TokenController token in listOfTokens) {
+            if (token == null) {
+                nullTokens.Add(token);
+            } else if (token.tokenType == tokenType) {
+                tokenToDelete = token;
+                break;
+            }
+        }
+        foreach (TokenController nullToken in nullTokens) {
+            listOfTokens.Remove(nullToken);
+        }
         if (tokenToDelete == null) {
             Debug.Log("Failed to delete resource token.");
             return;

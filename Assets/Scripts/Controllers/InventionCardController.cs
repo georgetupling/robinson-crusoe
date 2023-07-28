@@ -6,6 +6,7 @@ public class InventionCardController : CardController
 {
     [SerializeField] private InventionCard data;
     [SerializeField] private InventionCardTokenSpawner tokenSpawner;
+    [SerializeField] private InventionBuildActionSpaceController actionSpaceController;
 
     public bool IsBuilt { get; private set; }
     
@@ -54,6 +55,7 @@ public class InventionCardController : CardController
             isInitialized = true;
             meshRenderer.material = data.cardMaterial;
             tokenSpawner.Initialize(inventionCard);
+            actionSpaceController.SetInvention(inventionCard.invention);
         } else {
             Debug.Log("EventCardController already initialized.");
         }

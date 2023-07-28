@@ -55,6 +55,7 @@ public class DeckTokenSpawner : MonoBehaviour
     }
 
     void SpawnToken(TokenType tokenType) {
+        tokens.RemoveAll(x => x == null);
         bool tokenIsLarge = false;
         if (tokenType == TokenType.BuildAdventure || tokenType == TokenType.GatherAdventure || tokenType == TokenType.ExploreAdventure) {
             tokenIsLarge = true;
@@ -116,7 +117,7 @@ public class DeckTokenSpawner : MonoBehaviour
     
     bool PositionIsOccupied(Transform positionTransform) {
         foreach(TokenController token in tokens) {
-            if (token.transform.parent == positionTransform) {
+            if (token != null && token.transform.parent == positionTransform) {
                 return true;
             }
         }

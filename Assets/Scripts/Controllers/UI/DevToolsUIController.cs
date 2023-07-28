@@ -12,9 +12,12 @@ public class DevToolsUIController : MonoBehaviour
     [SerializeField] private Button moveWood;
     [SerializeField] private Button gainMorale;
     [SerializeField] private Button loseMorale;
+    [SerializeField] private Button spawnWound;
     [SerializeField] private Button gainHide;
 
     [SerializeField] private Button drawTile;
+
+    [SerializeField] private Button canOnlyRest;
 
     [SerializeField] private Button gainRoof;
     [SerializeField] private Button loseRoof;
@@ -56,6 +59,19 @@ public class DevToolsUIController : MonoBehaviour
         });
         loseMorale.onClick.AddListener(() => {
             EventGenerator.Singleton.RaiseLoseMoraleEvent(1);
+        });
+
+        spawnWound.onClick.AddListener(() => {
+            List<TokenType> tokenTypes = new List<TokenType> { TokenType.BuildWound, TokenType.GatherWound, TokenType.ExploreWound };
+            List<WoundType> woundTypes = new List<WoundType> { WoundType.Head, WoundType.Belly, WoundType.Leg, WoundType.Arm };
+            int randToken = Random.Range(0, 3);
+            int randWound = Random.Range(0, 4);
+            int randPlayer = Random.Range(0, GameSettings.PlayerCount);
+            EventGenerator.Singleton.RaiseSpawnWoundTokenEvent(randPlayer, woundTypes[randWound], tokenTypes[randToken]);
+        });
+
+        canOnlyRest.onClick.AddListener(() => {
+            EventGenerator.Singleton.RaisePlayerCanOnlyRestThisTurnEvent(0);
         });
 
         drawTile.onClick.AddListener(() => {

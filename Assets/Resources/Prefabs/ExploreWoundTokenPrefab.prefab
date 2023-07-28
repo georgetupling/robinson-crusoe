@@ -22,7 +22,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3357dc90584659f45b2eb19f2a73d511, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.03
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3357dc90584659f45b2eb19f2a73d511, type: 3}
       propertyPath: m_LocalRotation.w
@@ -58,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 24742585ce2f28a4c9dd32c59642e9a8, type: 2}
     - target: {fileID: 919132149155446097, guid: 3357dc90584659f45b2eb19f2a73d511, type: 3}
       propertyPath: m_Name
-      value: RoundToken17 (2) Variant
+      value: ExploreWoundTokenPrefab
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

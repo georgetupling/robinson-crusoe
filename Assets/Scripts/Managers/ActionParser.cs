@@ -9,6 +9,9 @@ public class ActionParser : MonoBehaviour
     public bool actionsReadyToSubmit = false;
     public List<ActionAssignment> actionAssignments = new List<ActionAssignment>();
 
+    // A list of all action pawns in the scene (including disabled ones!)
+    List<ActionPawnController> actionPawns = new List<ActionPawnController>();
+
     private Dictionary<int, ResourceCost> buildingCostsByPlayerCount = new Dictionary<int, ResourceCost>() {
         { 1, ResourceCost.TwoWoodOrHide },
         { 2, ResourceCost.TwoWoodOrHide },
@@ -25,6 +28,7 @@ public class ActionParser : MonoBehaviour
         EventGenerator.Singleton.AddListenerToGetDistanceFromCampToLocationEvent(OnGetDistanceFromCampToLocationEvent);
         EventGenerator.Singleton.AddListenerToGetResourceEvent(OnGetResourceEvent);
         EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
+        EventGenerator.Singleton.AddListenerToActionPawnInitializedEvent(OnActionPawnInitializedEvent);
     }
 
     // For handling queries
@@ -91,6 +95,11 @@ public class ActionParser : MonoBehaviour
         }
     }
 
+    void OnActionPawnInitializedEvent(ActionPawnController actionPawn) {
+        // Adds the action pawn to the list
+        actionPawns.Add(actionPawn);
+    }
+
     // Methods for parsing and validating actions
 
     void ParseActions() {
@@ -135,8 +144,8 @@ public class ActionParser : MonoBehaviour
             };
         }
         // Then checks that all player action pawns are assigned
-        List<ActionPawnController> actionPawns = new List<ActionPawnController>(FindObjectsOfType<ActionPawnController>());
         int assignedPlayerActions = 0;
+        int disabledActionPawns = 0;
         foreach (ActionPawnController actionPawn in actionPawns) {
             if (
                 actionPawn.GetPlayerId() < GameSettings.PlayerCount && 
@@ -146,10 +155,12 @@ public class ActionParser : MonoBehaviour
                 actionPawn.transform.parent.parent.CompareTag("ActionSpace")
             ) {
                 assignedPlayerActions++;
+            } else if (!actionPawn.gameObject.activeSelf) {
+                disabledActionPawns++;
             }
         }
         int totalPlayerActions = GameSettings.PlayerCount * 2;
-        if (assignedPlayerActions < totalPlayerActions) {
+        if (assignedPlayerActions + disabledActionPawns < totalPlayerActions) {
             return false;
         }
         // Then checks the resources are available and return if not

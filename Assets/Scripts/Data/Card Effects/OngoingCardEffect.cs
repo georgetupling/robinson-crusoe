@@ -2,23 +2,37 @@ using UnityEngine;
 
 public class OngoingCardEffect : CardEffect, IEffectEndable
 {
-    public Trigger EndTrigger { get; private set; }
+    public Trigger endTrigger { get; protected set; }
+    public bool hasEnded { get; protected set; }
 
-    public OngoingCardEffect() : base() {
-        EndTrigger = Trigger.EndTurn; // Default value
+    // Used by wound-related ongoing effects
+    protected bool medicineBuilt;
+
+    protected override void Initialize() {
+        base.Initialize();
+        endTrigger = Trigger.None; // Default value
     }
 
-    public new void ApplyEffect() {
-        if (!hasBeenApplied) {
-            EventGenerator.Singleton.RaiseStartOngoingEffectEvent(this);
-            hasBeenApplied = true;
-            Debug.LogError("OngoingCardEffect started with no effect. Consider using a child class instead.");
-        } else {
-            Debug.LogError("Card effects can only be applied once.");
+    public override void ApplyEffect() {
+        if (hasBeenApplied) {
+            Debug.LogError("OngoingCardEffect effect has already been applied.");
+            return;
         }
+        EventGenerator.Singleton.RaiseStartOngoingEffectEvent(this);
+        hasBeenApplied = true;
+        Debug.LogError("OngoingCardEffect started with no effect. Consider using a child class instead.");
     }
 
-    public void EndEffect() {
+    public virtual void EndEffect() {
+        if (hasEnded) {
+            Debug.LogError("OngoingCardEffect effect has already ended.");
+            return;
+        }
+        hasEnded = true;
         Debug.LogError("OngoingCardEffect ended with no effect. Consider using a child class instead.");
+    }
+
+    public void SetMedicineBuilt(bool medicineBuilt) {
+        this.medicineBuilt = medicineBuilt;
     }
 }

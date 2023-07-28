@@ -13,6 +13,10 @@ public class ActionPawnController : ComponentController
     Transform playArea;
     List<Transform> actionSpaces = new List<Transform>();
 
+    // Effects modifying action placement
+    bool canOnlyRestThisTurn;
+    bool canOnlyRestBuildOrMakeCampThisTurn;
+
 
     
     protected override void Awake() {
@@ -24,6 +28,9 @@ public class ActionPawnController : ComponentController
         EventGenerator.Singleton.AddListenerToPhaseStartEvent(OnPhaseStartEvent);
         EventGenerator.Singleton.AddListenerToReturnActionPawnEvent(OnReturnActionPawnEvent);
         EventGenerator.Singleton.AddListenerToActionsSubmittedEvent(OnActionsSubmittedEvent);
+        EventGenerator.Singleton.AddListenerToPlayerCanOnlyRestThisTurnEvent(OnPlayerCanOnlyRestThisTurnEffect);
+        EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
+        EventGenerator.Singleton.AddListenerToPlayerCanOnlyRestBuildOrMakeCampThisTurnEvent(OnPlayerCanOnlyRestBuildOrMakeCampThisTurnEvent);
     }
 
     void UpdateActionSpaces() {
@@ -47,6 +54,12 @@ public class ActionPawnController : ComponentController
         if (GameSettings.PlayerGenders[playerId] == Gender.Female) {
             // TODO
         }
+        // Passes the player Id to the ActionPawnDisabler if one exists
+        ActionPawnDisabler actionPawnDisabler = GetComponent<ActionPawnDisabler>();
+        if (actionPawnDisabler != null) {
+            actionPawnDisabler.SetPlayerId(playerId);
+        }
+        EventGenerator.Singleton.RaiseActionPawnInitializedEvent(this);
     }
 
     void OnPhaseStartEvent(Phase phase) {
@@ -65,6 +78,26 @@ public class ActionPawnController : ComponentController
             return;
         }
         MoveToTransform(originalTransform, MoveStyle.ReturnPawn);
+    }
+
+    void OnPlayerCanOnlyRestThisTurnEffect(int playerId) {
+        if (playerId != this.playerId) {
+            return;
+        }
+        canOnlyRestThisTurn = true;
+    }
+
+    void OnTurnStartEvent(int turnStarted) {
+        canOnlyRestThisTurn = false;
+        canOnlyRestBuildOrMakeCampThisTurn = false;
+        // Effects end at the start of the next turn
+    }
+
+    void OnPlayerCanOnlyRestBuildOrMakeCampThisTurnEvent(int playerId) {
+        if (playerId != this.playerId) {
+            return;
+        }
+        canOnlyRestBuildOrMakeCampThisTurn = true;
     }
 
     // Methods for dragging and dropping
@@ -94,6 +127,21 @@ public class ActionPawnController : ComponentController
             return;
         }
         Transform nearestActionSpace = GetNearestActionSpace();
+        ActionType actionType = ActionType.NotFound;
+        if (nearestActionSpace != null && nearestActionSpace.GetComponent<ActionSpace>() != null) {
+            actionType = nearestActionSpace.GetComponent<ActionSpace>().Type;
+        }
+        // If the player can only rest, sets non-rest action spaces to null
+        if (nearestActionSpace != null && canOnlyRestThisTurn && actionType != ActionType.Rest) {
+            nearestActionSpace = null;
+        }
+        // If the player can only rest, build, or make camp, sets other action spaces to null
+        if (nearestActionSpace != null && canOnlyRestBuildOrMakeCampThisTurn) {
+            List<ActionType> allowedActionTypes = new List<ActionType> { ActionType.Rest, ActionType.MakeCamp, ActionType.BuildShelter, ActionType.BuildRoof, ActionType.BuildPalisade, ActionType.BuildWeapon, ActionType.BuildInvention };
+            if (!allowedActionTypes.Contains(actionType)) {
+                nearestActionSpace = null;
+            }
+        }
         // Checks if the action space is an invention card and validates whether the requirements are met for assignment
         if (nearestActionSpace != null && nearestActionSpace.parent != null) {
             InventionCardController inventionCardController = nearestActionSpace.parent.GetComponent<InventionCardController>();
@@ -106,10 +154,6 @@ public class ActionPawnController : ComponentController
             }
         }
         // Checks if the action space is a build action and validates whether the requirements are met
-        ActionType actionType = ActionType.NotFound;
-        if (nearestActionSpace != null && nearestActionSpace.GetComponent<ActionSpace>() != null) {
-            actionType = nearestActionSpace.GetComponent<ActionSpace>().Type;
-        }
         if (nearestActionSpace != null && actionType != ActionType.NotFound) {
             List<ActionType> buildTypes = new List<ActionType> { ActionType.BuildShelter, ActionType.BuildRoof, ActionType.BuildPalisade, ActionType.BuildWeapon };
             if (buildTypes.Contains(actionType) && !RequirementChecker.Singleton.BuildRequirementsMet(actionType)) {
