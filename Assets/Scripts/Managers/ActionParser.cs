@@ -127,7 +127,7 @@ public class ActionParser : MonoBehaviour
         } else if (actionAssignment.Type == ActionType.Explore) {
             actionAssignment.locationId = GetLocationId(actionSpace);
         } else if (actionAssignment.Type == ActionType.BuildInvention) {
-            actionAssignment.invention = GetInvention(actionSpace);
+            actionAssignment.inventionCard = GetInventionCard(actionSpace);
         } else if (actionAssignment.Type == ActionType.Threat) {
             actionAssignment.eventCard = GetEventCard(actionSpace);
             actionAssignment.isTwoActionThreat = GetIsTwoActionThreat(actionSpace);
@@ -258,13 +258,13 @@ public class ActionParser : MonoBehaviour
         return exploreActionAreaController.GetLocationId();
     }
 
-    Invention GetInvention(Transform actionSpace) {
+    InventionCard GetInventionCard(Transform actionSpace) {
         InventionCardController inventionCardController = actionSpace.parent.GetComponent<InventionCardController>();
             if (inventionCardController != null) {
                 InventionCard data = inventionCardController.GetInventionCard();
-                return data.invention;
+                return data;
             }
-        return Invention.Map; // Default
+        return null; // Default
     }
 
     EventCard GetEventCard(Transform actionSpace) {

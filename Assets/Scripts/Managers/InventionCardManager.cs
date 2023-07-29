@@ -32,11 +32,13 @@ public class InventionCardManager : MonoBehaviour
         InitializePositions();
         InitializeInventionCardDeck();
         SpawnStartingInventionCards();
+        EventGenerator.Singleton.AddListenerToInventionIsBuiltEvent(OnInventionIsBuiltEvent);
+        EventGenerator.Singleton.AddListenerToGetInventionCardEvent(OnGetInventionCardEvent);
+        EventGenerator.Singleton.AddListenerToPersonalInventionSpawnedEvent(OnPersonalInventionSpawnedEvent);
     }
 
     void Start() {
-        EventGenerator.Singleton.AddListenerToInventionIsBuiltEvent(OnInventionIsBuiltEvent);
-        EventGenerator.Singleton.AddListenerToGetInventionCardEvent(OnGetInventionCardEvent);
+        
     }
 
     void InitializeInventionCards() {
@@ -91,7 +93,6 @@ public class InventionCardManager : MonoBehaviour
             InventionCard inventionCard = inventionCardDeck.Pop();
             SpawnInventionCard(inventionCard, inventionCardArea);
         }
-        // TODO - spawn personal invention cards
     }
 
     void SpawnInventionCard(InventionCard inventionCard, Transform parentTransform) {
@@ -105,7 +106,6 @@ public class InventionCardManager : MonoBehaviour
                 }
             }
         } else {
-            // TODO - store the personal invention somewhere
             newCard.transform.localPosition = Vector3.zero;
         }
         newCard.transform.localRotation = Quaternion.identity;
@@ -146,5 +146,16 @@ public class InventionCardManager : MonoBehaviour
             return;
         }
         EventGenerator.Singleton.RaiseGetInventionCardResponseEvent(invention, inventionCard);
+    }
+
+    // Initialises personal inventions
+
+    void OnPersonalInventionSpawnedEvent(InventionCardController inventionCardController, Invention invention) {
+        InventionCard inventionCard = inventionCards.Find(x => x.invention == invention);
+        if (inventionCard == null) {
+            Debug.LogError("Failed to find personal invention card {invention}.");
+            return;
+        }
+        inventionCardController.InitializeCard(inventionCard);
     }
 }

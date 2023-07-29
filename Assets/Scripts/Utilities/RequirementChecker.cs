@@ -19,6 +19,7 @@ public class RequirementChecker : MonoBehaviour
     private int roofLevel = 0;
     private int palisadeLevel = 0;
     private bool shelterIsBuilt;
+    private Dictionary<int, int> playerDetermination = new Dictionary<int, int>(); // Maps playerId to determination
 
     private List<Terrain> terrainRequirementsMet = new List<Terrain>();
     private List<Invention> itemRequirementsMet = new List<Invention>();
@@ -43,6 +44,7 @@ public class RequirementChecker : MonoBehaviour
         EventGenerator.Singleton.AddListenerToShelterIsBuiltResponseEvent(OnShelterIsBuiltResponseEvent);
         EventGenerator.Singleton.AddListenerToGetRoofLevelResponseEvent(OnGetRoofLevelResponseEvent);
         EventGenerator.Singleton.AddListenerToGetPalisadeLevelResponseEvent(OnGetPalisadeLevelResponseEvent);
+        EventGenerator.Singleton.AddListenerToGetDeterminationResponseEvent(OnGetDeterminationResponseEvent);
     }
 
     // Listeners
@@ -92,9 +94,18 @@ public class RequirementChecker : MonoBehaviour
         this.palisadeLevel = palisadeLevel;
     }
 
+    void OnGetDeterminationResponseEvent(int playerId, int determination) {
+        if (playerDetermination.ContainsKey(playerId)) {
+            playerDetermination[playerId] = determination;
+        } else {
+            playerDetermination.Add(playerId, determination);
+        }
+    }
+
     // Public methods
 
-    public bool InventionRequirementsMet(InventionCard inventionCard) {
+    public bool InventionRequirementsMet(int playerId, InventionCardController inventionCardController) {
+        InventionCard inventionCard = inventionCardController.GetInventionCard();
         if (inventionCard == null) {
             Debug.LogError("Parameter inventionCard is null.");
             return false;
@@ -110,6 +121,15 @@ public class RequirementChecker : MonoBehaviour
         StartCoroutine(UpdateResources());
         if (!SufficientResourcesAvailable(inventionCard.resourceCosts)) {
             return false;
+        }
+        if (inventionCard.isPersonalInvention) {
+            if (playerId != inventionCardController.GetPlayerId()) {
+                return false;
+            }
+            EventGenerator.Singleton.RaiseGetDeterminationEvent(playerId);
+            if (playerDetermination[playerId] < 2) {
+                return false;
+            }
         }
         return true;
     }

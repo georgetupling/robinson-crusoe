@@ -147,7 +147,7 @@ public class ActionPawnController : ComponentController
             InventionCardController inventionCardController = nearestActionSpace.parent.GetComponent<InventionCardController>();
             if (inventionCardController != null) {
                 InventionCard data = inventionCardController.GetInventionCard();
-                if (!RequirementChecker.Singleton.InventionRequirementsMet(data)) {
+                if (!RequirementChecker.Singleton.InventionRequirementsMet(playerId, inventionCardController)) {
                     nearestActionSpace = null;
                     EventGenerator.Singleton.RaiseShakeComponentEvent(inventionCardController.ComponentId);
                 }

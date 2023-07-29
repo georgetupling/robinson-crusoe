@@ -19,6 +19,7 @@ public class ActionResolver : MonoBehaviour
     private int hideAvailable = 0;
     private int woodAvailable = 0;
     private List<Invention> builtInventions = new List<Invention>();
+    private Dictionary<int, int> playerDetermination = new Dictionary<int, int>(); // Maps playerId to determination
 
     bool rolledSuccess = false;
 
@@ -33,6 +34,7 @@ public class ActionResolver : MonoBehaviour
         EventGenerator.Singleton.AddListenerToAnimationInProgressEvent(OnAnimationInProgressEvent);
         EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
         EventGenerator.Singleton.AddListenerToDieRolledEvent(OnDieRolledEvent);
+        EventGenerator.Singleton.AddListenerToGetDeterminationResponseEvent(OnGetDeterminationResponseEvent);
     }
 
     // Listeners
@@ -73,6 +75,14 @@ public class ActionResolver : MonoBehaviour
             rolledSuccess = faceRolled > 1;
         } else if (dieType == DieType.GatherSuccess || dieType == DieType.ExploreSuccess) {
             rolledSuccess = faceRolled != 0;
+        }
+    }
+
+    void OnGetDeterminationResponseEvent(int playerId, int determination) {
+        if (playerDetermination.ContainsKey(playerId)) {
+            playerDetermination[playerId] = determination;
+        } else {
+            playerDetermination.Add(playerId, determination);
         }
     }
 
@@ -144,6 +154,17 @@ public class ActionResolver : MonoBehaviour
             while (popupsArea.childCount > 0 || animationsInProgress > 0) {
                 yield return null;
             }
+            // Checks whether the player still has enough determination to build their signature invention
+            // This is necessary because the player could spend determination between assigning actions and this action resolving
+            if (actionAssignment.Type == ActionType.BuildInvention && actionAssignment.inventionCard.isPersonalInvention) {
+                EventGenerator.Singleton.RaiseGetDeterminationEvent(actionAssignment.playerIds[0]);
+                int determinationCost = 2;
+                if (playerDetermination[actionAssignment.playerIds[0]] < determinationCost) {
+                    Debug.LogError("Unable to pay determination cost for personal invention.");
+                    yield return new WaitForSeconds(delayBetweenActions);
+                    continue;
+                }
+            }
             bool costsPaid = PayCosts(actionAssignment.resourceCosts, actionAssignment);
             while (popupsArea.childCount > 0 || animationsInProgress > 0) {
                 yield return null;
@@ -171,7 +192,7 @@ public class ActionResolver : MonoBehaviour
                             EventGenerator.Singleton.RaiseGainShelterEvent();
                             break;
                         case ActionType.BuildInvention:
-                            EventGenerator.Singleton.RaiseBuildInventionSuccessEvent(actionAssignment.invention);
+                            EventGenerator.Singleton.RaiseBuildInventionSuccessEvent(actionAssignment.inventionCard.invention);
                             break;
                         case ActionType.BuildWeapon:
                             EventGenerator.Singleton.RaiseGainWeaponEvent(1);

@@ -32,6 +32,9 @@ public class CharacterSheetController : ComponentController
     [SerializeField] Transform armWoundPosition;
     [SerializeField] Transform bellyWoundPosition;
     [SerializeField] Transform legWoundPosition;
+
+    // Personal invention
+    [SerializeField] InventionCardController personalInvention;
     
     int playerId;
     Character character;
@@ -59,7 +62,7 @@ public class CharacterSheetController : ComponentController
     void OnInitializeCharacterSheetEvent(int componentId, int playerId, Character character) {
         if (componentId == this.ComponentId) {
             if (isInitialized) {
-                Debug.LogError($"Player {playerId + 1}'s character sheet is already initialized.");
+                Debug.LogError($"{GameSettings.PlayerNames[playerId]}'s character sheet is already initialized.");
                 return;
             }
             this.playerId = playerId;
@@ -70,6 +73,7 @@ public class CharacterSheetController : ComponentController
             EventGenerator.Singleton.RaiseInitializeHealthTrackerTokenEvent(healthTrackerToken.ComponentId, playerId, character.maximumHealth);
             EventGenerator.Singleton.RaiseInitializeActionPawnEvent(actionPawn0.ComponentId, playerId);
             EventGenerator.Singleton.RaiseInitializeActionPawnEvent(actionPawn1.ComponentId, playerId);
+            personalInvention.InitializePersonalInvention(playerId, character.personalInvention);
             isInitialized = true;
         }
     }

@@ -9,14 +9,11 @@ public class InventionCardController : CardController
     [SerializeField] private InventionBuildActionSpaceController actionSpaceController;
 
     public bool IsBuilt { get; private set; }
+    private int playerId = -1; // For personal inventions only
     
     protected override void Awake() {
         base.Awake();
         IsBuilt = false;
-    }
-
-    protected override void Start() {
-        base.Start();
         EventGenerator.Singleton.AddListenerToBuildInventionSuccessEvent(OnBuildInventionSuccessEvent);
         EventGenerator.Singleton.AddListenerToItemEvent(OnItemEvent);
     }
@@ -49,6 +46,8 @@ public class InventionCardController : CardController
         }
     }
 
+    // Methods for setting the InventionCard (and playerId for personal inventions)
+
     public void InitializeCard(InventionCard inventionCard) {
         if (!isInitialized) {
             data = inventionCard;
@@ -60,6 +59,13 @@ public class InventionCardController : CardController
             Debug.Log("EventCardController already initialized.");
         }
     }
+
+    public void InitializePersonalInvention(int playerId, Invention invention) {
+        this.playerId = playerId;
+        EventGenerator.Singleton.RaisePersonalInventionSpawnedEvent(this, invention);
+    }
+    
+    // Handles lose item events
 
     void HandleLoseItemEvent() {
         if (!IsBuilt) {
@@ -78,6 +84,15 @@ public class InventionCardController : CardController
             cardEffect.ApplyEffect();
         }
         EventGenerator.Singleton.RaiseUpdateBuiltInventionsEvent(data.invention, false);
+    }
+
+    // Getters
+
+    public int GetPlayerId() {
+        if (playerId == -1) {
+            Debug.LogError("Invention card playerId not set.");
+        }
+        return playerId;
     }
 
     public Invention GetInvention() {

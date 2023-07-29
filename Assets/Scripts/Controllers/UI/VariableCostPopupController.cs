@@ -68,7 +68,7 @@ public class VariableCostPopupController : MonoBehaviour
                 instruction.text = "Build palisade with wood or hide?";
                 break;
             case ActionType.BuildInvention:
-                instruction.text = "Build " + actionAssignment.invention.ToString() + " with wood or hide?";
+                instruction.text = "Build " + actionAssignment.inventionCard.invention.ToString() + " with wood or hide?";
                 break;
             case ActionType.Threat:
                 string threatName = actionAssignment.eventCard.threatName;

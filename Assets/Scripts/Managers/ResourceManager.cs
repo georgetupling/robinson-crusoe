@@ -89,8 +89,7 @@ public class ResourceManager : MonoBehaviour
             availableResources[resourceType] = 0;
         }
         if (availableResourceTokens.Count > 0) {
-            int numberOfTokensToDelete = Mathf.Clamp(amount, 0, availableResources[resourceType]);
-            for (int i = 0; i < numberOfTokensToDelete; i++) {
+            for (int i = 0; i < amount; i++) {
                 DeleteTokenOfType(resourceType, availableResourceTokens);
             }
         }
@@ -102,9 +101,11 @@ public class ResourceManager : MonoBehaviour
             futureResources[resourceType] = 0;
         }
         foreach (TokenController token in futureResourceTokens) {
-            availableResourceTokens.Add(token);
+            if (token != null) {
+                availableResourceTokens.Add(token);
+            }
         }
-        futureResourceTokens.RemoveAll(x => (x != null && x.transform.parent == availableResourcesArea));
+        futureResourceTokens.Clear();
     }
 
     void SpawnTokens(Transform resourcesArea, TokenController prefab, List<TokenController> listOfTokens, int amount) {

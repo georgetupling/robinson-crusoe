@@ -21,7 +21,7 @@ public class ActionAssignment
 
     // Build only
     bool buildingWithHide;
-    public Invention invention;
+    public InventionCard inventionCard;
 
     // Threat only
     public EventCard eventCard;

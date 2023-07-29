@@ -1925,6 +1925,7 @@ MonoBehaviour:
   armWoundPosition: {fileID: 3342740777000731031}
   bellyWoundPosition: {fileID: 561371566110629406}
   legWoundPosition: {fileID: 2837149186526884742}
+  personalInvention: {fileID: 8961836848224776049}
 --- !u!1001 &8480702514942391896
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1999,3 +2000,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7259345432560343312, guid: acbcf9e76c9329b4a85ff4c9ef6a9d7a, type: 3}
   m_PrefabInstance: {fileID: 8480702514942391896}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8961836848224776049 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 715884463876643113, guid: acbcf9e76c9329b4a85ff4c9ef6a9d7a, type: 3}
+  m_PrefabInstance: {fileID: 8480702514942391896}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0169ab52429eb854ba1e243065e9b296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

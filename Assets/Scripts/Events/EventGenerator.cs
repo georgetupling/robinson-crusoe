@@ -15,6 +15,8 @@ public class EventGenerator : MonoBehaviour
     private HealthEvent healthEvent = new HealthEvent();
     private DeterminationEvent determinationEvent = new DeterminationEvent();
     private GetFirstPlayerEvent getFirstPlayerEvent = new GetFirstPlayerEvent();
+    private UnityEvent<int> getDeterminationEvent = new UnityEvent<int>();
+    private UnityEvent<int, int> getDeterminationResponseEvent = new UnityEvent<int, int>();
 
     // Resources
     private ResourceEvent resourceEvent = new ResourceEvent();
@@ -62,6 +64,7 @@ public class EventGenerator : MonoBehaviour
     private InventionIsBuiltEvent inventionIsBuiltEvent = new InventionIsBuiltEvent();
     private GetInventionCardEvent getInventionCardEvent = new GetInventionCardEvent();
     private UpdateBuiltInventionsEvent updateBuiltInventionsEvent = new UpdateBuiltInventionsEvent();
+    private UnityEvent<InventionCardController, Invention> personalInventionSpawnedEvent = new UnityEvent<InventionCardController, Invention>();
 
 
     // Miscellaneous
@@ -205,6 +208,24 @@ public class EventGenerator : MonoBehaviour
     }
     public void AddListenerToGetFirstPlayerEvent(UnityAction<string, int> listener) {
         getFirstPlayerEvent.AddListener(listener);
+    }
+
+    // GetDeterminationEvent
+
+    public void RaiseGetDeterminationEvent(int playerId) {
+        getDeterminationEvent.Invoke(playerId);
+    }
+    public void AddListenerToGetDeterminationEvent(UnityAction<int> listener) {
+        getDeterminationEvent.AddListener(listener);
+    }
+
+    // Get determination response event
+
+    public void RaiseGetDeterminationResponseEvent(int playerId, int determination) {
+        getDeterminationResponseEvent.Invoke(playerId, determination);
+    }
+    public void AddListenerToGetDeterminationResponseEvent(UnityAction<int, int> listener) {
+        getDeterminationResponseEvent.AddListener(listener);
     }
 
     // GameManagementEvent
@@ -542,6 +563,15 @@ public class EventGenerator : MonoBehaviour
     }
     public void AddListenerToUpdateBuiltInventionsEvent(UnityAction<Invention, bool> listener) {
         updateBuiltInventionsEvent.AddListener(listener);
+    }
+
+    // Personal invention spawned event
+
+    public void RaisePersonalInventionSpawnedEvent(InventionCardController inventionCardController, Invention invention) {
+        personalInventionSpawnedEvent.Invoke(inventionCardController, invention);
+    }
+    public void AddListenerToPersonalInventionSpawnedEvent(UnityAction<InventionCardController, Invention> listener) {
+        personalInventionSpawnedEvent.AddListener(listener);
     }
     
     // TrackerTokenEvent

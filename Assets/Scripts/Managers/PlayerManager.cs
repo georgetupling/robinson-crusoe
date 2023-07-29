@@ -19,14 +19,12 @@ public class PlayerManager : MonoBehaviour
             return;
         }
         playerCount = GameSettings.PlayerCount;
-    }
-
-    void Start() {
         InitializePlayers();
         EventGenerator.Singleton.AddListenerToHealthEvent(OnHealthEvent);
         EventGenerator.Singleton.AddListenerToDeterminationEvent(OnDeterminationEvent);
         EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
         EventGenerator.Singleton.AddListenerToGetFirstPlayerEvent(OnGetFirstPlayerEvent);
+        EventGenerator.Singleton.AddListenerToGetDeterminationEvent(OnGetDeterminationEvent);
     }
 
     void InitializePlayers() {
@@ -76,6 +74,13 @@ public class PlayerManager : MonoBehaviour
     void OnGetFirstPlayerEvent(string eventType, int playerId) {
         if (eventType == GetFirstPlayerEvent.Query) {
             EventGenerator.Singleton.RaiseGetFirstPlayerResponseEvent(currentFirstPlayer);
+        }
+    }
+
+    void OnGetDeterminationEvent(int playerId) {
+        Player foundPlayer = players.Find(x => x.id == playerId);
+        if (foundPlayer != null) {
+            EventGenerator.Singleton.RaiseGetDeterminationResponseEvent(playerId, foundPlayer.determination);
         }
     }
 
