@@ -52,7 +52,7 @@ public class BeastCardManager : MonoBehaviour
             newCard.InitializeCard(beastCard);
             beastDeck.Push(newCard);
         }
-        DeckShuffler.ShuffleDeck(beastDeck, CardThickness);
+        DeckShuffler.Singleton.ShuffleDeck(beastDeck, CardThickness);
     }
 
     void OnDrawCardEvent(Deck deck) {

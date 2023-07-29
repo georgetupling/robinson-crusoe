@@ -48,7 +48,7 @@ public class ActionPawnController : ComponentController
             return;
         }
         this.playerId = playerId;
-        string materialName = GameSettings.PlayerCharacters[playerId].ToString() + "ActionPawnMaterial";
+        string materialName = GameSettings.PlayerCharacters[playerId].ToString() + GameSettings.PlayerGenders[playerId].ToString() + "ActionPawnMaterial";
         Material material = Resources.Load<Material>(Path.Combine("Materials/Action Pawns", materialName));
         GetComponent<MeshRenderer>().material = material;
         if (GameSettings.PlayerGenders[playerId] == Gender.Female) {

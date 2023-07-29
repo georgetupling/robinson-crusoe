@@ -67,9 +67,9 @@ public class AdventureCardManager : MonoBehaviour
         SpawnAdventureDeck(buildAdventureCards, buildAdventureDeckArea, Deck.BuildAdventure, buildAdventureDeck);
         SpawnAdventureDeck(gatherAdventureCards, gatherAdventureDeckArea, Deck.GatherAdventure, gatherAdventureDeck);
         SpawnAdventureDeck(exploreAdventureCards, exploreAdventureDeckArea, Deck.ExploreAdventure, exploreAdventureDeck);
-        DeckShuffler.ShuffleDeck(buildAdventureDeck, CardThickness);
-        DeckShuffler.ShuffleDeck(gatherAdventureDeck, CardThickness);
-        DeckShuffler.ShuffleDeck(exploreAdventureDeck, CardThickness);
+        DeckShuffler.Singleton.ShuffleDeck(buildAdventureDeck, CardThickness);
+        DeckShuffler.Singleton.ShuffleDeck(gatherAdventureDeck, CardThickness);
+        DeckShuffler.Singleton.ShuffleDeck(exploreAdventureDeck, CardThickness);
     }
 
     void SpawnAdventureDeck(List<AdventureCard> list, Transform deckArea, Deck deckType, Stack<CardController> deck) {

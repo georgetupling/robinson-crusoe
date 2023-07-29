@@ -1,10 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
-public static class DeckShuffler
+public class DeckShuffler : MonoBehaviour
 {
-    public static void ShuffleDeck(Stack<IslandTileController> deck, float islandTileThickness) {
+    public static DeckShuffler Singleton;
+
+    void Awake() {
+        if (Singleton == null) {
+            Singleton = this;
+        } else {
+            Debug.LogError("Scene contains duplicate DeckShuffler.");
+        }
+    }
+
+    public void ShuffleDeck(Stack<IslandTileController> deck, float islandTileThickness) {
         IslandTileController[] array = deck.ToArray();
         deck.Clear();
         for (int i = 0; i < array.Length; i++) {
@@ -18,9 +29,15 @@ public static class DeckShuffler
             tile.transform.localPosition = new Vector3(0, 0, (-1) * deck.Count * islandTileThickness);
             deck.Push(tile);
         }
+        // Plays the animation
+        List<ComponentController> componentList = new List<ComponentController>();
+        for (int i = 0; i < array.Length; i++) {
+            componentList.Add(array[i]);
+        }
+        StartCoroutine(PlayShuffleAnimation(componentList));
     }
 
-    public static void ShuffleDeck(Stack<CardController> deck, float cardThickness) {
+    public void ShuffleDeck(Stack<CardController> deck, float cardThickness) {
         CardController[] array = deck.ToArray();
         deck.Clear();
         for (int i = 0; i < array.Length; i++) {
@@ -34,9 +51,15 @@ public static class DeckShuffler
             card.transform.localPosition = new Vector3(0, 0, (-1) * deck.Count * cardThickness);
             deck.Push(card);
         }
+        // Plays the animation
+        List<ComponentController> componentList = new List<ComponentController>();
+        for (int i = 0; i < array.Length; i++) {
+            componentList.Add(array[i]);
+        }
+        StartCoroutine(PlayShuffleAnimation(componentList));
     }
 
-    public static void ShuffleDeck(Stack<DiscoveryTokenController> deck, float tokenThickness) {
+    public void ShuffleDeck(Stack<DiscoveryTokenController> deck, float tokenThickness) {
         DiscoveryTokenController[] array = deck.ToArray();
         deck.Clear();
         for (int i = 0; i < array.Length; i++) {
@@ -50,9 +73,15 @@ public static class DeckShuffler
             token.transform.localPosition = new Vector3(0, 0, (-1) * deck.Count * tokenThickness);
             deck.Push(token);
         }
+        // Plays the animation
+        List<ComponentController> componentList = new List<ComponentController>();
+        for (int i = 0; i < array.Length; i++) {
+            componentList.Add(array[i]);
+        }
+        StartCoroutine(PlayShuffleAnimation(componentList));
     }
 
-    public static void ShuffleDeck(Stack<InventionCard> deck) {
+    public void ShuffleDeck(Stack<InventionCard> deck) {
         InventionCard[] array = deck.ToArray();
         deck.Clear();
         for (int i = 0; i < array.Length; i++) {
@@ -67,7 +96,7 @@ public static class DeckShuffler
         }
     }
 
-    public static void ShuffleDeck(Stack<BeastCardController> deck, float cardThickness) {
+    public void ShuffleDeck(Stack<BeastCardController> deck, float cardThickness) {
         BeastCardController[] array = deck.ToArray();
         deck.Clear();
         for (int i = 0; i < array.Length; i++) {
@@ -81,5 +110,36 @@ public static class DeckShuffler
             card.transform.localPosition = new Vector3(0, 0, (-1) * deck.Count * cardThickness);
             deck.Push(card);
         }
+        // Plays the animation
+        List<ComponentController> componentList = new List<ComponentController>();
+        for (int i = 0; i < array.Length; i++) {
+            componentList.Add(array[i]);
+        }
+        StartCoroutine(PlayShuffleAnimation(componentList));
+    }
+
+    IEnumerator PlayShuffleAnimation(List<ComponentController> deck) {
+        EventGenerator.Singleton.RaiseAnimationInProgressEvent(true);
+        ComponentController[] array = deck.ToArray();
+        float shuffleDuration = GameSettings.AnimationDuration * 0.5f;
+        float delayBetweenShakes = shuffleDuration / array.Length;
+
+        float shakeDuration = 0.1f;
+        Vector3 scaleShakeStrength = new Vector3(0.005f, 0.005f, 0f);
+        Vector3 postionShakeStrength = new Vector3(0.01f, 0.01f, 0f);
+        int vibrato = 20;
+        int randomness = 30;
+        bool snapping = false;
+        for (int i = 0; i < array.Length; i++) {
+            array[i].transform.DOShakeScale(shakeDuration, scaleShakeStrength, vibrato, randomness);
+            array[i].transform.DOShakePosition(shakeDuration, postionShakeStrength, vibrato, randomness, snapping);
+            yield return new WaitForSeconds(delayBetweenShakes);
+        }
+        for (int i = array.Length - 1; i >= 0; i--) {
+            array[i].transform.DOShakeScale(shakeDuration, scaleShakeStrength, vibrato, randomness);
+            array[i].transform.DOShakePosition(shakeDuration, postionShakeStrength, vibrato, randomness, snapping);
+            yield return new WaitForSeconds(delayBetweenShakes);
+        }
+        EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
     }
 }

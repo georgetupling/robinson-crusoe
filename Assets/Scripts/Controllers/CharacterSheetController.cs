@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CharacterSheetController : ComponentController
 {
+    // Transform character sheet model is attached to
+    [SerializeField] Transform characterSheetTransform;
+    
     List<TokenController> tokens = new List<TokenController>();
 
     // Pre-spawned tokens
@@ -35,6 +38,14 @@ public class CharacterSheetController : ComponentController
 
     // Personal invention
     [SerializeField] InventionCardController personalInvention;
+
+    // Ability area click handlers
+    [SerializeField] AbilityAreaClickHandler abilityArea0;
+    [SerializeField] AbilityAreaClickHandler abilityArea1;
+    [SerializeField] AbilityAreaClickHandler abilityArea2;
+    [SerializeField] AbilityAreaClickHandler abilityArea3;
+
+    List<AbilityAreaClickHandler> abilityAreas;
     
     int playerId;
     Character character;
@@ -46,6 +57,7 @@ public class CharacterSheetController : ComponentController
     protected override void Awake() {
         base.Awake();
         positions = new List<Transform> { position0, position1, position2, position3, position4, position5, position6, position7, position8, position9, position10, position11 };
+        abilityAreas = new List<AbilityAreaClickHandler>() { abilityArea0, abilityArea1, abilityArea2, abilityArea3 };
         EventGenerator.Singleton.AddListenerToInitializeCharacterSheetEvent(OnInitializeCharacterSheetEvent);
         EventGenerator.Singleton.AddListenerToDeterminationEvent(OnDeterminationEvent);
         EventGenerator.Singleton.AddListenerToGetFirstPlayerEvent(OnGetFirstPlayerEvent);
@@ -68,12 +80,18 @@ public class CharacterSheetController : ComponentController
             this.playerId = playerId;
             this.character = character;
             if (GameSettings.PlayerGenders[playerId] == Gender.Female) {
-                // TODO
+                characterSheetTransform.eulerAngles = new Vector3(0, 180, 0);
+                // Flips to the reverse side if the character is female
             }
             EventGenerator.Singleton.RaiseInitializeHealthTrackerTokenEvent(healthTrackerToken.ComponentId, playerId, character.maximumHealth);
             EventGenerator.Singleton.RaiseInitializeActionPawnEvent(actionPawn0.ComponentId, playerId);
             EventGenerator.Singleton.RaiseInitializeActionPawnEvent(actionPawn1.ComponentId, playerId);
             personalInvention.InitializePersonalInvention(playerId, character.personalInvention);
+            for (int i = 0; i < abilityAreas.Count; i++) {
+                if (abilityAreas[i] != null) {
+                    abilityAreas[i].Initialize(playerId, character.abilities[i]);
+                }
+            }
             isInitialized = true;
         }
     }

@@ -80,7 +80,7 @@ public class InventionCardManager : MonoBehaviour
                 inventionCardDeck.Push(inventionCard);
             }
         }
-        DeckShuffler.ShuffleDeck(inventionCardDeck);
+        DeckShuffler.Singleton.ShuffleDeck(inventionCardDeck);
     }
 
     void SpawnStartingInventionCards() {

@@ -120,7 +120,7 @@ public class IslandTileManager : MonoBehaviour
                 islandTileDeck.Push(newIslandTile);
             }
         }
-        DeckShuffler.ShuffleDeck(islandTileDeck, IslandTileThickness);
+        DeckShuffler.Singleton.ShuffleDeck(islandTileDeck, IslandTileThickness);
     }
 
     void HandleDistanceFromCampQuery(int islandTileId) {

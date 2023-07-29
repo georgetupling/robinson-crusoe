@@ -10,13 +10,15 @@ public class Character
     public int maximumHealth { get; private set; }
     public List<int> moraleThresholds { get; private set; }
     public Invention personalInvention { get; private set; }
+    public List<Ability> abilities { get; private set; }
 
     // TODO: character special abilities
-    public Character(CharacterType characterType, string characterName, int maximumHealth, List<int> moraleThresholds, Invention personalInvention) {
+    public Character(CharacterType characterType, string characterName, int maximumHealth, List<int> moraleThresholds, Invention personalInvention, List<Ability> abilities) {
         this.characterType = characterType;
         this.characterName = characterName;
         this.maximumHealth = maximumHealth;
         this.moraleThresholds = moraleThresholds;
         this.personalInvention = personalInvention;
+        this.abilities = abilities;
     }
 }

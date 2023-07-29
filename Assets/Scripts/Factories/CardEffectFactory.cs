@@ -18,4 +18,15 @@ public static class CardEffectFactory
         }
         return cardEffects;
     }
+
+    public static CardEffect CreateCardEffect(string cardEffectName) {
+        System.Type type = System.Type.GetType(cardEffectName);
+        if (type != null && typeof(CardEffect).IsAssignableFrom(type)) {
+            CardEffect cardEffect = CardEffect.CreateCardEffectInstance(cardEffectName) as CardEffect;
+            return cardEffect;
+        } else {
+            Debug.Log($"{cardEffectName} is not a valid CardEffect type.");
+            return null;
+        }
+    }
 }

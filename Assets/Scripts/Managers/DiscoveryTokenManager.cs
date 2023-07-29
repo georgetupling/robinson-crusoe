@@ -49,7 +49,7 @@ public class DiscoveryTokenManager : MonoBehaviour
         foreach(DiscoveryToken discoveryToken in discoveryTokens) {
             SpawnDiscoveryToken(discoveryToken);
         }
-        DeckShuffler.ShuffleDeck(discoveryTokenDeck, TokenThickness);
+        DeckShuffler.Singleton.ShuffleDeck(discoveryTokenDeck, TokenThickness);
     }
 
     void SpawnDiscoveryToken(DiscoveryToken discoveryToken) {

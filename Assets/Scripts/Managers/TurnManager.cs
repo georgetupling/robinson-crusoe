@@ -36,7 +36,7 @@ public class TurnManager : MonoBehaviour
     }
 
     void Start() {
-        StartNextPhase();
+        StartCoroutine(WaitForAnimationsThenEndPhase());
     }
 
     void OnEndPhaseEvent(Phase phase) {

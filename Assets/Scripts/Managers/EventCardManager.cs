@@ -110,6 +110,7 @@ public class EventCardManager : MonoBehaviour
         int randomIndex = Random.Range(0, startingEventCards.Count);
         newCard.InitializeCard(startingEventCards[randomIndex]);
         EventGenerator.Singleton.RaiseEnableThreatActionAreaEvent(newCard.ComponentId, true);
+        DeckShuffler.Singleton.ShuffleDeck(eventDeck, CardThickness);
     }
 
     void OnPhaseStartEvent(Phase phaseStarted) {
@@ -145,6 +146,6 @@ public class EventCardManager : MonoBehaviour
     IEnumerator WaitBrieflyThenShuffle(CardController cardController) {
         yield return new WaitForSeconds(0.25f);
         cardController.transform.eulerAngles = Vector3.zero;
-        DeckShuffler.ShuffleDeck(eventDeck, CardThickness);
+        DeckShuffler.Singleton.ShuffleDeck(eventDeck, CardThickness);
     }
 }
