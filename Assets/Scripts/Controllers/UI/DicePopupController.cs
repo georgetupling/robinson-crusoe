@@ -2,16 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class DicePopupController : MonoBehaviour
 {
+    [SerializeField] RectTransform background;
+    [SerializeField] TMP_Text instruction;
     [SerializeField] RectTransform diceArea;
     [SerializeField] Image imagePrefab;
     [SerializeField] Button okayButton;
+    [SerializeField] Button rerollButton;
     
     List<Die> dice = new List<Die>();
     List<Image> images = new List<Image>();
     List<int> facesRolled = new List<int>();
+    int playerId;
 
     const int iterations = 10;
     const float waitPerIteration = 0.15f;
@@ -19,6 +24,7 @@ public class DicePopupController : MonoBehaviour
     void Awake() {
         EventGenerator.Singleton.RaiseDisableMainUIEvent();
         SetUpOkayButton();
+        SetUpRerollButton();
     }
 
     void SetUpOkayButton() {
@@ -31,7 +37,27 @@ public class DicePopupController : MonoBehaviour
         });
     }
 
-    public void Initialize(List<DieType> dieTypes) {
+    void SetUpRerollButton() {
+        rerollButton.onClick.AddListener(() => {
+            instruction.gameObject.SetActive(true);
+            okayButton.interactable = false;
+            rerollButton.interactable = false;
+            EventGenerator.Singleton.RaiseLoseDeterminationEvent(playerId, 2);
+            // Pressing reroll adds listeners to and enables the die image buttons
+            for (int i = 0; i < images.Count; i++) {
+                int index = i;
+                Button imageButton = images[i].GetComponent<Button>();
+                imageButton.onClick.AddListener(() => {
+                    DisableDieButtons();
+                    StartCoroutine(RerollDie(index));
+                });
+                imageButton.enabled = true;
+            }
+        });
+    }
+
+    public void Initialize(List<DieType> dieTypes, int playerId, bool hasRerollAvailable) {
+        this.playerId = playerId;
         // Converts the die types into dice using the DiceFactory
         foreach (DieType dieType in dieTypes) {
             Die die = DiceFactory.Singleton.GetDie(dieType);
@@ -74,6 +100,12 @@ public class DicePopupController : MonoBehaviour
             images.Add(image);
         }
 
+        if (hasRerollAvailable) {
+            rerollButton.gameObject.SetActive(true);
+            float spaceBetweenButtons = 15f;
+            background.sizeDelta = new Vector2(background.rect.width, background.rect.height + rerollButton.GetComponent<RectTransform>().rect.height + spaceBetweenButtons);
+        }
+        
         StartCoroutine(RollDice());
     }
 
@@ -91,6 +123,28 @@ public class DicePopupController : MonoBehaviour
             yield return new WaitForSeconds(waitPerIteration);
         }
         okayButton.interactable = true;
+        rerollButton.interactable = true;
     }
+
+    // Helper methods for rerolling dice
+
+    void DisableDieButtons() {
+        foreach (Image image in images) {
+            Button imageButton = image.GetComponent<Button>();
+            imageButton.enabled = false;
+        }
+    }
+
+    IEnumerator RerollDie(int imageIndex) {
+        for (int i = 0; i < iterations; i++) {
+                int randomDiceSide = Random.Range(0, 6);
+                images[imageIndex].sprite = dice[imageIndex].GetFaceSprite(randomDiceSide);
+                facesRolled[imageIndex] = randomDiceSide;
+            yield return new WaitForSeconds(waitPerIteration);
+        }
+        okayButton.interactable = true;
+    }
+
+
 
 }

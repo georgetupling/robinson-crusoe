@@ -16,6 +16,7 @@ public class PopupManager : MonoBehaviour
     [SerializeField] private MakeCampChoicePopupController makeCampChoicePopupPrefab;
     [SerializeField] private NightPhasePopupController nightPhasePopupPrefab;
     [SerializeField] private DicePopupController dicePopupPrefab;
+    [SerializeField] private AbilityPopupController abilityPopupPrefab;
 
     [SerializeField] private Transform parentTransform;
 
@@ -34,6 +35,7 @@ public class PopupManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToSpawnMakeCampChoicePopupEvent(OnSpawnMakeCampChoicePopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnNightPhasePopupEvent(OnSpawnNightPhasePopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnDicePopupEvent(OnSpawnDicePopupEvent);
+        EventGenerator.Singleton.AddListenerToSpawnAbilityPopupEvent(OnSpawnAbilityPopupEvent);
     }
 
     void OnCardRevealedEvent(Deck deckDrawnFrom, Card revealedCard, int componentIdOfRevealedCard) {
@@ -79,9 +81,14 @@ public class PopupManager : MonoBehaviour
         newPopup.Initialize(totalFoodAvailable);
     }
 
-    void OnSpawnDicePopupEvent(List<DieType> dieTypes) {
+    void OnSpawnDicePopupEvent(List<DieType> dieTypes, int playerId, bool hasRerollAvailable) {
         DicePopupController newPopup = Instantiate(dicePopupPrefab, parentTransform, false);
-        newPopup.Initialize(dieTypes);
+        newPopup.Initialize(dieTypes, playerId, hasRerollAvailable);
+    }
+
+    void OnSpawnAbilityPopupEvent(int playerId, Ability ability) {
+        AbilityPopupController newPopup = Instantiate(abilityPopupPrefab, parentTransform, false);
+        newPopup.Initialize(playerId, ability);
     }
 
     // Helper methods

@@ -130,19 +130,23 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<ResourceCost, ActionAssignment> spawnVariableCostPopupEvent = new UnityEvent<ResourceCost, ActionAssignment>();
     private UnityEvent<int> spawnMakeCampChoicePopupEvent = new UnityEvent<int>();
     private UnityEvent<int>  spawnNightPhasePopupEvent = new UnityEvent<int>();
+    private UnityEvent<int, Ability> spawnAbilityPopupEvent = new UnityEvent<int, Ability>();
 
     // Player Input
     private UnityEvent<bool> chooseAdjacentTileEvent = new UnityEvent<bool>();
     private UnityEvent<bool, int> adjacentTileChosenEvent = new UnityEvent<bool, int>();
 
     // Dice
-    private UnityEvent<List<DieType>> spawnDicePopupEvent = new UnityEvent<List<DieType>>();
+    private UnityEvent<List<DieType>, int, bool> spawnDicePopupEvent = new UnityEvent<List<DieType>, int, bool>();
     private UnityEvent<DieType, int> dieRolledEvent = new UnityEvent<DieType, int>();
 
     // Adventure Cards
     private UnityEvent<AdventureType> drawAdventureCardEvent = new UnityEvent<AdventureType>();
     private UnityEvent<int, AdventureCard, int> adventureCardPopupClosedEvent = new UnityEvent<int, AdventureCard, int>();
     private UnityEvent<CardController> shuffleIntoEventDeckEvent = new UnityEvent<CardController>();
+
+    // Abilities
+    private UnityEvent<int, Ability> abilityActivatedEvent = new UnityEvent<int, Ability>();
 
     void Awake() {
         if (Singleton == null) {
@@ -1177,6 +1181,15 @@ public class EventGenerator : MonoBehaviour
         spawnNightPhasePopupEvent.AddListener(listener);
     }
 
+    // Spawn ability popup event
+
+    public void RaiseSpawnAbilityPopupEvent(int playerId, Ability ability) {
+        spawnAbilityPopupEvent.Invoke(playerId, ability);
+    }
+    public void AddListenerToSpawnAbilityPopupEvent(UnityAction<int, Ability> listener) {
+        spawnAbilityPopupEvent.AddListener(listener);
+    }
+
 
     // Choose adjacent camp event
 
@@ -1198,10 +1211,13 @@ public class EventGenerator : MonoBehaviour
 
     // Spawn Build Dice Popup
 
-    public void RaiseSpawnDicePopupEvent(List<DieType> dieTypes) {
-        spawnDicePopupEvent.Invoke(dieTypes);
+    public void RaiseSpawnDicePopupEvent(List<DieType> dieTypes, int playerId, bool hasRerollAvailable) {
+        spawnDicePopupEvent.Invoke(dieTypes, playerId, hasRerollAvailable);
     }
-    public void AddListenerToSpawnDicePopupEvent(UnityAction<List<DieType>> listener) {
+    public void RaiseSpawnDicePopupEvent(List<DieType> dieTypes) {
+        spawnDicePopupEvent.Invoke(dieTypes, -1, false);
+    }
+    public void AddListenerToSpawnDicePopupEvent(UnityAction<List<DieType>, int, bool> listener) {
         spawnDicePopupEvent.AddListener(listener);
     }
 
@@ -1242,6 +1258,15 @@ public class EventGenerator : MonoBehaviour
     }
     public void AddListenerToShuffleIntoEventDeckEvent(UnityAction<CardController> listener) {
         shuffleIntoEventDeckEvent.AddListener(listener);
+    }
+
+    // Ability activated
+
+    public void RaiseAbilityActivatedEvent(int playerId, Ability ability) {
+        abilityActivatedEvent.Invoke(playerId, ability);
+    }
+    public void AddListenerToAbilityActivatedEvent(UnityAction<int, Ability> listener) {
+        abilityActivatedEvent.AddListener(listener);
     }
     
 }

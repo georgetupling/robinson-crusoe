@@ -198,8 +198,6 @@ public class ActionResolver : MonoBehaviour
                             EventGenerator.Singleton.RaiseGainWeaponEvent(1);
                             break;
                     }
-                } else {
-                    Debug.Log("Build unsuccessful."); // For testing purposes
                 }
             } else {
                 Debug.LogError("Unable to pay build costs.");
@@ -235,8 +233,6 @@ public class ActionResolver : MonoBehaviour
             }
             if (gatherIsSuccessful) {
                 EventGenerator.Singleton.RaiseGatherSuccessEvent(actionAssignment.islandTile.Id, actionAssignment.isRightSource);
-            } else {
-                Debug.Log("Gather unsuccessful."); // For testing purposes
             }
             yield return new WaitForSeconds(delayBetweenActions);
         }
@@ -269,8 +265,6 @@ public class ActionResolver : MonoBehaviour
             }
             if (exploreIsSuccessful) {
                 EventGenerator.Singleton.RaiseDrawIslandTileEvent(actionAssignment.locationId);
-            } else {
-                Debug.Log("Explore unsuccessful."); // For testing purposes
             }
             yield return new WaitForSeconds(delayBetweenActions);
         }

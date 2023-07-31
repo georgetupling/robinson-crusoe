@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class ActionPawnController : ComponentController
+public class ActionPawnController : ComponentController, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     int playerId;
     bool isActionPhase;
@@ -102,7 +103,7 @@ public class ActionPawnController : ComponentController
 
     // Methods for dragging and dropping
 
-    void OnMouseDown() {
+    public void OnBeginDrag(PointerEventData pointerEventData) {
         if (!isActionPhase || actionsSubmitted) {
             Shake();
             return;
@@ -115,14 +116,14 @@ public class ActionPawnController : ComponentController
         UpdateActionSpaces();
     }
 
-    void OnMouseDrag() {
+    public void OnDrag(PointerEventData pointerEventData) {
         while (transform.parent != playArea) {
             return;
         }
         transform.position = GetMouseWorldPosition();
     }
 
-   void OnMouseUp() {
+   public void OnEndDrag(PointerEventData pointerEventData) {
         if (transform.parent != playArea) {
             return;
         }

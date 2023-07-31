@@ -3621,7 +3621,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1200, y: 600}
+  m_SizeDelta: {x: 2000, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &509069178
 MonoBehaviour:
@@ -4994,6 +4994,7 @@ MonoBehaviour:
   makeCampChoicePopupPrefab: {fileID: 6804288373813744710, guid: 47ee3e8fff0355d4b96e6c8ebef13fb2, type: 3}
   nightPhasePopupPrefab: {fileID: 5894890414741770321, guid: 51022d4c5ee8b214ebd530529c138e52, type: 3}
   dicePopupPrefab: {fileID: 4151864331969145337, guid: 450d8148656f8294cb98a7f8705003dd, type: 3}
+  abilityPopupPrefab: {fileID: 4448420331352022548, guid: 91959ab629a6c99439209fc664697c7f, type: 3}
   parentTransform: {fileID: 473154762}
 --- !u!1 &794049183
 GameObject:

@@ -30,6 +30,10 @@ public class DiceRoller : MonoBehaviour
     [SerializeField] Transform gatherAdventureDeckTokenArea;
     [SerializeField] Transform exploreAdventureDeckTokenArea;
 
+    // Player determination by playerId
+
+    Dictionary<int, int> playerDetermination = new Dictionary<int, int>();
+
     void Awake() {
         if (Singleton == null) {
             Singleton = this;
@@ -38,9 +42,10 @@ public class DiceRoller : MonoBehaviour
         }
         EventGenerator.Singleton.AddListenerToDieRolledEvent(OnDieRolledEvent);
         EventGenerator.Singleton.AddListenerToAdventureCardPopupClosedEvent(OnAdventureCardPopupClosedEvent);
+        EventGenerator.Singleton.AddListenerToGetDeterminationResponseEvent(OnGetDeterminationResponseEvent);
     }
 
-    // Listens for dice rolls and actions them
+    // Listeners
 
     void OnDieRolledEvent(DieType dieType, int faceRolled) {
         switch (dieType) {
@@ -110,23 +115,52 @@ public class DiceRoller : MonoBehaviour
         }
     }
 
+    void OnGetDeterminationResponseEvent(int playerId, int determination) {
+        if (!playerDetermination.ContainsKey(playerId)) {
+            playerDetermination.Add(playerId, determination);
+        } else {
+            playerDetermination[playerId] = determination;
+        }
+    }
+
     // Public methods
 
     public void RollBuildDice(int playerId) {
         this.playerId = playerId;
-        EventGenerator.Singleton.RaiseSpawnDicePopupEvent(buildDice);
+        // Checks whether the player has a reroll available
+        bool hasRerollAvailable = false;
+        if (GameSettings.PlayerCharacters[playerId] == CharacterType.Carpenter) {
+            EventGenerator.Singleton.RaiseGetDeterminationEvent(playerId);
+            int costOfReroll = 2;
+            hasRerollAvailable = playerDetermination[playerId] >= costOfReroll;
+        }
+        EventGenerator.Singleton.RaiseSpawnDicePopupEvent(buildDice, playerId, hasRerollAvailable);
     }
 
     public void RollGatherDice(int playerId, int islandTileId) {
         this.playerId = playerId;
         this.islandTileId = islandTileId;
-        EventGenerator.Singleton.RaiseSpawnDicePopupEvent(gatherDice);
+        // Checks whether the player has a reroll available
+        bool hasRerollAvailable = false;
+        if (GameSettings.PlayerCharacters[playerId] == CharacterType.Cook) {
+            EventGenerator.Singleton.RaiseGetDeterminationEvent(playerId);
+            int costOfReroll = 2;
+            hasRerollAvailable = playerDetermination[playerId] >= costOfReroll;
+        }
+        EventGenerator.Singleton.RaiseSpawnDicePopupEvent(gatherDice, playerId, hasRerollAvailable);
     }
 
     public void RollExploreDice(int playerId, int locationId) {
         this.playerId = playerId;
         this.locationId = locationId;
-        EventGenerator.Singleton.RaiseSpawnDicePopupEvent(exploreDice);
+        // Checks whether the player has a reroll available
+        bool hasRerollAvailable = false;
+        if (GameSettings.PlayerCharacters[playerId] == CharacterType.Explorer) {
+            EventGenerator.Singleton.RaiseGetDeterminationEvent(playerId);
+            int costOfReroll = 2;
+            hasRerollAvailable = playerDetermination[playerId] >= costOfReroll;
+        }
+        EventGenerator.Singleton.RaiseSpawnDicePopupEvent(exploreDice, playerId, hasRerollAvailable);
     }
 
     // Helper method that checks whether a particular adventure deck has an adventure token on it
