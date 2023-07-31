@@ -10,16 +10,11 @@ public class GrandmasRecipeEffect : CardEffect
     }
     
     public override void ApplyEffect() {
-        if (hasBeenApplied) {
-            Debug.LogError("GrandmasRecipeEffect effect has already been applied.");
-            return;
-        }
         if (targetId == -1) {
             Debug.LogError("GrandmasRecipeEffect target not set.");
             return;
         }
         EventGenerator.Singleton.RaiseLoseFoodEvent(1);
         EventGenerator.Singleton.RaiseGainHealthEvent(targetId, 2);
-        hasBeenApplied = true;
     }
 }

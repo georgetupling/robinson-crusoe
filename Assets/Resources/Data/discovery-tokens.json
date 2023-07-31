@@ -6,7 +6,7 @@
         "canBeActivated": true,
         "activationRequiresWeapon": false,
         "activationRequiresPot": false,
-        "effectsOnActivation": ["CancelRainCloudInNextWeatherPhase"]
+        "effectsOnActivation": ["CancelRainCloud"]
     },
     {
         "discovery": "Tobacco",

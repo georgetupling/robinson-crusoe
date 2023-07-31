@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class GameSettings
 {
-    public static int PlayerCount = 2;
+    public static int PlayerCount = 4;
     public static float AnimationDuration = 1f;
 
     public static Dictionary<int, string> PlayerNames = new Dictionary<int, string> {
@@ -15,9 +15,9 @@ public static class GameSettings
     };
     public static Dictionary<int, CharacterType> PlayerCharacters = new Dictionary<int, CharacterType> {
         { 0, CharacterType.Cook },
-        { 1, CharacterType.Cook },
-        { 2, CharacterType.Cook },
-        { 3, CharacterType.Cook }
+        { 1, CharacterType.Carpenter },
+        { 2, CharacterType.Explorer },
+        { 3, CharacterType.Soldier }
     };
     public static Dictionary<int, Gender> PlayerGenders = new Dictionary<int, Gender> {
         { 0, Gender.Male },

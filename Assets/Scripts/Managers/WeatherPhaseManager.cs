@@ -14,10 +14,17 @@ public class WeatherPhaseManager : MonoBehaviour
     int roofLevel;
     bool isWaitingOnRoofLevel;
 
+    int cookDetermination;
+    bool isWaitingOnCookDetermination;
+
     int numberOfRainClouds = 0;
     int numberOfSnowClouds = 0;
+    int foodLost = 0;
+    int palisadeLost = 0;
 
-    // numberOfClouds[0] is the number of rain clouds, numberOfClouds[1] is the number of snow clouds
+    int cancelledRainClouds = 0;
+    int snowCloudsConvertedToRain = 0;
+
 
     void Awake() {
         if (singleton == null) {
@@ -28,7 +35,12 @@ public class WeatherPhaseManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToPhaseStartEvent(OnPhaseStartEvent);
         EventGenerator.Singleton.AddListenerToGetRoofLevelResponseEvent(OnGetRoofLevelResponseEvent);
         EventGenerator.Singleton.AddListenerToDieRolledEvent(OnDieRolledEvent);
+        EventGenerator.Singleton.AddListenerToGetDeterminationResponseEvent(OnGetDeterminationResponseEvent);
+        EventGenerator.Singleton.AddListenerToCancelRainCloudEvent(OnCancelRainCloudEvent);
+        EventGenerator.Singleton.AddListenerToConvertSnowToRainEvent(OnConvertSnowToRainEvent);
     }
+
+    // Listeners
 
     void OnPhaseStartEvent(Phase phaseStarted) {
         if (phaseStarted != Phase.Weather) {
@@ -48,9 +60,9 @@ public class WeatherPhaseManager : MonoBehaviour
             }
         } else if (dieType == DieType.RedWeather) {
             if (faceRolled < 1) {
-                EventGenerator.Singleton.RaiseLoseFoodEvent(1);
+                foodLost++;
             } else if (faceRolled < 3) {
-                EventGenerator.Singleton.RaiseLosePalisadeEvent(1);
+                palisadeLost++;
             } else if (faceRolled < 4) {
                 // TODO: combat against strength 3 beast
             }
@@ -63,6 +75,28 @@ public class WeatherPhaseManager : MonoBehaviour
                 numberOfRainClouds += 2;
             }
         }
+    }
+
+    void OnGetDeterminationResponseEvent(int playerId, int determination) {
+        if (isWaitingOnCookDetermination) {
+            cookDetermination = determination;
+            isWaitingOnCookDetermination = false;
+        }
+    }
+    
+    void OnGetRoofLevelResponseEvent(int roofLevel) {
+        if (isWaitingOnRoofLevel) {
+            this.roofLevel = roofLevel;
+            isWaitingOnRoofLevel = false;
+        }
+    }
+
+    void OnCancelRainCloudEvent() {
+        cancelledRainClouds++;
+    }
+
+    void OnConvertSnowToRainEvent() {
+        snowCloudsConvertedToRain++;
     }
 
     IEnumerator ApplyWeatherPhase() {
@@ -81,6 +115,7 @@ public class WeatherPhaseManager : MonoBehaviour
         while (popupArea.childCount > 0) {
             yield return null;
         }
+        // Counts up tokens
         foreach (TokenController token in weatherTokens) {
             if (token.tokenType == TokenType.Storm) {
                 EventGenerator.Singleton.RaiseLosePalisadeEvent(1);
@@ -90,6 +125,44 @@ public class WeatherPhaseManager : MonoBehaviour
                 numberOfSnowClouds += 1;
             }
         }
+        // If there are one or more clouds, checks whether there is a cook with enough determination to use Hooch
+        if (numberOfRainClouds > 0 || numberOfSnowClouds > 0) {
+            for (int i = 0; i < GameSettings.PlayerCount; i++) {
+                while (popupArea.childCount > 0) {
+                    yield return null;
+                }
+                yield return new WaitForSeconds(0.25f);
+                if (GameSettings.PlayerCharacters[i] == CharacterType.Cook) {
+                    isWaitingOnCookDetermination = true;
+                    EventGenerator.Singleton.RaiseGetDeterminationEvent(i);
+                    while (isWaitingOnCookDetermination) {
+                        yield return null;
+                    }
+                    int determinationRequired = 3;
+                    if (cookDetermination >= determinationRequired) {
+                        Character cook = CharacterFactory.CreateCharacter(CharacterType.Cook);
+                        Ability hooch = cook.abilities[3];
+                        EventGenerator.Singleton.RaiseSpawnAbilityPopupEvent(i, hooch);
+                    }
+                }
+            }
+        }
+        while (popupArea.childCount > 0) {
+            yield return null;
+        }
+
+        // Applies any "cancel rain" or "convert snow to rain" effects
+        numberOfRainClouds -= cancelledRainClouds;
+        numberOfSnowClouds -= snowCloudsConvertedToRain;
+        numberOfRainClouds += snowCloudsConvertedToRain;
+        if (numberOfRainClouds < 0) {
+            numberOfRainClouds = 0;
+        }
+        if (numberOfSnowClouds < 0) {
+            numberOfSnowClouds = 0;
+        }
+
+        // Applies the effects
         EventGenerator.Singleton.RaiseLoseWoodEvent(numberOfSnowClouds);
         numberOfRainClouds += numberOfSnowClouds;
         numberOfRainClouds -= roofLevel;
@@ -97,16 +170,11 @@ public class WeatherPhaseManager : MonoBehaviour
             EventGenerator.Singleton.RaiseLoseFoodEvent(numberOfRainClouds);
             EventGenerator.Singleton.RaiseLoseWoodEvent(numberOfRainClouds);
         }
+        EventGenerator.Singleton.RaiseLoseFoodEvent(foodLost);
+        EventGenerator.Singleton.RaiseLosePalisadeEvent(palisadeLost);
         ClearWeatherArea();
         yield return new WaitForSeconds(1.5f);
         EventGenerator.Singleton.RaiseEndPhaseEvent(Phase.Weather);
-    }
-
-    void OnGetRoofLevelResponseEvent(int roofLevel) {
-        if (isWaitingOnRoofLevel) {
-            this.roofLevel = roofLevel;
-            isWaitingOnRoofLevel = false;
-        }
     }
 
     // Helper methods
@@ -142,5 +210,9 @@ public class WeatherPhaseManager : MonoBehaviour
         weatherDice.Clear();
         numberOfRainClouds = 0;
         numberOfSnowClouds = 0;
+        foodLost = 0;
+        palisadeLost = 0;
+        cancelledRainClouds = 0;
+        snowCloudsConvertedToRain = 0;
     }
 }

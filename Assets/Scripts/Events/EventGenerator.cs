@@ -148,6 +148,10 @@ public class EventGenerator : MonoBehaviour
     // Abilities
     private UnityEvent<int, Ability> abilityActivatedEvent = new UnityEvent<int, Ability>();
 
+    // Weather
+    private UnityEvent cancelRainCloudEvent = new UnityEvent();
+    private UnityEvent convertSnowToRainEvent = new UnityEvent();
+
     void Awake() {
         if (Singleton == null) {
             Singleton = this;
@@ -1267,6 +1271,24 @@ public class EventGenerator : MonoBehaviour
     }
     public void AddListenerToAbilityActivatedEvent(UnityAction<int, Ability> listener) {
         abilityActivatedEvent.AddListener(listener);
+    }
+
+    // Cancel rain cloud
+
+    public void RaiseCancelRainCloudEvent() {
+        cancelRainCloudEvent.Invoke();
+    }
+    public void AddListenerToCancelRainCloudEvent(UnityAction listener) {
+        cancelRainCloudEvent.AddListener(listener);
+    }
+
+    // Conert snow to rain
+
+    public void RaiseConvertSnowToRainEvent() {
+        convertSnowToRainEvent.Invoke();
+    }
+    public void AddListenerToConvertSnowToRainEvent(UnityAction listener) {
+        convertSnowToRainEvent.AddListener(listener);
     }
     
 }

@@ -295,7 +295,7 @@ public class ActionResolver : MonoBehaviour
                 } else {
                     EventGenerator.Singleton.RaiseSpawnMakeCampChoicePopupEvent(reversedPlayerIds[i]);
                 }
-                yield return new WaitForSeconds(delayBetweenActions);
+                yield return new WaitForSeconds(delayBetweenActions / 2f);
             }
         }
         StartCoroutine(ResolveRestActions());
@@ -320,7 +320,7 @@ public class ActionResolver : MonoBehaviour
                     yield return null;
                 }
                 EventGenerator.Singleton.RaiseGainHealthEvent(reversedPlayerIds[i], 1);
-                yield return new WaitForSeconds(delayBetweenActions);
+                yield return new WaitForSeconds(delayBetweenActions / 2f);
             }
         }
         while (popupsArea.childCount > 0 || animationsInProgress > 0) {
