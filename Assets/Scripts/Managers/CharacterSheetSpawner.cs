@@ -10,11 +10,9 @@ public class CharacterSheetSpawner : MonoBehaviour
 
     // Game Settings
     int playerCount;
-    Dictionary<int, CharacterType> playerCharacters = new Dictionary<int, CharacterType>();
 
     void Awake() {
         playerCount = GameSettings.PlayerCount;
-        playerCharacters = GameSettings.PlayerCharacters;
         InitializePositions();
     }
 
@@ -36,12 +34,12 @@ public class CharacterSheetSpawner : MonoBehaviour
 
     void SpawnCharacterSheets() {
         for (int playerId = 0; playerId < playerCount; playerId++) {
-            SpawnCharacterSheet(playerId, playerCharacters[playerId], positions[playerId]);
+            SpawnCharacterSheet(playerId, GameSettings.PlayerCharacters[playerId], GameSettings.PlayerGenders[playerId], positions[playerId]);
         }
     }
 
-    void SpawnCharacterSheet(int playerId, CharacterType characterType, Vector3 position) {
-        CharacterSheetController prefab = PrefabLoader.Singleton.GetPrefab(characterType);
+    void SpawnCharacterSheet(int playerId, CharacterType characterType, Gender gender, Vector3 position) {
+        CharacterSheetController prefab = PrefabLoader.Singleton.GetPrefab(characterType, gender);
         if (prefab == null) {
             return;
         }

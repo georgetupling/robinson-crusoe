@@ -129,6 +129,10 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
         }
         Transform nearestActionSpace = GetNearestActionSpace();
         ActionType actionType = ActionType.NotFound;
+        if (GetAvailablePosition(nearestActionSpace) != null) {
+            transform.SetParent(GetAvailablePosition(nearestActionSpace), true);
+        }
+        
         if (nearestActionSpace != null && nearestActionSpace.GetComponent<ActionSpace>() != null) {
             actionType = nearestActionSpace.GetComponent<ActionSpace>().Type;
         }
@@ -174,6 +178,7 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
                 }
             }
         }
+        transform.SetParent(playArea, true);
         Transform availablePosition = nearestActionSpace == null ? originalTransform : GetAvailablePosition(nearestActionSpace);
         MoveStyle speed = nearestActionSpace == originalTransform ? MoveStyle.Default : MoveStyle.Fast;
         MoveToTransform(availablePosition, speed);
@@ -229,6 +234,9 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
     }
 
     Transform GetAvailablePosition(Transform actionSpace) {
+        if (actionSpace == null) {
+            return null;
+        }
         for (int index = 0; index < actionSpace.childCount; index++) {
             Transform childTransform = actionSpace.GetChild(index);
             if (childTransform != null && childTransform.gameObject.activeInHierarchy && childTransform.childCount == 0) {

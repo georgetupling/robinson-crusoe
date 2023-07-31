@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CharacterSheetController : ComponentController
 {
+    public CharacterType characterType;
+    public Gender gender;
+    
     // Transform character sheet model is attached to
     [SerializeField] Transform characterSheetTransform;
     
@@ -79,10 +82,6 @@ public class CharacterSheetController : ComponentController
             }
             this.playerId = playerId;
             this.character = character;
-            if (GameSettings.PlayerGenders[playerId] == Gender.Female) {
-                characterSheetTransform.eulerAngles = new Vector3(0, 180, 0);
-                // Flips to the reverse side if the character is female
-            }
             EventGenerator.Singleton.RaiseInitializeHealthTrackerTokenEvent(healthTrackerToken.ComponentId, playerId, character.maximumHealth);
             EventGenerator.Singleton.RaiseInitializeActionPawnEvent(actionPawn0.ComponentId, playerId);
             EventGenerator.Singleton.RaiseInitializeActionPawnEvent(actionPawn1.ComponentId, playerId);

@@ -114,6 +114,8 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<ActionPawnController> actionPawnInitializedEvent = new UnityEvent<ActionPawnController>();
     private UnityEvent<int> playerCanOnlyRestThisTurnEvent = new UnityEvent<int>();
     private UnityEvent<int> playerCanOnlyRestBuildOrMakeCampThisTurnEvent = new UnityEvent<int>();
+    private UnityEvent areSufficientResourcesAvailableEvent = new UnityEvent();
+    private UnityEvent<bool> areSufficientResourcesAvailableResponseEvent = new UnityEvent<bool>();
 
     // Night Phase
     private UnityEvent<List<int>> playersEatingEvent = new UnityEvent<List<int>>(); // Used by the night phase popup to communicate which players are eating
@@ -876,6 +878,23 @@ public class EventGenerator : MonoBehaviour
         playerCanOnlyRestBuildOrMakeCampThisTurnEvent.AddListener(listener);
     }
 
+    // Are sufficient resources available
+
+    public void RaiseAreSufficientResourcesAvailableEvent() {
+        areSufficientResourcesAvailableEvent.Invoke();
+    }
+    public void AddListenerToAreSufficientResourcesAvailableEvent(UnityAction listener) {
+        areSufficientResourcesAvailableEvent.AddListener(listener);
+    }
+
+    // Are sufficient resources available response
+
+    public void RaiseAreSufficientResourcesAvailableResponseEvent(bool response) {
+        areSufficientResourcesAvailableResponseEvent.Invoke(response);
+    }
+    public void AddListenerToAreSufficientResourcesAvailableResponseEvent(UnityAction<bool> listener) {
+        areSufficientResourcesAvailableResponseEvent.AddListener(listener);
+    }
     // Players eating
 
     public void RaisePlayersEatingEvent(List<int> playersEating) {

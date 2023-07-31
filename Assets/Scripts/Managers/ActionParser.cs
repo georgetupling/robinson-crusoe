@@ -29,6 +29,8 @@ public class ActionParser : MonoBehaviour
         EventGenerator.Singleton.AddListenerToGetResourceEvent(OnGetResourceEvent);
         EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
         EventGenerator.Singleton.AddListenerToActionPawnInitializedEvent(OnActionPawnInitializedEvent);
+
+        EventGenerator.Singleton.AddListenerToAreSufficientResourcesAvailableEvent(OnAreSufficientResourcesAvailableEvent);
     }
 
     // For handling queries
@@ -47,6 +49,13 @@ public class ActionParser : MonoBehaviour
     private List<Invention> itemRequirementsMet = new List<Invention>();
 
     // Listeners
+
+    void OnAreSufficientResourcesAvailableEvent() {
+        UpdateActionSpaces();
+        ParseActions();
+        bool response = SufficientResourcesAvailable();
+        EventGenerator.Singleton.RaiseAreSufficientResourcesAvailableResponseEvent(response);
+    }
 
     void OnActionPawnAssignedEvent() {
         UpdateActionSpaces();
@@ -474,10 +483,15 @@ public class ActionParser : MonoBehaviour
 
         // Checks if enough resources are available to complete all action assignments
 
-        StartCoroutine(UpdateResources());
+        isWaitingForHideAvailable = true;
+        isWaitingForWoodAvailable = true;
+        EventGenerator.Singleton.RaiseGetHideEvent();
+        EventGenerator.Singleton.RaiseGetWoodEvent();
+        while (isWaitingForHideAvailable || isWaitingForWoodAvailable) {
+            // Do nothing
+        }
         int unspentWood = woodAvailable;
         int unspentHide = hideAvailable;
-
         if (requiredResources.ContainsKey(ResourceCost.Wood)) {
             int woodRequirement = requiredResources[ResourceCost.Wood];
             if (unspentWood < woodRequirement) {
@@ -522,16 +536,6 @@ public class ActionParser : MonoBehaviour
         }
         return false;
 
-    }
-
-    IEnumerator UpdateResources() {
-        isWaitingForHideAvailable = true;
-        isWaitingForWoodAvailable = true;
-        EventGenerator.Singleton.RaiseGetHideEvent();
-        EventGenerator.Singleton.RaiseGetWoodEvent();
-        while (isWaitingForHideAvailable || isWaitingForWoodAvailable) {
-            yield return null;
-        }
     }
 
     bool CombinationIsValid(List<ResourceCost> requiredResourcesList, List<bool> paidWithHide, int unspentWood, int unspentHide) {

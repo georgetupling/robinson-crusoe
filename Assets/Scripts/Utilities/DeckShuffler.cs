@@ -125,19 +125,19 @@ public class DeckShuffler : MonoBehaviour
         float delayBetweenShakes = shuffleDuration / array.Length;
 
         float shakeDuration = 0.1f;
-        Vector3 scaleShakeStrength = new Vector3(0.005f, 0.005f, 0f);
-        Vector3 postionShakeStrength = new Vector3(0.01f, 0.01f, 0f);
+        Vector3 scaleShakeStrength = new Vector3(0.02f, 0.01f, 0f);
+        // Vector3 postionShakeStrength = new Vector3(0.01f, 0.01f, 0f);
         int vibrato = 20;
         int randomness = 30;
-        bool snapping = false;
+        // bool snapping = false;
         for (int i = 0; i < array.Length; i++) {
             array[i].transform.DOShakeScale(shakeDuration, scaleShakeStrength, vibrato, randomness);
-            array[i].transform.DOShakePosition(shakeDuration, postionShakeStrength, vibrato, randomness, snapping);
+            //array[i].transform.DOShakePosition(shakeDuration, postionShakeStrength, vibrato, randomness, snapping);
             yield return new WaitForSeconds(delayBetweenShakes);
         }
         for (int i = array.Length - 1; i >= 0; i--) {
             array[i].transform.DOShakeScale(shakeDuration, scaleShakeStrength, vibrato, randomness);
-            array[i].transform.DOShakePosition(shakeDuration, postionShakeStrength, vibrato, randomness, snapping);
+            //array[i].transform.DOShakePosition(shakeDuration, postionShakeStrength, vibrato, randomness, snapping);
             yield return new WaitForSeconds(delayBetweenShakes);
         }
         EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);

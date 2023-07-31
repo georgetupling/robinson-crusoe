@@ -14,7 +14,7 @@ public class PrefabLoader : MonoBehaviour
     public static PrefabLoader Singleton { get; private set; }
 
     Dictionary<TokenType, TokenController> tokenPrefabs = new Dictionary<TokenType, TokenController>();
-    Dictionary<CharacterType, CharacterSheetController> characterSheetPrefabs = new Dictionary<CharacterType, CharacterSheetController>();
+    List<CharacterSheetController> characterSheetPrefabs = new List<CharacterSheetController>();
 
     private Dictionary<ResourceType, TokenType> resourceToTokenMap = new Dictionary<ResourceType, TokenType> {
             { ResourceType.Wood, TokenType.Wood },
@@ -45,9 +45,11 @@ public class PrefabLoader : MonoBehaviour
 
     void LoadCharacterSheetPrefabs() {
         foreach (CharacterType characterType in Enum.GetValues(typeof(CharacterType))) {
-            string prefabName = characterType.ToString() + "Prefab";
-            CharacterSheetController prefab = Resources.Load<CharacterSheetController>(Path.Combine("Prefabs", prefabName));
-            characterSheetPrefabs[characterType] = prefab;
+            foreach (Gender gender in Enum.GetValues(typeof(Gender))) {
+                string prefabName = characterType.ToString() + gender.ToString() + "Prefab";
+                CharacterSheetController prefab = Resources.Load<CharacterSheetController>(Path.Combine("Prefabs", prefabName));
+                characterSheetPrefabs.Add(prefab);
+            }
         }
     }
 
@@ -66,11 +68,11 @@ public class PrefabLoader : MonoBehaviour
         return GetPrefab(tokenType);
     }
 
-    public CharacterSheetController GetPrefab(CharacterType characterType) {
-        if (!characterSheetPrefabs.ContainsKey(characterType) || characterSheetPrefabs[characterType] == null) {
-            Debug.LogError($"Prefab for {characterType} character sheet does not exist.");
-            return null;
+    public CharacterSheetController GetPrefab(CharacterType characterType, Gender gender) {
+        CharacterSheetController prefab = characterSheetPrefabs.Find(x => x.characterType == characterType && x.gender == gender);
+        if (prefab == null) {
+            Debug.LogError($"Failed to load {gender} {characterType} prefab.");
         }
-        return characterSheetPrefabs[characterType];
+        return prefab;
     }
 }

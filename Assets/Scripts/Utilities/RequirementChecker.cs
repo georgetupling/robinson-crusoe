@@ -10,16 +10,14 @@ public class RequirementChecker : MonoBehaviour
 {
     public static RequirementChecker Singleton { get; private set; }
 
-    private bool isWaitingForHideAvailable = false;
-    private bool isWaitingForWoodAvailable = false;
     private bool isWaitingForWeaponLevel = false;
-    private int hideAvailable = 0;
-    private int woodAvailable = 0;
     private int weaponLevel = 0;
     private int roofLevel = 0;
     private int palisadeLevel = 0;
     private bool shelterIsBuilt;
     private Dictionary<int, int> playerDetermination = new Dictionary<int, int>(); // Maps playerId to determination
+    public bool sufficientResourcesAvailable;
+    bool waitingOnAreSufficientResourcesAvailable;
 
     private List<Terrain> terrainRequirementsMet = new List<Terrain>();
     private List<Invention> itemRequirementsMet = new List<Invention>();
@@ -37,7 +35,6 @@ public class RequirementChecker : MonoBehaviour
         if (Singleton == null) {
             Singleton = this;
         }
-        EventGenerator.Singleton.AddListenerToGetResourceEvent(OnGetResourceEvent);
         EventGenerator.Singleton.AddListenerToGetWeaponLevelEvent(OnGetWeaponLevelEvent);
         EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
         EventGenerator.Singleton.AddListenerToTerrainRequirementMetEvent(OnTerrainRequirementMetEvent);
@@ -45,17 +42,15 @@ public class RequirementChecker : MonoBehaviour
         EventGenerator.Singleton.AddListenerToGetRoofLevelResponseEvent(OnGetRoofLevelResponseEvent);
         EventGenerator.Singleton.AddListenerToGetPalisadeLevelResponseEvent(OnGetPalisadeLevelResponseEvent);
         EventGenerator.Singleton.AddListenerToGetDeterminationResponseEvent(OnGetDeterminationResponseEvent);
+        EventGenerator.Singleton.AddListenerToAreSufficientResourcesAvailableResponseEvent(OnAreSufficentResourcesAvailableResponseEvent);
     }
 
     // Listeners
 
-    void OnGetResourceEvent(string eventType, int amount) {
-        if (eventType == GetResourceEvent.GetHideResponse) {
-            hideAvailable = amount;
-            isWaitingForHideAvailable = false;
-        } else if (eventType == GetResourceEvent.GetWoodResponse) {
-            woodAvailable = amount;
-            isWaitingForWoodAvailable = false;
+    void OnAreSufficentResourcesAvailableResponseEvent(bool response) {
+        if (waitingOnAreSufficientResourcesAvailable) {
+            sufficientResourcesAvailable = response;
+            waitingOnAreSufficientResourcesAvailable = false;
         }
     }
 
@@ -118,8 +113,12 @@ public class RequirementChecker : MonoBehaviour
                 return false;
             }
         }
-        StartCoroutine(UpdateResources());
-        if (!SufficientResourcesAvailable(inventionCard.resourceCosts)) {
+        waitingOnAreSufficientResourcesAvailable = true;
+        EventGenerator.Singleton.RaiseAreSufficientResourcesAvailableEvent();
+        while (waitingOnAreSufficientResourcesAvailable) {
+            // Do nothing
+        }
+        if (!sufficientResourcesAvailable) {
             return false;
         }
         if (inventionCard.isPersonalInvention) {
@@ -142,8 +141,12 @@ public class RequirementChecker : MonoBehaviour
         } else {
             resourceCost = buildingCostsByPlayerCount[GameSettings.PlayerCount];
         }
-        StartCoroutine(UpdateResources());
-        if (!SufficientResourceAvailable(resourceCost)) {
+        waitingOnAreSufficientResourcesAvailable = true;
+        EventGenerator.Singleton.RaiseAreSufficientResourcesAvailableEvent();
+        while (waitingOnAreSufficientResourcesAvailable) {
+            // Do nothing
+        }
+        if (!sufficientResourcesAvailable) {
             return false;
         }
 
@@ -189,24 +192,18 @@ public class RequirementChecker : MonoBehaviour
         if (weaponLevel < eventCard.threatWeaponRequirement) {
             return false;
         }
-        StartCoroutine(UpdateResources());
-        if (!SufficientResourcesAvailable(eventCard.threatResourceCosts)) {
+        waitingOnAreSufficientResourcesAvailable = true;
+        EventGenerator.Singleton.RaiseAreSufficientResourcesAvailableEvent();
+        while (waitingOnAreSufficientResourcesAvailable) {
+            // Do nothing
+        }
+        if (!sufficientResourcesAvailable) {
             return false;
         }
         return true;
     }
 
     // Helper methods
-
-    IEnumerator UpdateResources() {
-        isWaitingForHideAvailable = true;
-        isWaitingForWoodAvailable = true;
-        EventGenerator.Singleton.RaiseGetHideEvent();
-        EventGenerator.Singleton.RaiseGetWoodEvent();
-        while (isWaitingForHideAvailable || isWaitingForWoodAvailable) {
-            yield return null;
-        }
-    }
 
     IEnumerator UpdateWeaponLevel() {
         isWaitingForWeaponLevel = true;
@@ -215,34 +212,5 @@ public class RequirementChecker : MonoBehaviour
             yield return null;
         }
     }
-
-    bool SufficientResourcesAvailable(List<ResourceCost> resourceCosts) {
-        foreach (ResourceCost resourceCost in resourceCosts) {
-            if (!SufficientResourceAvailable(resourceCost)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool SufficientResourceAvailable(ResourceCost resourceCost) {
-        switch(resourceCost) {
-            case ResourceCost.Wood: if (woodAvailable < 1) return false; break;
-            case ResourceCost.Hide: if (hideAvailable < 1) return false; break;
-            case ResourceCost.TwoWood: if (woodAvailable < 2) return false; break;
-            case ResourceCost.ThreeWood: if (woodAvailable < 3) return false; break;
-            case ResourceCost.FourWood: if (woodAvailable < 4) return false; break;
-            case ResourceCost.TwoHide: if (hideAvailable < 2) return false; break;
-            case ResourceCost.ThreeHide: if (hideAvailable < 3) return false; break;
-            case ResourceCost.TwoWoodOrHide: if (woodAvailable < 2 && hideAvailable < 1) return false; break;
-            case ResourceCost.ThreeWoodOrTwoHide: if (woodAvailable < 3 && hideAvailable < 2) return false; break;
-            case ResourceCost.FourWoodOrThreeHide: if (woodAvailable < 4 && hideAvailable < 3) return false; break;
-            case ResourceCost.WoodUnlessShovel: if (!itemRequirementsMet.Contains(Invention.Shovel) && woodAvailable < 1) return false; break;
-            default: Debug.LogError($"No method for validating resource cost {resourceCost}."); return false;
-        }
-        return true;
-    }
-
-
 
 }
