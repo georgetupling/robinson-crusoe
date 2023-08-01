@@ -33,6 +33,7 @@ public class TurnManager : MonoBehaviour
         currentPhase = Phase.Event;
         EventGenerator.Singleton.AddListenerToEndPhaseEvent(OnEndPhaseEvent);
         EventGenerator.Singleton.AddListenerToAnimationInProgressEvent(OnAnimationInProgressEvent);
+        EventGenerator.Singleton.AddListenerToGetPhaseEvent(OnGetPhaseEvent);
     }
 
     void Start() {
@@ -54,6 +55,10 @@ public class TurnManager : MonoBehaviour
         } else {
             animationsInProgress--;
         }
+    }
+
+    void OnGetPhaseEvent() {
+        EventGenerator.Singleton.RaiseGetPhaseResponseEvent(currentPhase);
     }
 
     IEnumerator WaitForAnimationsThenEndPhase() {

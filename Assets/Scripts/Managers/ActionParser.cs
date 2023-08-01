@@ -9,7 +9,7 @@ public class ActionParser : MonoBehaviour
     public bool actionsReadyToSubmit = false;
     public List<ActionAssignment> actionAssignments = new List<ActionAssignment>();
 
-    // A list of all action pawns in the scene (including disabled ones!)
+    // A list of all player action pawns in the scene (including disabled ones!)
     List<ActionPawnController> actionPawns = new List<ActionPawnController>();
 
     private Dictionary<int, ResourceCost> buildingCostsByPlayerCount = new Dictionary<int, ResourceCost>() {

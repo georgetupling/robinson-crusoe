@@ -121,7 +121,7 @@
     },
     {
         "inventionName": "Fireplace",
-        "itemRequirements": [],
+        "itemRequirements": ["Fire"],
         "resourceCosts": [],
         "terrainTypeRequirement": "None",
         "effectsOnBuild": ["FireplaceEffect"],

@@ -763,6 +763,51 @@ Transform:
   m_Father: {fileID: 2209780158044373831}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3797696479965768523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1191005603772077792}
+  - component: {fileID: 5184371878634122055}
+  m_Layer: 0
+  m_Name: ActionPawnPosition2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1191005603772077792
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3797696479965768523}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.522, y: -0.129, z: -0.049999997}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4476483831360773113}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5184371878634122055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3797696479965768523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c12800f4c6341824f87cf65a503b61a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 8485670516454630430, guid: 9ee7da442e018fd4d943605dc1cafbc4, type: 3}
 --- !u!1 &3831328265882234168
 GameObject:
   m_ObjectHideFlags: 0
@@ -1084,6 +1129,7 @@ Transform:
   - {fileID: 4903231460809123177}
   - {fileID: 2052479280215538521}
   - {fileID: 6788425013286852477}
+  - {fileID: 1191005603772077792}
   - {fileID: 211615300787733077}
   - {fileID: 2209780158044373831}
   - {fileID: 4552479629281790806}
@@ -1129,6 +1175,7 @@ MonoBehaviour:
   abilityArea1: {fileID: 3115365897169303762}
   abilityArea2: {fileID: 600023142056825736}
   abilityArea3: {fileID: 7341826097772478885}
+  singleUsePawnSpawner: {fileID: 5184371878634122055}
 --- !u!1 &5605966502721066797
 GameObject:
   m_ObjectHideFlags: 0

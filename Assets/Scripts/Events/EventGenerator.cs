@@ -77,6 +77,8 @@ public class EventGenerator : MonoBehaviour
     private PhaseStartEvent phaseStartEvent = new PhaseStartEvent();
     private TurnStartEvent turnStartEvent = new TurnStartEvent();
     private AnimationInProgressEvent animationInProgressEvent = new AnimationInProgressEvent();
+    private UnityEvent getPhaseEvent = new UnityEvent();
+    private UnityEvent<Phase> getPhaseResponseEvent = new UnityEvent<Phase>();
 
     // Cards and Tokens
     private CardSpawnedEvent cardSpawnedEvent = new CardSpawnedEvent();
@@ -153,6 +155,7 @@ public class EventGenerator : MonoBehaviour
     // Abilities
     private UnityEvent<int, Ability> abilityActivatedEvent = new UnityEvent<int, Ability>();
     private UnityEvent<int> economicalConstructionEvent = new UnityEvent<int>();
+    private UnityEvent<int, PawnType> spawnSingleUsePawnEvent = new UnityEvent<int, PawnType>();
 
     // Weather
     private UnityEvent cancelRainCloudEvent = new UnityEvent();
@@ -1082,6 +1085,24 @@ public class EventGenerator : MonoBehaviour
         animationInProgressEvent.AddListener(listener);
     }
 
+    // Get phase event
+
+    public void RaiseGetPhaseEvent() {
+        getPhaseEvent.Invoke();
+    }
+    public void AddListenerToGetPhaseEvent(UnityAction listener) {
+        getPhaseEvent.AddListener(listener);
+    }
+
+    // Get phase response event
+
+    public void RaiseGetPhaseResponseEvent(Phase currentPhase) {
+        getPhaseResponseEvent.Invoke(currentPhase);
+    }
+    public void AddListenerToGetPhaseResponseEvent(UnityAction<Phase> listener) {
+        getPhaseResponseEvent.AddListener(listener);
+    }
+
     // CardSpawnedEvent
 
     public void RaiseCardSpawnedEvent(Deck deck) {
@@ -1331,6 +1352,16 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToEconomicalConstructionEvent(UnityAction<int> listener) {
         economicalConstructionEvent.AddListener(listener);
     }
+
+    // Spawn single use pawn
+
+    public void RaiseSpawnSingleUsePawnEvent(int playerId, PawnType pawnType) {
+        spawnSingleUsePawnEvent.Invoke(playerId, pawnType);
+    }
+    public void AddListenerToSpawnSingleUsePawnEvent(UnityAction<int, PawnType> listener) {
+        spawnSingleUsePawnEvent.AddListener(listener);
+    }
+
 
     // Cancel rain cloud
 

@@ -14,11 +14,13 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
     Transform playArea;
     List<Transform> actionSpaces = new List<Transform>();
 
+    // Fields for non-standard pawns
+    public bool isSingleUse { get; private set; }
+    public PawnType pawnType { get; private set; }
+
     // Effects modifying action placement
     bool canOnlyRestThisTurn;
     bool canOnlyRestBuildOrMakeCampThisTurn;
-
-
     
     protected override void Awake() {
         base.Awake();
@@ -32,6 +34,7 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
         EventGenerator.Singleton.AddListenerToPlayerCanOnlyRestThisTurnEvent(OnPlayerCanOnlyRestThisTurnEffect);
         EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
         EventGenerator.Singleton.AddListenerToPlayerCanOnlyRestBuildOrMakeCampThisTurnEvent(OnPlayerCanOnlyRestBuildOrMakeCampThisTurnEvent);
+        EventGenerator.Singleton.AddListenerToGetPhaseResponseEvent(OnGetPhaseResponseEvent);
     }
 
     void UpdateActionSpaces() {
@@ -42,19 +45,19 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
         }
     }
 
-    // Listeners
+    // Initialisation
 
     void OnInitializeActionPawnEvent(int componentId, int playerId) {
+        // This event is used to initialize player pawns
         if (componentId != this.ComponentId) {
             return;
         }
         this.playerId = playerId;
+        isSingleUse =  false;
+        pawnType = PawnType.Player;
         string materialName = GameSettings.PlayerCharacters[playerId].ToString() + GameSettings.PlayerGenders[playerId].ToString() + "ActionPawnMaterial";
         Material material = Resources.Load<Material>(Path.Combine("Materials/Action Pawns", materialName));
         GetComponent<MeshRenderer>().material = material;
-        if (GameSettings.PlayerGenders[playerId] == Gender.Female) {
-            // TODO
-        }
         // Passes the player Id to the ActionPawnDisabler if one exists
         ActionPawnDisabler actionPawnDisabler = GetComponent<ActionPawnDisabler>();
         if (actionPawnDisabler != null) {
@@ -62,6 +65,24 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
         }
         EventGenerator.Singleton.RaiseActionPawnInitializedEvent(this);
     }
+
+    public void InitializeNonPlayerPawn(int playerId, bool isSingleUse, PawnType pawnType) {
+        // This method is used to initialize non-player pawns
+        this.playerId = playerId;
+        this.isSingleUse =  isSingleUse;
+        this.pawnType = pawnType;
+        string materialName = pawnType.ToString() + "ActionPawnMaterial";
+        Material material = Resources.Load<Material>(Path.Combine("Materials/Action Pawns", materialName));
+        GetComponent<MeshRenderer>().material = material;
+        // Passes the player Id to the ActionPawnDisabler if one exists
+        ActionPawnDisabler actionPawnDisabler = GetComponent<ActionPawnDisabler>();
+        if (actionPawnDisabler != null) {
+            actionPawnDisabler.SetPlayerId(playerId);
+        }
+        EventGenerator.Singleton.RaiseGetPhaseEvent();
+    }
+
+    // Listeners
 
     void OnPhaseStartEvent(Phase phase) {
         isActionPhase = phase == Phase.Action;
@@ -89,9 +110,14 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
     }
 
     void OnTurnStartEvent(int turnStarted) {
+        // Certain effects end at the start of the next turn
         canOnlyRestThisTurn = false;
         canOnlyRestBuildOrMakeCampThisTurn = false;
-        // Effects end at the start of the next turn
+        // Single use pawns disappear at the start of the turn
+        if (isSingleUse) {
+            // EventGenerator.Singleton.RaiseActionPawnDestroyedEvent(this.ComponentId);
+            Destroy(gameObject);
+        }
     }
 
     void OnPlayerCanOnlyRestBuildOrMakeCampThisTurnEvent(int playerId) {
@@ -99,6 +125,10 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
             return;
         }
         canOnlyRestBuildOrMakeCampThisTurn = true;
+    }
+
+    void OnGetPhaseResponseEvent(Phase currentPhase) {
+        isActionPhase = currentPhase == Phase.Action;
     }
 
     // Methods for dragging and dropping
@@ -132,9 +162,21 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
         if (GetAvailablePosition(nearestActionSpace) != null) {
             transform.SetParent(GetAvailablePosition(nearestActionSpace), true);
         }
-        
         if (nearestActionSpace != null && nearestActionSpace.GetComponent<ActionSpace>() != null) {
             actionType = nearestActionSpace.GetComponent<ActionSpace>().Type;
+        }
+        // Applies restrictions for specific pawn types
+        List<ActionType> buildTypes = new List<ActionType> { ActionType.BuildShelter, ActionType.BuildRoof, ActionType.BuildPalisade, ActionType.BuildWeapon };
+        if (pawnType != PawnType.Player) {
+            if (
+                (pawnType == PawnType.Build && !(buildTypes.Contains(actionType) || actionType == ActionType.BuildInvention)) ||
+                (pawnType == PawnType.Gather && actionType != ActionType.Gather) ||
+                (pawnType == PawnType.Explore && actionType != ActionType.Explore) ||
+                (pawnType == PawnType.Hunting && actionType != ActionType.Hunting)
+                // TODO: Add conditions for assigning dog and Friday!
+                ) {
+                nearestActionSpace = null;
+            }
         }
         // If the player can only rest, sets non-rest action spaces to null
         if (nearestActionSpace != null && canOnlyRestThisTurn && actionType != ActionType.Rest) {
@@ -160,7 +202,6 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
         }
         // Checks if the action space is a build action and validates whether the requirements are met
         if (nearestActionSpace != null && actionType != ActionType.NotFound) {
-            List<ActionType> buildTypes = new List<ActionType> { ActionType.BuildShelter, ActionType.BuildRoof, ActionType.BuildPalisade, ActionType.BuildWeapon };
             if (buildTypes.Contains(actionType) && !RequirementChecker.Singleton.BuildRequirementsMet(actionType)) {
                 nearestActionSpace = null;
             }

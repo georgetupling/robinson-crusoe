@@ -170,6 +170,51 @@ Transform:
   m_Father: {fileID: 3681802514755979052}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &751792448493087339
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 232656498992963334}
+  - component: {fileID: 4526374241088621642}
+  m_Layer: 0
+  m_Name: ActionPawnPosition2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &232656498992963334
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751792448493087339}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.522, y: -0.129, z: -0.049999997}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6950284871511025800}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4526374241088621642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751792448493087339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c12800f4c6341824f87cf65a503b61a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 8485670516454630430, guid: 9ee7da442e018fd4d943605dc1cafbc4, type: 3}
 --- !u!1 &883464348527483203
 GameObject:
   m_ObjectHideFlags: 0
@@ -417,7 +462,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2155916987158417689}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.44900003, y: 0.09799999, z: -0.049999997}
+  m_LocalPosition: {x: -0.44900006, y: 0.09799999, z: -0.049999997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -843,13 +888,14 @@ Transform:
   m_Children:
   - {fileID: 2794072159434067115}
   - {fileID: 6604233763644430386}
-  - {fileID: 3708284368174327767}
   - {fileID: 8729217141033933353}
   - {fileID: 47871346953578421}
   - {fileID: 5858168878219879771}
   - {fileID: 5521285017490959163}
   - {fileID: 3139148665589940601}
   - {fileID: 7492486732790577747}
+  - {fileID: 3708284368174327767}
+  - {fileID: 232656498992963334}
   - {fileID: 5524419631666467416}
   - {fileID: 3681802514755979052}
   - {fileID: 3842071255397226137}
@@ -895,6 +941,7 @@ MonoBehaviour:
   abilityArea1: {fileID: 6401820340750016862}
   abilityArea2: {fileID: 3577226758240468121}
   abilityArea3: {fileID: 5856323726933528222}
+  singleUsePawnSpawner: {fileID: 4526374241088621642}
 --- !u!1 &3471308318998415661
 GameObject:
   m_ObjectHideFlags: 0

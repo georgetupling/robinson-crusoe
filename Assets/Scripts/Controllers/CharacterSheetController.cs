@@ -49,6 +49,9 @@ public class CharacterSheetController : ComponentController
     [SerializeField] AbilityAreaClickHandler abilityArea3;
 
     List<AbilityAreaClickHandler> abilityAreas;
+
+    // Single use pawn spawner
+    [SerializeField] SingleUsePawnSpawner singleUsePawnSpawner;
     
     int playerId;
     Character character;
@@ -86,6 +89,9 @@ public class CharacterSheetController : ComponentController
             EventGenerator.Singleton.RaiseInitializeActionPawnEvent(actionPawn0.ComponentId, playerId);
             EventGenerator.Singleton.RaiseInitializeActionPawnEvent(actionPawn1.ComponentId, playerId);
             personalInvention.InitializePersonalInvention(playerId, character.personalInvention);
+            if (singleUsePawnSpawner != null) {
+                singleUsePawnSpawner.SetPlayerId(playerId);
+            }
             for (int i = 0; i < abilityAreas.Count; i++) {
                 if (abilityAreas[i] != null) {
                     abilityAreas[i].Initialize(playerId, character.abilities[i]);
