@@ -4995,6 +4995,7 @@ MonoBehaviour:
   nightPhasePopupPrefab: {fileID: 5894890414741770321, guid: 51022d4c5ee8b214ebd530529c138e52, type: 3}
   dicePopupPrefab: {fileID: 4151864331969145337, guid: 450d8148656f8294cb98a7f8705003dd, type: 3}
   abilityPopupPrefab: {fileID: 4448420331352022548, guid: 91959ab629a6c99439209fc664697c7f, type: 3}
+  chooseInventionCardPopupPrefab: {fileID: 6864355774286461605, guid: cb426bc20c3919c40919fcabe64214cf, type: 3}
   parentTransform: {fileID: 473154762}
 --- !u!1 &794049183
 GameObject:

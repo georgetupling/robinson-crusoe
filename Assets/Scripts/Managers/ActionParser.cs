@@ -18,20 +18,6 @@ public class ActionParser : MonoBehaviour
         { 3, ResourceCost.ThreeWoodOrTwoHide },
         { 4, ResourceCost.FourWoodOrThreeHide }
     };
-    
-    void Awake() {
-        if (singleton == null) {
-            singleton = this;
-        }
-        EventGenerator.Singleton.AddListenerToActionPawnAssignedEvent(OnActionPawnAssignedEvent);
-        EventGenerator.Singleton.AddListenerToGetDistanceFromCampEvent(OnGetDistanceFromCampEvent);
-        EventGenerator.Singleton.AddListenerToGetDistanceFromCampToLocationEvent(OnGetDistanceFromCampToLocationEvent);
-        EventGenerator.Singleton.AddListenerToGetResourceEvent(OnGetResourceEvent);
-        EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
-        EventGenerator.Singleton.AddListenerToActionPawnInitializedEvent(OnActionPawnInitializedEvent);
-
-        EventGenerator.Singleton.AddListenerToAreSufficientResourcesAvailableEvent(OnAreSufficientResourcesAvailableEvent);
-    }
 
     // For handling queries
 
@@ -47,6 +33,25 @@ public class ActionParser : MonoBehaviour
     private int woodAvailable = 0;
 
     private List<Invention> itemRequirementsMet = new List<Invention>();
+    
+    // Flags for applying specific effects
+    
+    int economicalConstructionPlayerId = -1;
+
+    void Awake() {
+        if (singleton == null) {
+            singleton = this;
+        }
+        EventGenerator.Singleton.AddListenerToActionPawnAssignedEvent(OnActionPawnAssignedEvent);
+        EventGenerator.Singleton.AddListenerToGetDistanceFromCampEvent(OnGetDistanceFromCampEvent);
+        EventGenerator.Singleton.AddListenerToGetDistanceFromCampToLocationEvent(OnGetDistanceFromCampToLocationEvent);
+        EventGenerator.Singleton.AddListenerToGetResourceEvent(OnGetResourceEvent);
+        EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
+        EventGenerator.Singleton.AddListenerToActionPawnInitializedEvent(OnActionPawnInitializedEvent);
+        EventGenerator.Singleton.AddListenerToAreSufficientResourcesAvailableEvent(OnAreSufficientResourcesAvailableEvent);
+        EventGenerator.Singleton.AddListenerToEconomicalConstructionEvent(OnEconomicalConstructionEvent);
+        EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
+    }
 
     // Listeners
 
@@ -107,6 +112,14 @@ public class ActionParser : MonoBehaviour
     void OnActionPawnInitializedEvent(ActionPawnController actionPawn) {
         // Adds the action pawn to the list
         actionPawns.Add(actionPawn);
+    }
+    
+    void OnEconomicalConstructionEvent(int playerId) {
+        economicalConstructionPlayerId = playerId;
+    }
+
+    void OnTurnStartEvent(int turnStarted) {
+        economicalConstructionPlayerId = -1;
     }
 
     // Methods for parsing and validating actions
@@ -401,12 +414,31 @@ public class ActionParser : MonoBehaviour
     bool SufficientResourcesAvailable() {
         Dictionary<ResourceCost, int> requiredResources = new Dictionary<ResourceCost, int>();
 
+        bool economicalConstructionApplied = false;
         foreach (ActionAssignment actionAssignment in actionAssignments) {
             foreach (ResourceCost resourceCost in actionAssignment.resourceCosts) {
-                if (requiredResources.ContainsKey(resourceCost)) {
-                    requiredResources[resourceCost]++;
+                // Checks if economical construction is active and takes it into account by reducing wood costs by 1
+                ResourceCost requiredCost = resourceCost;
+                if (actionAssignment.playerIds[0] == economicalConstructionPlayerId && !economicalConstructionApplied) {
+                    switch (resourceCost) {
+                        case ResourceCost.Wood: requiredCost = ResourceCost.ReducedToZero; economicalConstructionApplied = true; break;
+                        case ResourceCost.TwoWood: requiredCost = ResourceCost.Wood; economicalConstructionApplied = true; break;
+                        case ResourceCost.ThreeWood: requiredCost = ResourceCost.TwoWood; economicalConstructionApplied = true; break;
+                        case ResourceCost.FourWood: requiredCost = ResourceCost.ThreeWood; economicalConstructionApplied = true; break;
+                        case ResourceCost.TwoWoodOrHide: requiredCost = ResourceCost.WoodOrHide; economicalConstructionApplied = true; break;
+                        case ResourceCost.ThreeWoodOrTwoHide: requiredCost = ResourceCost.TwoWoodOrTwoHide; economicalConstructionApplied = true; break;
+                        case ResourceCost.FourWoodOrThreeHide: requiredCost = ResourceCost.ThreeWoodOrThreeHide; economicalConstructionApplied = true; break;
+                    }
+                }
+                if (requiredCost == ResourceCost.ReducedToZero) {
+                    continue;
+                }
+
+                // Then adds the resources to the dictionary
+                if (requiredResources.ContainsKey(requiredCost)) {
+                    requiredResources[requiredCost]++;
                 } else {
-                    requiredResources[resourceCost] = 1;
+                    requiredResources[requiredCost] = 1;
                 }
             }
         }
@@ -559,6 +591,24 @@ public class ActionParser : MonoBehaviour
                     hideRequirement += 3;
                 } else {
                     woodRequirement += 4;
+                }
+            } else if (requiredResourcesList[i] == ResourceCost.WoodOrHide) {
+                if (paidWithHide[i] == true) {
+                    hideRequirement += 1;
+                } else {
+                    woodRequirement += 1;
+                }
+            } else if (requiredResourcesList[i] == ResourceCost.TwoWoodOrTwoHide) {
+                if (paidWithHide[i] == true) {
+                    hideRequirement += 2;
+                } else {
+                    woodRequirement += 2;
+                } 
+            } else if (requiredResourcesList[i] == ResourceCost.ThreeWoodOrThreeHide) {
+                if (paidWithHide[i] == true) {
+                    hideRequirement += 3;
+                } else {
+                    woodRequirement += 3;
                 }
             } else {
                 Debug.LogError("Invalid resource cost.");

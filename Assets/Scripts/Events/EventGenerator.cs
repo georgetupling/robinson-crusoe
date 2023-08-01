@@ -65,6 +65,8 @@ public class EventGenerator : MonoBehaviour
     private GetInventionCardEvent getInventionCardEvent = new GetInventionCardEvent();
     private UpdateBuiltInventionsEvent updateBuiltInventionsEvent = new UpdateBuiltInventionsEvent();
     private UnityEvent<InventionCardController, Invention> personalInventionSpawnedEvent = new UnityEvent<InventionCardController, Invention>();
+    private UnityEvent<int> drawInventionCardsAndChooseOneEvent = new UnityEvent<int>();
+    private UnityEvent<List<InventionCard>, int> inventionCardChosenFromSelectionEvent = new UnityEvent<List<InventionCard>, int>();
 
 
     // Miscellaneous
@@ -133,6 +135,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<int> spawnMakeCampChoicePopupEvent = new UnityEvent<int>();
     private UnityEvent<int>  spawnNightPhasePopupEvent = new UnityEvent<int>();
     private UnityEvent<int, Ability> spawnAbilityPopupEvent = new UnityEvent<int, Ability>();
+    private UnityEvent<List<InventionCard>> spawnChooseInventionCardPopupEvent = new UnityEvent<List<InventionCard>>();
 
     // Player Input
     private UnityEvent<bool> chooseAdjacentTileEvent = new UnityEvent<bool>();
@@ -149,6 +152,7 @@ public class EventGenerator : MonoBehaviour
 
     // Abilities
     private UnityEvent<int, Ability> abilityActivatedEvent = new UnityEvent<int, Ability>();
+    private UnityEvent<int> economicalConstructionEvent = new UnityEvent<int>();
 
     // Weather
     private UnityEvent cancelRainCloudEvent = new UnityEvent();
@@ -582,6 +586,24 @@ public class EventGenerator : MonoBehaviour
     }
     public void AddListenerToPersonalInventionSpawnedEvent(UnityAction<InventionCardController, Invention> listener) {
         personalInventionSpawnedEvent.AddListener(listener);
+    }
+
+    // Draw invention cards and choose one
+
+    public void RaiseDrawInventionCardsAndChooseOneEvent(int numberOfCards) {
+        drawInventionCardsAndChooseOneEvent.Invoke(numberOfCards);
+    }
+    public void AddListenerToDrawInventionCardsAndChooseOneEvent(UnityAction<int> listener) {
+        drawInventionCardsAndChooseOneEvent.AddListener(listener);
+    }
+
+    // Invention card chosen from selection event
+
+    public void RaiseInventionCardChosenFromSelectionEvent(List<InventionCard> inventionCards, int indexOfChosenCard) {
+        inventionCardChosenFromSelectionEvent.Invoke(inventionCards, indexOfChosenCard);
+    }
+    public void AddListenerToInventionCardChosenFromSelectionEvent(UnityAction<List<InventionCard>, int> listener) {
+        inventionCardChosenFromSelectionEvent.AddListener(listener);
     }
     
     // TrackerTokenEvent
@@ -1213,6 +1235,15 @@ public class EventGenerator : MonoBehaviour
         spawnAbilityPopupEvent.AddListener(listener);
     }
 
+    // Spawn choose invention card popup event
+
+    public void RaiseSpawnChooseInventionCardPopupEvent(List<InventionCard> inventionCards) {
+        spawnChooseInventionCardPopupEvent.Invoke(inventionCards);
+    }
+    public void AddListenerToSpawnChooseInventionCardPopupEvent(UnityAction<List<InventionCard>> listener) {
+        spawnChooseInventionCardPopupEvent.AddListener(listener);
+    }
+
 
     // Choose adjacent camp event
 
@@ -1290,6 +1321,15 @@ public class EventGenerator : MonoBehaviour
     }
     public void AddListenerToAbilityActivatedEvent(UnityAction<int, Ability> listener) {
         abilityActivatedEvent.AddListener(listener);
+    }
+
+    // Economical construction
+
+    public void RaiseEconomicalConstructionEvent(int playerId) {
+        economicalConstructionEvent.Invoke(playerId);
+    }
+    public void AddListenerToEconomicalConstructionEvent(UnityAction<int> listener) {
+        economicalConstructionEvent.AddListener(listener);
     }
 
     // Cancel rain cloud

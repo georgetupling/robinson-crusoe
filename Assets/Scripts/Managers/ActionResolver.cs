@@ -23,6 +23,11 @@ public class ActionResolver : MonoBehaviour
 
     bool rolledSuccess = false;
 
+    // Flags for applying specific effects
+    
+    int economicalConstructionPlayerId = -1;
+    bool economicalConstructionApplied = false;
+
     void Awake() {
         if (singleton == null) {
             singleton = this;
@@ -35,6 +40,8 @@ public class ActionResolver : MonoBehaviour
         EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
         EventGenerator.Singleton.AddListenerToDieRolledEvent(OnDieRolledEvent);
         EventGenerator.Singleton.AddListenerToGetDeterminationResponseEvent(OnGetDeterminationResponseEvent);
+        EventGenerator.Singleton.AddListenerToEconomicalConstructionEvent(OnEconomicalConstructionEvent);
+        EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
     }
 
     // Listeners
@@ -84,6 +91,15 @@ public class ActionResolver : MonoBehaviour
         } else {
             playerDetermination.Add(playerId, determination);
         }
+    }
+
+    void OnEconomicalConstructionEvent(int playerId) {
+        economicalConstructionPlayerId = playerId;
+    }
+
+    void OnTurnStartEvent(int turnStarted) {
+        economicalConstructionPlayerId = -1;
+        economicalConstructionApplied = false;
     }
 
     // Methods for resolving actions
@@ -336,13 +352,36 @@ public class ActionResolver : MonoBehaviour
     // Helper methods
 
     bool PayCosts(List<ResourceCost> resourceCosts, ActionAssignment actionAssignment) {
+        // This loop checks if economical construction is active and if it is reduces a wood cost by 1
+        // The (potentially) modified values are stored in a new list to avoid changing the original list as we iterate over it
+        List<ResourceCost> modifiedResourceCosts = new List<ResourceCost>();
+        if (economicalConstructionPlayerId == actionAssignment.playerIds[0] && !economicalConstructionApplied) {
+            foreach(ResourceCost resourceCost in resourceCosts) {
+                ResourceCost modifiedCost = resourceCost;
+                switch (resourceCost) {
+                        case ResourceCost.Wood: modifiedCost = ResourceCost.ReducedToZero; economicalConstructionApplied = true; break;
+                        case ResourceCost.TwoWood: modifiedCost = ResourceCost.Wood; economicalConstructionApplied = true; break;
+                        case ResourceCost.ThreeWood: modifiedCost = ResourceCost.TwoWood; economicalConstructionApplied = true; break;
+                        case ResourceCost.FourWood: modifiedCost = ResourceCost.ThreeWood; economicalConstructionApplied = true; break;
+                        case ResourceCost.TwoWoodOrHide: modifiedCost = ResourceCost.WoodOrHide; economicalConstructionApplied = true; break;
+                        case ResourceCost.ThreeWoodOrTwoHide: modifiedCost = ResourceCost.TwoWoodOrTwoHide; economicalConstructionApplied = true; break;
+                        case ResourceCost.FourWoodOrThreeHide: modifiedCost = ResourceCost.ThreeWoodOrThreeHide; economicalConstructionApplied = true; break;
+                    }
+                modifiedResourceCosts.Add(modifiedCost);
+                if (economicalConstructionApplied) {
+                    break;
+                }
+            }
+        }
+
+        // This code sorts costs into payable costs (i.e. fixed costs) and costs to query (i.e. variable costs that the player can afford to pay more than one way)
         bool canPayWithHide = false;
         bool canPayWithWood = false;
         List<ResourceCost> payableCosts = new List<ResourceCost>();
         List<ResourceCost> costsToQuery = new List<ResourceCost>();
         StartCoroutine(UpdateResources());
-        resourceCosts.Sort(); // The list is sorted so that fixed costs are evaluated before variable costs
-        foreach (ResourceCost resourceCost in resourceCosts) {
+        modifiedResourceCosts.Sort(); // The list is sorted so that fixed costs are evaluated before variable costs
+        foreach (ResourceCost resourceCost in modifiedResourceCosts) {
             switch (resourceCost) {
                 case ResourceCost.Wood:
                     if (woodAvailable >= 1) {
@@ -438,6 +477,51 @@ public class ActionResolver : MonoBehaviour
                     } else if (canPayWithWood) {
                         payableCosts.Add(ResourceCost.FourWood);
                         woodAvailable -= 4;
+                    } else if (canPayWithHide) {
+                        payableCosts.Add(ResourceCost.ThreeHide);
+                        hideAvailable -= 3;
+                    } else {
+                        return false;
+                    }
+                    break;
+                case ResourceCost.WoodOrHide:
+                    canPayWithWood = woodAvailable >= 1;
+                    canPayWithHide = hideAvailable >= 1;
+                    if (canPayWithWood && canPayWithHide) {
+                        costsToQuery.Add(resourceCost);
+                    } else if (canPayWithWood) {
+                        payableCosts.Add(ResourceCost.Wood);
+                        woodAvailable -= 1;
+                    } else if (canPayWithHide) {
+                        payableCosts.Add(ResourceCost.Hide);
+                        hideAvailable -= 1;
+                    } else {
+                        return false;
+                    }
+                    break;
+                case ResourceCost.TwoWoodOrTwoHide:
+                    canPayWithWood = woodAvailable >= 2;
+                    canPayWithHide = hideAvailable >= 2;
+                    if (canPayWithWood && canPayWithHide) {
+                        costsToQuery.Add(resourceCost);
+                    } else if (canPayWithWood) {
+                        payableCosts.Add(ResourceCost.TwoWood);
+                        woodAvailable -= 2;
+                    } else if (canPayWithHide) {
+                        payableCosts.Add(ResourceCost.TwoHide);
+                        hideAvailable -= 2;
+                    } else {
+                        return false;
+                    }
+                    break;
+                case ResourceCost.ThreeWoodOrThreeHide:
+                    canPayWithWood = woodAvailable >= 3;
+                    canPayWithHide = hideAvailable >= 3;
+                    if (canPayWithWood && canPayWithHide) {
+                        costsToQuery.Add(resourceCost);
+                    } else if (canPayWithWood) {
+                        payableCosts.Add(ResourceCost.ThreeWood);
+                        woodAvailable -= 3;
                     } else if (canPayWithHide) {
                         payableCosts.Add(ResourceCost.ThreeHide);
                         hideAvailable -= 3;

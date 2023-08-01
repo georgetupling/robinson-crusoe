@@ -10,5 +10,9 @@ public enum ResourceCost
     TwoWoodOrHide,
     ThreeWoodOrTwoHide,
     FourWoodOrThreeHide,
-    WoodUnlessShovel
+    WoodUnlessShovel,
+    ReducedToZero,
+    WoodOrHide,
+    TwoWoodOrTwoHide,
+    ThreeWoodOrThreeHide
 }

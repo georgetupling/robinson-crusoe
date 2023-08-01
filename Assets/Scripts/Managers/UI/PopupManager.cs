@@ -17,6 +17,7 @@ public class PopupManager : MonoBehaviour
     [SerializeField] private NightPhasePopupController nightPhasePopupPrefab;
     [SerializeField] private DicePopupController dicePopupPrefab;
     [SerializeField] private AbilityPopupController abilityPopupPrefab;
+    [SerializeField] private ChooseInventionCardPopupController chooseInventionCardPopupPrefab;
 
     [SerializeField] private Transform parentTransform;
 
@@ -36,6 +37,7 @@ public class PopupManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToSpawnNightPhasePopupEvent(OnSpawnNightPhasePopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnDicePopupEvent(OnSpawnDicePopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnAbilityPopupEvent(OnSpawnAbilityPopupEvent);
+        EventGenerator.Singleton.AddListenerToSpawnChooseInventionCardPopupEvent(OnSpawnChooseInventionCardPopupEvent);
     }
 
     void OnCardRevealedEvent(Deck deckDrawnFrom, Card revealedCard, int componentIdOfRevealedCard) {
@@ -89,6 +91,11 @@ public class PopupManager : MonoBehaviour
     void OnSpawnAbilityPopupEvent(int playerId, Ability ability) {
         AbilityPopupController newPopup = Instantiate(abilityPopupPrefab, parentTransform, false);
         newPopup.Initialize(playerId, ability);
+    }
+
+    void OnSpawnChooseInventionCardPopupEvent(List<InventionCard> inventionCards) {
+        ChooseInventionCardPopupController newPopup = Instantiate(chooseInventionCardPopupPrefab, parentTransform, false);
+        newPopup.Initialize(inventionCards);
     }
 
     // Helper methods

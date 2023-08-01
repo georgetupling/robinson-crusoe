@@ -99,10 +99,10 @@ public class DevToolsUIController : MonoBehaviour
         });
 
         gainDetermination.onClick.AddListener(() => {
-            EventGenerator.Singleton.RaiseGainDeterminationEvent(0, 1);
+            EventGenerator.Singleton.RaiseGainDeterminationEvent(DeterminationEvent.AllPlayers, 1);
         });
         loseDetermination.onClick.AddListener(() => {
-            EventGenerator.Singleton.RaiseLoseDeterminationEvent(0, 1);
+            EventGenerator.Singleton.RaiseLoseDeterminationEvent(DeterminationEvent.AllPlayers, 1);
         });
 
         drawDiscoveryToken.onClick.AddListener(() => {

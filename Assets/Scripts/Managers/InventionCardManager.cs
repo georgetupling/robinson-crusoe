@@ -35,6 +35,8 @@ public class InventionCardManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToInventionIsBuiltEvent(OnInventionIsBuiltEvent);
         EventGenerator.Singleton.AddListenerToGetInventionCardEvent(OnGetInventionCardEvent);
         EventGenerator.Singleton.AddListenerToPersonalInventionSpawnedEvent(OnPersonalInventionSpawnedEvent);
+        EventGenerator.Singleton.AddListenerToDrawInventionCardsAndChooseOneEvent(OnDrawInventionCardsAndChooseOneEvent);
+        EventGenerator.Singleton.AddListenerToInventionCardChosenFromSelectionEvent(OnInventionCardChosenFromSelectonEvent);
     }
 
     void Start() {
@@ -110,6 +112,26 @@ public class InventionCardManager : MonoBehaviour
         }
         newCard.transform.localRotation = Quaternion.identity;
         newCard.InitializeCard(inventionCard);
+    }
+
+    void OnDrawInventionCardsAndChooseOneEvent(int numberOfCards) {
+        List<InventionCard> drawnCards = new List<InventionCard>();
+        for (int i = 0; i < numberOfCards; i++) {
+            InventionCard drawnCard = inventionCardDeck.Pop();
+            drawnCards.Add(drawnCard);
+        }
+        EventGenerator.Singleton.RaiseSpawnChooseInventionCardPopupEvent(drawnCards);
+    }
+
+    void OnInventionCardChosenFromSelectonEvent(List<InventionCard> inventionCards, int indexOfChosenCard) {
+        for (int i = 0; i < inventionCards.Count; i++) {
+            if (i == indexOfChosenCard) {
+                SpawnInventionCard(inventionCards[i], inventionCardArea);
+            } else {
+                inventionCardDeck.Push(inventionCards[i]);
+            }
+        }
+        DeckShuffler.Singleton.ShuffleDeck(inventionCardDeck);
     }
 
     
