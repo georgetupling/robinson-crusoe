@@ -13,6 +13,7 @@ public class InventionCard : Card
     public Terrain terrainTypeRequirement { get; private set; }
     public List<CardEffect> effectsOnBuild { get; private set; }
     public List<CardEffect> effectsOnLoss { get; private set; }
+    public List<CardEffect> effectsOnActivation { get; private set; }
     public bool isDefaultInvention { get; private set; }
     public bool isPersonalInvention { get; private set; }
 
@@ -23,6 +24,7 @@ public class InventionCard : Card
         terrainTypeRequirement = EnumParser.ParseTerrain(data.terrainTypeRequirement);
         effectsOnBuild = CardEffectFactory.CreateCardEffectList(data.effectsOnBuild);
         effectsOnLoss = CardEffectFactory.CreateCardEffectList(data.effectsOnLoss);
+        effectsOnActivation = CardEffectFactory.CreateCardEffectList(data.effectsOnActivation);
         isDefaultInvention = data.isDefaultInvention;
         isPersonalInvention = data.isPersonalInvention;
         string materialName = data.inventionName + "Material";

@@ -29,5 +29,6 @@ public enum Invention
     Pit,
     Wall,
     Raft,
-    Belts
+    Belts,
+    None
 }

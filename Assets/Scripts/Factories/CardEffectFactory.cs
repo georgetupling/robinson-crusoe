@@ -6,6 +6,9 @@ public static class CardEffectFactory
 {
     public static List<CardEffect> CreateCardEffectList(List<string> namesOfCardEffects) {
         List<CardEffect> cardEffects = new List<CardEffect>();
+        if (namesOfCardEffects == null || namesOfCardEffects.Count == 0) {
+            return cardEffects;
+        }
 
         foreach (string effectName in namesOfCardEffects) {
             System.Type type = System.Type.GetType(effectName);

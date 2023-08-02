@@ -157,17 +157,13 @@ public class InventionCardManager : MonoBehaviour
     
     void OnGetInventionCardEvent(string eventType, Invention invention, InventionCard inventionCard) {
         if (eventType == GetInventionCardEvent.Query) {
-            HandleGetInventionCardQuery(invention);
+            InventionCard foundInventionCard = inventionCards.Find(x => x.invention == invention);
+            if (foundInventionCard == null) {
+                Debug.LogError("Invention card not found.");
+                return;
+            }
+            EventGenerator.Singleton.RaiseGetInventionCardResponseEvent(invention, foundInventionCard);
         }
-    }
-
-    void HandleGetInventionCardQuery(Invention invention) {
-        InventionCard inventionCard = inventionCards.Find(x => x.invention == invention);
-        if (inventionCard == null) {
-            Debug.LogError("Invention card not found.");
-            return;
-        }
-        EventGenerator.Singleton.RaiseGetInventionCardResponseEvent(invention, inventionCard);
     }
 
     // Initialises personal inventions

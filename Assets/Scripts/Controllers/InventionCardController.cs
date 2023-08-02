@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class InventionCardController : CardController
 {
     [SerializeField] private InventionCard data;
     [SerializeField] private InventionCardTokenSpawner tokenSpawner;
     [SerializeField] private InventionBuildActionSpaceController actionSpaceController;
+    [SerializeField] private NonPlayerPawnSpawner nonPlayerPawnSpawner;
 
     public bool IsBuilt { get; private set; }
     private int playerId = -1; // For personal inventions only
@@ -27,12 +29,22 @@ public class InventionCardController : CardController
             return;
         }
         IsBuilt = true;
-        TurnFaceDown(true);
-        foreach (CardEffect cardEffect in data.effectsOnBuild) {
-            cardEffect.ApplyEffect();
-        }
-        Debug.Log($"{data.invention} built successfully."); // For testing purposes, delete this print later!!
-        EventGenerator.Singleton.RaiseUpdateBuiltInventionsEvent(data.invention, true);
+        EventGenerator.Singleton.RaiseAnimationInProgressEvent(true);
+        float height = -0.2f;
+        float duration = GameSettings.AnimationDuration;
+        float initialZPosition = transform.localPosition.z;
+        transform.DOLocalMoveZ(initialZPosition + height, duration / 3)
+            .OnKill(() => {
+                transform.DORotate(new Vector3(0, 180, 0), duration / 3)
+                    .OnKill(() => {
+                        transform.DOLocalMoveZ(initialZPosition, duration / 3);
+                        foreach (CardEffect cardEffect in data.effectsOnBuild) {
+                            cardEffect.ApplyEffect();
+                        }
+                        EventGenerator.Singleton.RaiseUpdateBuiltInventionsEvent(data.invention, true);
+                        EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
+                    });
+            });
     }
 
     void OnItemEvent(string eventType, Invention invention) {
@@ -55,6 +67,7 @@ public class InventionCardController : CardController
             meshRenderer.material = data.cardMaterial;
             tokenSpawner.Initialize(inventionCard);
             actionSpaceController.SetInvention(inventionCard.invention);
+            nonPlayerPawnSpawner.SetInvention(inventionCard.invention);
         } else {
             Debug.Log("EventCardController already initialized.");
         }

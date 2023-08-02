@@ -141,6 +141,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<List<IslandTileController>, Stack<IslandTileController>> spawnReconnaissancePopupEvent = new UnityEvent<List<IslandTileController>, Stack<IslandTileController>>();
     private UnityEvent<DiscoveryTokenController, DiscoveryTokenController> spawnScoutingPopupEvent = new UnityEvent<DiscoveryTokenController, DiscoveryTokenController>();
     private UnityEvent<BeastCardController, Stack<BeastCardController>> spawnTrackingPopupEvent = new UnityEvent<BeastCardController, Stack<BeastCardController>>();
+    private UnityEvent<Invention> spawnItemActivationPopupEvent = new UnityEvent<Invention>();
 
     // Player Input
     private UnityEvent<bool> chooseAdjacentTileEvent = new UnityEvent<bool>();
@@ -1296,6 +1297,15 @@ public class EventGenerator : MonoBehaviour
     }
     public void AddListenerToSpawnTrackingPopupEvent(UnityAction<BeastCardController, Stack<BeastCardController>> listener) {
         spawnTrackingPopupEvent.AddListener(listener);
+    }
+
+    // Spawn item activation popup event
+
+    public void RaiseSpawnItemActivationPopupEvent(Invention invention) {
+        spawnItemActivationPopupEvent.Invoke(invention);
+    }
+    public void AddListenerToSpawnItemActivationPopupEvent(UnityAction<Invention> listener) {
+        spawnItemActivationPopupEvent.AddListener(listener);
     }
 
 

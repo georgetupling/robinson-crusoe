@@ -21,6 +21,7 @@ public class PopupManager : MonoBehaviour
     [SerializeField] private ReconnaissancePopupController reconnaissancePopupPrefab;
     [SerializeField] private ScoutingPopupController scoutingPopPrefab;
     [SerializeField] private TrackingPopupController trackingPopupPrefab;
+    [SerializeField] private ItemActivationPopupController itemActivationPopupPrefab;
 
     [SerializeField] private Transform parentTransform;
 
@@ -44,6 +45,7 @@ public class PopupManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToSpawnReconnaissancePopupEvent(OnSpawnReconnaissancePopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnScoutingPopupEvent(OnSpawnScoutingPopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnTrackingPopupEvent(OnSpawnTrackingPopupEvent);
+        EventGenerator.Singleton.AddListenerToSpawnItemActivationPopupEvent(OnSpawnItemActivationEvent);
     }
 
     void OnCardRevealedEvent(Deck deckDrawnFrom, Card revealedCard, int componentIdOfRevealedCard) {
@@ -117,6 +119,11 @@ public class PopupManager : MonoBehaviour
     void OnSpawnTrackingPopupEvent(BeastCardController topCard, Stack<BeastCardController> huntingDeck) {
         TrackingPopupController newPopup = Instantiate(trackingPopupPrefab, parentTransform, false);
         newPopup.Initialize(topCard, huntingDeck);
+    }
+
+    void OnSpawnItemActivationEvent(Invention invention) {
+        ItemActivationPopupController newPopup = Instantiate(itemActivationPopupPrefab, parentTransform, false);
+        newPopup.SetInvention(invention);
     }
 
     // Helper methods

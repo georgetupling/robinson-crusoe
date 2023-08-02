@@ -9,6 +9,7 @@ public struct InventionCardUnprocessedData {
         public string terrainTypeRequirement;
         public List<string> effectsOnBuild;
         public List<string> effectsOnLoss;
+        public List<string> effectsOnActivation;
         public bool isDefaultInvention;
         public bool isPersonalInvention;
     };

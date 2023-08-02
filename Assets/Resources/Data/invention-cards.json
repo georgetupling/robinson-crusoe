@@ -4,8 +4,8 @@
         "itemRequirements": [],
         "resourceCosts": [],
         "terrainTypeRequirement": "River",
-        "effectsOnBuild": ["MapEffect"],
-        "effectsOnLoss": ["EndMapEffect"],
+        "effectsOnBuild": [],
+        "effectsOnLoss": [],
         "isDefaultInvention": true,
         "isPersonalInvention": false
     },
@@ -14,8 +14,9 @@
         "itemRequirements": [],
         "resourceCosts": [],
         "terrainTypeRequirement": "Hills",
-        "effectsOnBuild": ["PotEffect"],
-        "effectsOnLoss": ["EndPotEffect"],
+        "effectsOnBuild": [],
+        "effectsOnLoss": [],
+        "effectsOnActivation": ["PotEffect"],
         "isDefaultInvention": true,
         "isPersonalInvention": false
     },
@@ -124,8 +125,9 @@
         "itemRequirements": ["Fire"],
         "resourceCosts": [],
         "terrainTypeRequirement": "None",
-        "effectsOnBuild": ["FireplaceEffect"],
-        "effectsOnLoss": ["EndFireplaceEffect"],
+        "effectsOnBuild": [],
+        "effectsOnLoss": [],
+        "effectsOnActivation": ["FireplaceEffect"],
         "isDefaultInvention": false,
         "isPersonalInvention": true
     },
@@ -214,8 +216,8 @@
         "itemRequirements": ["Fire"],
         "resourceCosts": [],
         "terrainTypeRequirement": "Hills",
-        "effectsOnBuild": ["LanternEffect"],
-        "effectsOnLoss": ["EndLanternEffect"],
+        "effectsOnBuild": [],
+        "effectsOnLoss": [],
         "isDefaultInvention": false,
         "isPersonalInvention": false
     },
@@ -234,8 +236,8 @@
         "itemRequirements": ["Rope"],
         "resourceCosts": ["Wood"],
         "terrainTypeRequirement": "None",
-        "effectsOnBuild": ["ShieldEffect"],
-        "effectsOnLoss": ["EndShieldEffect"],
+        "effectsOnBuild": [],
+        "effectsOnLoss": [],
         "isDefaultInvention": false,
         "isPersonalInvention": false
     },
@@ -284,8 +286,8 @@
         "itemRequirements": ["Rope"],
         "resourceCosts": ["TwoWood"],
         "terrainTypeRequirement": "None",
-        "effectsOnBuild": ["RaftEffect"],
-        "effectsOnLoss": ["EndRaftEffect"],
+        "effectsOnBuild": [],
+        "effectsOnLoss": [],
         "isDefaultInvention": false,
         "isPersonalInvention": false
     },
@@ -294,8 +296,8 @@
         "itemRequirements": ["Knife"],
         "resourceCosts": ["Hide"],
         "terrainTypeRequirement": "None",
-        "effectsOnBuild": ["BeltsEffect"],
-        "effectsOnLoss": ["EndBeltsEffect"],
+        "effectsOnBuild": [],
+        "effectsOnLoss": [],
         "isDefaultInvention": false,
         "isPersonalInvention": false
     }

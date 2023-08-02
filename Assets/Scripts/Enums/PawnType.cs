@@ -6,5 +6,6 @@ public enum PawnType
     Explore,
     Hunting,
     Dog,
-    Friday
+    Friday,
+    GatherOrExplore
 }

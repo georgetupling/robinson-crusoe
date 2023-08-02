@@ -4999,6 +4999,7 @@ MonoBehaviour:
   reconnaissancePopupPrefab: {fileID: 3388071214490712726, guid: 4c9597b050fd46141bf52af9eae52b5e, type: 3}
   scoutingPopPrefab: {fileID: 4070859478239754139, guid: 52b36bb23494c6447bb89f8409d9b38c, type: 3}
   trackingPopupPrefab: {fileID: 8052845952018398224, guid: 1b111d18509017c4295ba54189ed5fe5, type: 3}
+  itemActivationPopupPrefab: {fileID: 12715543615101853, guid: f17fa8faddb4ce042be31813a894f17c, type: 3}
   parentTransform: {fileID: 473154762}
 --- !u!1 &794049183
 GameObject:
@@ -11417,6 +11418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 557b10a900fc6e4479c8c190aea5c4a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  popupArea: {fileID: 473154762}
 --- !u!1 &1684309287
 GameObject:
   m_ObjectHideFlags: 0

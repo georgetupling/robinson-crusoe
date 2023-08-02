@@ -34,6 +34,11 @@ public class DiceRoller : MonoBehaviour
 
     Dictionary<int, int> playerDetermination = new Dictionary<int, int>();
 
+    // Fields for querying the first player ID
+
+    bool waitingOnFirstPlayer;
+    int firstPlayerId;
+
     void Awake() {
         if (Singleton == null) {
             Singleton = this;
@@ -43,6 +48,7 @@ public class DiceRoller : MonoBehaviour
         EventGenerator.Singleton.AddListenerToDieRolledEvent(OnDieRolledEvent);
         EventGenerator.Singleton.AddListenerToAdventureCardPopupClosedEvent(OnAdventureCardPopupClosedEvent);
         EventGenerator.Singleton.AddListenerToGetDeterminationResponseEvent(OnGetDeterminationResponseEvent);
+        EventGenerator.Singleton.AddListenerToGetFirstPlayerEvent(OnGetFirstPlayerEvent);
     }
 
     // Listeners
@@ -99,6 +105,14 @@ public class DiceRoller : MonoBehaviour
 
     void OnAdventureCardPopupClosedEvent(int componentId, AdventureCard adventureCard, int optionChosen) {
         // Actions the drawn adventure card
+        if (playerId == 6) {
+            waitingOnFirstPlayer = true;
+            EventGenerator.Singleton.RaiseGetFirstPlayerEvent();
+            while (waitingOnFirstPlayer) {
+                // Do nothing
+            }
+            playerId = firstPlayerId;
+        }
         foreach (CardEffect cardEffect in adventureCard.adventureEffects) {
             // Sets the option chosen and the target of the effect
             if (adventureCard.adventureHasDecision) {
@@ -123,13 +137,20 @@ public class DiceRoller : MonoBehaviour
         }
     }
 
+    void OnGetFirstPlayerEvent(string eventType, int firstPlayerId) {
+        if (waitingOnFirstPlayer) {
+            this.firstPlayerId = firstPlayerId;
+            waitingOnFirstPlayer = false;
+        }
+    }
+
     // Public methods
 
     public void RollBuildDice(int playerId) {
         this.playerId = playerId;
         // Checks whether the player has a reroll available
         bool hasRerollAvailable = false;
-        if (GameSettings.PlayerCharacters[playerId] == CharacterType.Carpenter) {
+        if (playerId < GameSettings.PlayerCount && GameSettings.PlayerCharacters[playerId] == CharacterType.Carpenter) {
             EventGenerator.Singleton.RaiseGetDeterminationEvent(playerId);
             int costOfReroll = 2;
             hasRerollAvailable = playerDetermination[playerId] >= costOfReroll;
@@ -142,7 +163,7 @@ public class DiceRoller : MonoBehaviour
         this.islandTileId = islandTileId;
         // Checks whether the player has a reroll available
         bool hasRerollAvailable = false;
-        if (GameSettings.PlayerCharacters[playerId] == CharacterType.Cook) {
+        if (playerId < GameSettings.PlayerCount && GameSettings.PlayerCharacters[playerId] == CharacterType.Cook) {
             EventGenerator.Singleton.RaiseGetDeterminationEvent(playerId);
             int costOfReroll = 2;
             hasRerollAvailable = playerDetermination[playerId] >= costOfReroll;
@@ -155,7 +176,7 @@ public class DiceRoller : MonoBehaviour
         this.locationId = locationId;
         // Checks whether the player has a reroll available
         bool hasRerollAvailable = false;
-        if (GameSettings.PlayerCharacters[playerId] == CharacterType.Explorer) {
+        if (playerId < GameSettings.PlayerCount && GameSettings.PlayerCharacters[playerId] == CharacterType.Explorer) {
             EventGenerator.Singleton.RaiseGetDeterminationEvent(playerId);
             int costOfReroll = 2;
             hasRerollAvailable = playerDetermination[playerId] >= costOfReroll;

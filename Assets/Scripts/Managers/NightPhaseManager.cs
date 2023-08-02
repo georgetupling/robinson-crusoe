@@ -6,6 +6,8 @@ public class NightPhaseManager : MonoBehaviour
 {
     static NightPhaseManager singleton;
 
+    [SerializeField] Transform popupArea;
+
     bool isWaitingOnFood;
     bool isWaitingOnNonPerishableFood;
     bool isWaitingOnPopup;
@@ -23,6 +25,9 @@ public class NightPhaseManager : MonoBehaviour
 
     bool campHasNaturalShelter;
     bool shelterIsBuilt;
+
+    // Flags for night phase events
+    bool potBuilt;
     
     void Awake() {
         if (singleton == null) {
@@ -36,6 +41,7 @@ public class NightPhaseManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToAdjacentTileChosenEvent(OnAdjacentTileChosenEvent);
         EventGenerator.Singleton.AddListenerToCampHasNaturalShelterResponseEvent(OnCampHasNaturalShelterResponseEvent);
         EventGenerator.Singleton.AddListenerToShelterIsBuiltResponseEvent(OnShelterIsBuiltResponseEvent);
+        EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventions);
     }
 
     // Listeners
@@ -81,6 +87,12 @@ public class NightPhaseManager : MonoBehaviour
         if (isWaitingOnShelterIsBuilt) {
             this.shelterIsBuilt = shelterIsBuilt;
             isWaitingOnShelterIsBuilt = false;
+        }
+    }
+
+    void OnUpdateBuiltInventions(Invention invention, bool isBuilt) {
+        if (invention == Invention.Pot) {
+            potBuilt = isBuilt;
         }
     }
 
@@ -133,6 +145,32 @@ public class NightPhaseManager : MonoBehaviour
             EventGenerator.Singleton.RaiseSpawnIslandTileTokenEvent(TokenType.Camp, locationId);
             EventGenerator.Singleton.RaiseLoseHalfRoofEvent();
             EventGenerator.Singleton.RaiseLoseHalfPalisadeEvent();
+        }
+
+        // Asks if the players want to use the pot
+        EventGenerator.Singleton.RaiseGetFoodEvent();
+        while (isWaitingOnFood) {
+            yield return null;
+        }
+        if (potBuilt && foodAvailable > 0) {
+            yield return new WaitForSeconds(1f);
+            EventGenerator.Singleton.RaiseSpawnItemActivationPopupEvent(Invention.Pot);
+            while (popupArea.childCount > 0) {
+                yield return null;
+            }
+        }
+
+        // Asks if the players want to use the fireplace
+        EventGenerator.Singleton.RaiseGetFoodEvent();
+        while (isWaitingOnFood) {
+            yield return null;
+        }
+        if (potBuilt && foodAvailable > 0) {
+            yield return new WaitForSeconds(1f);
+            EventGenerator.Singleton.RaiseSpawnItemActivationPopupEvent(Invention.Pot);
+            while (popupArea.childCount > 0) {
+                yield return null;
+            }
         }
 
         // Players take damage if they are sleeping outside

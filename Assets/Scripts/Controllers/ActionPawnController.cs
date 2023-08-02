@@ -172,7 +172,8 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
                 (pawnType == PawnType.Build && !(buildTypes.Contains(actionType) || actionType == ActionType.BuildInvention)) ||
                 (pawnType == PawnType.Gather && actionType != ActionType.Gather) ||
                 (pawnType == PawnType.Explore && actionType != ActionType.Explore) ||
-                (pawnType == PawnType.Hunting && actionType != ActionType.Hunting)
+                (pawnType == PawnType.Hunting && actionType != ActionType.Hunting) ||
+                (pawnType == PawnType.GatherOrExplore && !(actionType == ActionType.Gather || actionType == ActionType.Explore))
                 // TODO: Add conditions for assigning dog and Friday!
                 ) {
                 nearestActionSpace = null;

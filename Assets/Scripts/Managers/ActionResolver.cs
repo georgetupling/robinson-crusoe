@@ -188,7 +188,13 @@ public class ActionResolver : MonoBehaviour
             if (costsPaid) {
                 bool buildIsSuccessful = true;
                 if (actionAssignment.mustRoll) {
-                    DiceRoller.Singleton.RollBuildDice(actionAssignment.playerIds[0]);
+                    // The only time the ID of the second pawn is used is when the first one is a neutral pawn (e.g. the Map pawn)
+                    // These pawns have playerId 6 since they're "owned" by the first player
+                    if (actionAssignment.playerIds[0] == 6 && actionAssignment.playerIds.Count > 1) {
+                        DiceRoller.Singleton.RollBuildDice(actionAssignment.playerIds[1]);
+                    } else {
+                        DiceRoller.Singleton.RollBuildDice(actionAssignment.playerIds[0]);
+                    }
                     while (popupsArea.childCount > 0 || animationsInProgress > 0) {
                         yield return null;
                     }
@@ -239,7 +245,13 @@ public class ActionResolver : MonoBehaviour
             }
             bool gatherIsSuccessful = true;
             if (actionAssignment.mustRoll) {
-                DiceRoller.Singleton.RollGatherDice(actionAssignment.playerIds[0], actionAssignment.islandTile.Id);
+                // The only time the ID of the second pawn is used is when the first one is a neutral pawn (e.g. the Map pawn)
+                // These pawns have playerId 6 since they're "owned" by the first player
+                if (actionAssignment.playerIds[0] == 6 && actionAssignment.playerIds.Count > 1) {
+                    DiceRoller.Singleton.RollGatherDice(actionAssignment.playerIds[1], actionAssignment.islandTile.Id);
+                } else {
+                    DiceRoller.Singleton.RollGatherDice(actionAssignment.playerIds[0], actionAssignment.islandTile.Id);
+                }
                 while (popupsArea.childCount > 0 || animationsInProgress > 0) {
                     yield return null;
                 }
@@ -271,7 +283,13 @@ public class ActionResolver : MonoBehaviour
             }
             bool exploreIsSuccessful = true;
             if (actionAssignment.mustRoll) {
-                DiceRoller.Singleton.RollExploreDice(actionAssignment.playerIds[0], actionAssignment.locationId);
+                // The only time the ID of the second pawn is used is when the first one is a neutral pawn (e.g. the Map pawn)
+                // These pawns have playerId 6 since they're "owned" by the first player
+                if (actionAssignment.playerIds[0] == 6 && actionAssignment.playerIds.Count > 1) {
+                    DiceRoller.Singleton.RollExploreDice(actionAssignment.playerIds[1], actionAssignment.locationId);
+                } else {
+                    DiceRoller.Singleton.RollExploreDice(actionAssignment.playerIds[0], actionAssignment.locationId);
+                }
                 while (popupsArea.childCount > 0 || animationsInProgress > 0) {
                     yield return null;
                 }
