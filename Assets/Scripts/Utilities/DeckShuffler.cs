@@ -108,6 +108,7 @@ public class DeckShuffler : MonoBehaviour
         for (int i = 0; i < array.Length; i++) {
             BeastCardController card = array[i];
             card.transform.localPosition = new Vector3(0, 0, (-1) * deck.Count * cardThickness);
+            card.transform.eulerAngles = new Vector3(0, 180, 0);
             deck.Push(card);
         }
         // Plays the animation
@@ -126,7 +127,7 @@ public class DeckShuffler : MonoBehaviour
 
         float shakeDuration = 0.1f;
         Vector3 scaleShakeStrength = new Vector3(0.02f, 0.01f, 0f);
-        Vector3 postionShakeStrength = new Vector3(0.01f, 0.01f, 0f);
+        Vector3 postionShakeStrength = new Vector3(0.005f, 0.005f, 0f);
         int vibrato = 20;
         int randomness = 30;
         bool snapping = false;

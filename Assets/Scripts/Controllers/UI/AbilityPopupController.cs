@@ -90,6 +90,21 @@ public class AbilityPopupController : MonoBehaviour
                 if (determination < ability.determinationCost || food < ability.foodCost) {
                     confirmButton.interactable = false;
                 }
+                // For the soldier's tracking ability, checks if there is a card in the hunting deck
+                
+                if (ability.abilityEffect != null && ability.abilityEffect.GetType() == typeof(TrackingEffect)) {
+                    Transform huntingDeckArea = GameObject.Find("HuntingDeckArea").transform;
+                    bool huntingDeckEmpty = true;
+                    for (int i = 0; i < huntingDeckArea.childCount; i++) {
+                        if (huntingDeckArea.GetChild(i).GetComponent<BeastCardController>() != null) {
+                            huntingDeckEmpty = false;
+                            break;
+                        }
+                    }
+                    if (huntingDeckEmpty) {
+                        confirmButton.interactable = false;
+                    }
+                }
             } else {
                 // Code for activated abilities with options
                 confirmButton.gameObject.SetActive(false);

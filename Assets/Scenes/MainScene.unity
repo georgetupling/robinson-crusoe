@@ -4996,6 +4996,9 @@ MonoBehaviour:
   dicePopupPrefab: {fileID: 4151864331969145337, guid: 450d8148656f8294cb98a7f8705003dd, type: 3}
   abilityPopupPrefab: {fileID: 4448420331352022548, guid: 91959ab629a6c99439209fc664697c7f, type: 3}
   chooseInventionCardPopupPrefab: {fileID: 6864355774286461605, guid: cb426bc20c3919c40919fcabe64214cf, type: 3}
+  reconnaissancePopupPrefab: {fileID: 3388071214490712726, guid: 4c9597b050fd46141bf52af9eae52b5e, type: 3}
+  scoutingPopPrefab: {fileID: 4070859478239754139, guid: 52b36bb23494c6447bb89f8409d9b38c, type: 3}
+  trackingPopupPrefab: {fileID: 8052845952018398224, guid: 1b111d18509017c4295ba54189ed5fe5, type: 3}
   parentTransform: {fileID: 473154762}
 --- !u!1 &794049183
 GameObject:

@@ -7,7 +7,7 @@ using DG.Tweening;
 
 public class DiscoveryTokenController : TokenController, IPointerClickHandler
 {
-    private DiscoveryToken data;
+    public DiscoveryToken data { get; private set; }
     private bool isInitialized;
 
     private MeshRenderer meshRenderer;
@@ -59,7 +59,7 @@ public class DiscoveryTokenController : TokenController, IPointerClickHandler
         transform.DOMoveZ(transform.position.z - 0.15f, 0.5f)
             .OnComplete(() => {
                 transform.DORotate(new Vector3(0f, 0f, 0f), 0.5f)
-                    .OnComplete(() => 
+                    .OnKill(() => 
                     {
                     EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
                     EventGenerator.Singleton.RaiseDiscoveryTokenRevealedEvent(ComponentId, data.tokenSprite);

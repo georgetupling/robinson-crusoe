@@ -26,6 +26,9 @@ public class BeastCard : Card
             Debug.LogError($"{materialName} not found.");
         }
         string spriteName = beastName.Replace(" ", "") + "Sprite";
-        cardSprite = Resources.Load(Path.Combine("Sprites/Beast Cards", spriteName)) as Sprite;
+        cardSprite = Resources.Load<Sprite>(Path.Combine("Sprites/Beast Cards", spriteName));
+        if (cardSprite == null) {
+            Debug.LogError($"{spriteName} not found.");
+        }
     }
 }

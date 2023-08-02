@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using DG.Tweening;
 
 /*
     This class spawns discovery tokens and manages the discovery token deck.
@@ -17,7 +18,7 @@ public class DiscoveryTokenManager : MonoBehaviour
     [SerializeField] private DiscoveryTokenController discoveryTokenPrefab;
     [SerializeField] private Transform discoveryTokenDeckArea;
 
-    private const float TokenThickness = 0.005f;
+    private const float TokenThickness = 0.007f;
 
     void Awake() {
         if (singleton == null) {
@@ -28,6 +29,7 @@ public class DiscoveryTokenManager : MonoBehaviour
         InitializeDiscoveryTokens();
         SpawnDiscoveryTokenDeck();
         EventGenerator.Singleton.AddListenerToDrawDiscoveryTokenEvent(OnDrawDiscoveryTokenEvent);
+        EventGenerator.Singleton.AddListenerToScoutingEvent(OnScoutingEvent);
     }
 
     // Loads the discovery tokens from discovery-tokens.json
@@ -78,5 +80,30 @@ public class DiscoveryTokenManager : MonoBehaviour
     void DrawDiscoveryToken() {
         DiscoveryTokenController drawnDiscoveryToken = discoveryTokenDeck.Pop();
         EventGenerator.Singleton.RaiseDiscoveryTokenDrawnEvent(drawnDiscoveryToken.ComponentId);
+    }
+
+    // Methods for the epxlorer's scouting ability
+
+    void OnScoutingEvent() {
+        DiscoveryTokenController token1 = discoveryTokenDeck.Pop();
+        DiscoveryTokenController token2 = discoveryTokenDeck.Pop();
+        EventGenerator.Singleton.RaiseAnimationInProgressEvent(true);
+        float height = 0.15f;
+        float duration = GameSettings.AnimationDuration * 0.5f;
+        token1.transform.DOMoveZ(token1.transform.position.z - height, duration)
+            .OnComplete(() => {
+                token1.transform.DORotate(new Vector3(0f, 0f, 0f), duration)
+                    .OnKill(() => {
+                    EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
+                    });
+            });
+        token2.transform.DOMoveZ(token2.transform.position.z - height, duration)
+            .OnComplete(() => {
+                token2.transform.DORotate(new Vector3(0f, 0f, 0f), duration)
+                    .OnKill(() => {
+                    EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
+                    EventGenerator.Singleton.RaiseSpawnScoutingPopupEvent(token1, token2);
+                    });
+            });
     }
 }

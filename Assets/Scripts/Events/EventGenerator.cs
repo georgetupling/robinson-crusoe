@@ -138,6 +138,9 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<int>  spawnNightPhasePopupEvent = new UnityEvent<int>();
     private UnityEvent<int, Ability> spawnAbilityPopupEvent = new UnityEvent<int, Ability>();
     private UnityEvent<List<InventionCard>> spawnChooseInventionCardPopupEvent = new UnityEvent<List<InventionCard>>();
+    private UnityEvent<List<IslandTileController>, Stack<IslandTileController>> spawnReconnaissancePopupEvent = new UnityEvent<List<IslandTileController>, Stack<IslandTileController>>();
+    private UnityEvent<DiscoveryTokenController, DiscoveryTokenController> spawnScoutingPopupEvent = new UnityEvent<DiscoveryTokenController, DiscoveryTokenController>();
+    private UnityEvent<BeastCardController, Stack<BeastCardController>> spawnTrackingPopupEvent = new UnityEvent<BeastCardController, Stack<BeastCardController>>();
 
     // Player Input
     private UnityEvent<bool> chooseAdjacentTileEvent = new UnityEvent<bool>();
@@ -156,6 +159,9 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<int, Ability> abilityActivatedEvent = new UnityEvent<int, Ability>();
     private UnityEvent<int> economicalConstructionEvent = new UnityEvent<int>();
     private UnityEvent<int, PawnType> spawnSingleUsePawnEvent = new UnityEvent<int, PawnType>();
+    private UnityEvent reconnaissanceEvent = new UnityEvent();
+    private UnityEvent scoutingEvent = new UnityEvent();
+    private UnityEvent trackingEvent = new UnityEvent();
 
     // Weather
     private UnityEvent cancelRainCloudEvent = new UnityEvent();
@@ -1265,6 +1271,33 @@ public class EventGenerator : MonoBehaviour
         spawnChooseInventionCardPopupEvent.AddListener(listener);
     }
 
+    // Spawn reconnaissance popup event
+
+    public void RaiseSpawnReconnaissancePopupEvent(List<IslandTileController> topTiles, Stack<IslandTileController> deck) {
+        spawnReconnaissancePopupEvent.Invoke(topTiles, deck);
+    }
+    public void AddListenerToSpawnReconnaissancePopupEvent(UnityAction<List<IslandTileController>, Stack<IslandTileController>> listener) {
+        spawnReconnaissancePopupEvent.AddListener(listener);
+    }
+
+    // Spawn scouting popup event
+
+    public void RaiseSpawnScoutingPopupEvent(DiscoveryTokenController token1, DiscoveryTokenController token2) {
+        spawnScoutingPopupEvent.Invoke(token1, token2);
+    }
+    public void AddListenerToSpawnScoutingPopupEvent(UnityAction<DiscoveryTokenController, DiscoveryTokenController> listener) {
+        spawnScoutingPopupEvent.AddListener(listener);
+    }
+
+    // Spawn tracking popup event
+
+    public void RaiseSpawnTrackingPopupEvent(BeastCardController topCard, Stack<BeastCardController> huntingDeck) {
+        spawnTrackingPopupEvent.Invoke(topCard, huntingDeck);
+    }
+    public void AddListenerToSpawnTrackingPopupEvent(UnityAction<BeastCardController, Stack<BeastCardController>> listener) {
+        spawnTrackingPopupEvent.AddListener(listener);
+    }
+
 
     // Choose adjacent camp event
 
@@ -1360,6 +1393,33 @@ public class EventGenerator : MonoBehaviour
     }
     public void AddListenerToSpawnSingleUsePawnEvent(UnityAction<int, PawnType> listener) {
         spawnSingleUsePawnEvent.AddListener(listener);
+    }
+
+    // Reconnaissance event
+
+    public void RaiseReconnaissanceEvent() {
+        reconnaissanceEvent.Invoke();
+    }
+    public void AddListenerToReconnaissanceEvent(UnityAction listener) {
+        reconnaissanceEvent.AddListener(listener);
+    }
+
+    // Scouting event
+
+    public void RaiseScoutingEvent() {
+        scoutingEvent.Invoke();
+    }
+    public void AddListenerToScoutingEvent(UnityAction listener) {
+        scoutingEvent.AddListener(listener);
+    }
+
+    // Tracking event
+
+    public void RaiseTrackingEvent() {
+        trackingEvent.Invoke();
+    }
+    public void AddListenerToTrackingEvent(UnityAction listener) {
+        trackingEvent.AddListener(listener);
     }
 
 

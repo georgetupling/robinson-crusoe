@@ -18,7 +18,7 @@ public class IslandTileManager : MonoBehaviour
 
     private int campTileLocation;
 
-    const float IslandTileThickness = 0.01f;
+    const float IslandTileThickness = 0.016f;
     private int StartingTileId;
     private int StartingTileLocation;
 
@@ -43,14 +43,15 @@ public class IslandTileManager : MonoBehaviour
             return;
         }
         InitializeIslandTiles();
-    }
-
-    void Start() {
         EventGenerator.Singleton.AddListenerToDrawIslandTileEvent(OnDrawIslandTileEvent);
         EventGenerator.Singleton.AddListenerToSpawnIslandTileTokenEvent(OnSpawnIslandTileTokenEvent);
         EventGenerator.Singleton.AddListenerToGetDistanceFromCampEvent(OnGetDistanceFromCampEvent);
         EventGenerator.Singleton.AddListenerToGetDistanceFromCampToLocationEvent(OnGetDistanceFromCampToLocationEvent);
         EventGenerator.Singleton.AddListenerToLocationIsOccupiedEvent(OnLocationIsOccupiedEvent);
+        EventGenerator.Singleton.AddListenerToReconnaissanceEvent(OnReconnaissanceEvent);
+    }
+
+    void Start() {
         StartingTileId = ScenarioManager.Singleton.GetStartingIslandTileId();
         StartingTileLocation = ScenarioManager.Singleton.GetStartingIslandTileLocation();
         SpawnStartingIslandTile();
@@ -67,6 +68,8 @@ public class IslandTileManager : MonoBehaviour
             islandTiles.Add(islandTile);
         }
     }
+
+    // Listeners
 
     void OnDrawIslandTileEvent(int locationId) {
         if (locationIslandTileMap.ContainsKey(locationId)) {
@@ -102,6 +105,17 @@ public class IslandTileManager : MonoBehaviour
         }
     }
 
+    void OnReconnaissanceEvent() {
+        List<IslandTileController> topTiles = new List<IslandTileController>();
+        for (int i = 0; i < 3; i++) {
+            IslandTileController drawnTile = islandTileDeck.Pop();
+            topTiles.Add(drawnTile);
+        }
+        EventGenerator.Singleton.RaiseSpawnReconnaissancePopupEvent(topTiles, islandTileDeck);
+    }
+
+    // Spawns the starting island tile and the island tile deck
+
     void SpawnStartingIslandTile() {
         IslandTileController newIslandTile = Instantiate(islandTilePrefab, islandTileArea, false);
         IslandTile islandTile = islandTiles.Find(x => x.Id == StartingTileId);
@@ -122,6 +136,8 @@ public class IslandTileManager : MonoBehaviour
         }
         DeckShuffler.Singleton.ShuffleDeck(islandTileDeck, IslandTileThickness);
     }
+
+    // Methods for responding to queries
 
     void HandleDistanceFromCampQuery(int islandTileId) {
         int locationOfQueriedTile = -1;

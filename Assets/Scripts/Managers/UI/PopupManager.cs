@@ -18,6 +18,9 @@ public class PopupManager : MonoBehaviour
     [SerializeField] private DicePopupController dicePopupPrefab;
     [SerializeField] private AbilityPopupController abilityPopupPrefab;
     [SerializeField] private ChooseInventionCardPopupController chooseInventionCardPopupPrefab;
+    [SerializeField] private ReconnaissancePopupController reconnaissancePopupPrefab;
+    [SerializeField] private ScoutingPopupController scoutingPopPrefab;
+    [SerializeField] private TrackingPopupController trackingPopupPrefab;
 
     [SerializeField] private Transform parentTransform;
 
@@ -38,6 +41,9 @@ public class PopupManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToSpawnDicePopupEvent(OnSpawnDicePopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnAbilityPopupEvent(OnSpawnAbilityPopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnChooseInventionCardPopupEvent(OnSpawnChooseInventionCardPopupEvent);
+        EventGenerator.Singleton.AddListenerToSpawnReconnaissancePopupEvent(OnSpawnReconnaissancePopupEvent);
+        EventGenerator.Singleton.AddListenerToSpawnScoutingPopupEvent(OnSpawnScoutingPopupEvent);
+        EventGenerator.Singleton.AddListenerToSpawnTrackingPopupEvent(OnSpawnTrackingPopupEvent);
     }
 
     void OnCardRevealedEvent(Deck deckDrawnFrom, Card revealedCard, int componentIdOfRevealedCard) {
@@ -96,6 +102,21 @@ public class PopupManager : MonoBehaviour
     void OnSpawnChooseInventionCardPopupEvent(List<InventionCard> inventionCards) {
         ChooseInventionCardPopupController newPopup = Instantiate(chooseInventionCardPopupPrefab, parentTransform, false);
         newPopup.Initialize(inventionCards);
+    }
+
+    void OnSpawnReconnaissancePopupEvent(List<IslandTileController> topTiles, Stack<IslandTileController> deck) {
+        ReconnaissancePopupController newPopup = Instantiate(reconnaissancePopupPrefab, parentTransform, false);
+        newPopup.Initialize(topTiles, deck);
+    }
+
+    void OnSpawnScoutingPopupEvent(DiscoveryTokenController token1, DiscoveryTokenController token2) {
+        ScoutingPopupController newPopup = Instantiate(scoutingPopPrefab, parentTransform, false);
+        newPopup.Initialize(token1, token2);
+    }
+
+    void OnSpawnTrackingPopupEvent(BeastCardController topCard, Stack<BeastCardController> huntingDeck) {
+        TrackingPopupController newPopup = Instantiate(trackingPopupPrefab, parentTransform, false);
+        newPopup.Initialize(topCard, huntingDeck);
     }
 
     // Helper methods
