@@ -19,11 +19,16 @@ public class ResourceManager : MonoBehaviour
     private List<TokenController> futureResourceTokens = new List<TokenController>();
 
     private bool isActionPhase;
+    private bool cellarIsBuilt;
 
-    void Awake() {
-        if (singleton == null) {
+    void Awake()
+    {
+        if (singleton == null)
+        {
             singleton = this;
-        } else {
+        }
+        else
+        {
             Destroy(gameObject);
             return;
         }
@@ -31,9 +36,12 @@ public class ResourceManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToResourceEvent(OnResourceEvent);
         EventGenerator.Singleton.AddListenerToGetResourceEvent(OnGetResourceEvent);
         EventGenerator.Singleton.AddListenerToPhaseStartEvent(OnPhaseStartEvent);
+        EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
+        EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
     }
 
-    void InitializeResources() {
+    void InitializeResources()
+    {
         availableResources.Add(ResourceType.Food, 0);
         availableResources.Add(ResourceType.Hide, 0);
         availableResources.Add(ResourceType.NonPerishableFood, 0);
@@ -45,8 +53,10 @@ public class ResourceManager : MonoBehaviour
         futureResources.Add(ResourceType.Wood, 0);
     }
 
-    void OnResourceEvent(string eventType, int amount) {
-        switch (eventType) {
+    void OnResourceEvent(string eventType, int amount)
+    {
+        switch (eventType)
+        {
             case ResourceEvent.GainFood: GainResource(ResourceType.Food, amount); break;
             case ResourceEvent.LoseFood: LoseResource(ResourceType.Food, amount); break;
             case ResourceEvent.GainHide: GainResource(ResourceType.Hide, amount); break;
@@ -59,8 +69,10 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
-    void OnGetResourceEvent(string eventType, int amount) {
-        switch (eventType) {
+    void OnGetResourceEvent(string eventType, int amount)
+    {
+        switch (eventType)
+        {
             case GetResourceEvent.GetHide: EventGenerator.Singleton.RaiseGetHideResponseEvent(availableResources[ResourceType.Hide]); break;
             case GetResourceEvent.GetFood: EventGenerator.Singleton.RaiseGetFoodResponseEvent(availableResources[ResourceType.Food]); break;
             case GetResourceEvent.GetNonPerishableFood: EventGenerator.Singleton.RaiseGetNonPerishableFoodResponseEvent(availableResources[ResourceType.NonPerishableFood]); break;
@@ -68,54 +80,85 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
-    void OnPhaseStartEvent(Phase phase) {
+    void OnPhaseStartEvent(Phase phase)
+    {
         isActionPhase = phase == Phase.Action;
     }
-
-    void GainResource(ResourceType resourceType, int amount) {
-        if (isActionPhase) {
+    void OnTurnStartEvent(int turnStarted)
+    {
+        if (!cellarIsBuilt)
+        {
+            int perishableFood = availableResources[ResourceType.Food];
+            LoseResource(ResourceType.Food, perishableFood);
+        }
+    }
+    void OnUpdateBuiltInventionsEvent(Invention invention, bool isBuilt)
+    {
+        if (invention == Invention.Cellar)
+        {
+            cellarIsBuilt = isBuilt;
+        }
+    }
+    void GainResource(ResourceType resourceType, int amount)
+    {
+        if (isActionPhase)
+        {
             futureResources[resourceType] += amount;
             SpawnTokens(futureResourcesArea, PrefabLoader.Singleton.GetPrefab(resourceType), futureResourceTokens, amount);
-        } else {
+        }
+        else
+        {
             availableResources[resourceType] += amount;
             SpawnTokens(availableResourcesArea, PrefabLoader.Singleton.GetPrefab(resourceType), availableResourceTokens, amount);
         }
     }
 
-    void LoseResource(ResourceType resourceType, int amount) {
+    void LoseResource(ResourceType resourceType, int amount)
+    {
         availableResources[resourceType] -= amount;
-        if (availableResources[resourceType] < 0) {
+        if (availableResources[resourceType] < 0)
+        {
             EventGenerator.Singleton.RaiseAllLoseHealthEvent(-availableResources[resourceType]);
             availableResources[resourceType] = 0;
         }
-        if (availableResourceTokens.Count > 0) {
-            for (int i = 0; i < amount; i++) {
+        if (availableResourceTokens.Count > 0)
+        {
+            for (int i = 0; i < amount; i++)
+            {
                 DeleteTokenOfType(resourceType, availableResourceTokens);
             }
         }
     }
 
-    void MakeResourcesAvailable() {
-        foreach (ResourceType resourceType in System.Enum.GetValues(typeof(ResourceType))) {
+    void MakeResourcesAvailable()
+    {
+        foreach (ResourceType resourceType in System.Enum.GetValues(typeof(ResourceType)))
+        {
             availableResources[resourceType] += futureResources[resourceType];
             futureResources[resourceType] = 0;
         }
-        foreach (TokenController token in futureResourceTokens) {
-            if (token != null) {
+        foreach (TokenController token in futureResourceTokens)
+        {
+            if (token != null)
+            {
                 availableResourceTokens.Add(token);
             }
         }
         futureResourceTokens.Clear();
     }
 
-    void SpawnTokens(Transform resourcesArea, TokenController prefab, List<TokenController> listOfTokens, int amount) {
-        for (int i= 0; i < amount; i++) {
+    void SpawnTokens(Transform resourcesArea, TokenController prefab, List<TokenController> listOfTokens, int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
             SpawnToken(resourcesArea, prefab, listOfTokens);
         }
     }
 
-    private void SpawnToken(Transform resourcesArea, TokenController prefab, List<TokenController> listOfTokens) {
-        if (prefab == null || resourcesArea == null) {
+    private void SpawnToken(Transform resourcesArea, TokenController prefab, List<TokenController> listOfTokens)
+    {
+        if (prefab == null || resourcesArea == null)
+        {
             Debug.Log("Prefab or resource area is null. Cannot spawn token.");
             return;
         }
@@ -130,9 +173,11 @@ public class ResourceManager : MonoBehaviour
         listOfTokens.Add(newToken);
     }
 
-    private void DeleteTokenOfType(ResourceType resourceType, List<TokenController> listOfTokens) {
+    private void DeleteTokenOfType(ResourceType resourceType, List<TokenController> listOfTokens)
+    {
         TokenType tokenType;
-        switch (resourceType) {
+        switch (resourceType)
+        {
             case ResourceType.Food: tokenType = TokenType.Food; break;
             case ResourceType.Hide: tokenType = TokenType.Hide; break;
             case ResourceType.NonPerishableFood: tokenType = TokenType.NonPerishableFood; break;
@@ -141,18 +186,24 @@ public class ResourceManager : MonoBehaviour
         }
         TokenController tokenToDelete = null;
         List<TokenController> nullTokens = new List<TokenController>();
-        foreach (TokenController token in listOfTokens) {
-            if (token == null) {
+        foreach (TokenController token in listOfTokens)
+        {
+            if (token == null)
+            {
                 nullTokens.Add(token);
-            } else if (token.tokenType == tokenType) {
+            }
+            else if (token.tokenType == tokenType)
+            {
                 tokenToDelete = token;
                 break;
             }
         }
-        foreach (TokenController nullToken in nullTokens) {
+        foreach (TokenController nullToken in nullTokens)
+        {
             listOfTokens.Remove(nullToken);
         }
-        if (tokenToDelete == null) {
+        if (tokenToDelete == null)
+        {
             Debug.Log("Failed to delete resource token.");
             return;
         }

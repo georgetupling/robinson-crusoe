@@ -22,13 +22,18 @@ public class PopupManager : MonoBehaviour
     [SerializeField] private ScoutingPopupController scoutingPopPrefab;
     [SerializeField] private TrackingPopupController trackingPopupPrefab;
     [SerializeField] private ItemActivationPopupController itemActivationPopupPrefab;
+    [SerializeField] private ShortcutPopupController shortcutPopupPrefab;
 
     [SerializeField] private Transform parentTransform;
 
-    void Awake() {
-        if (singleton == null) {
+    void Awake()
+    {
+        if (singleton == null)
+        {
             singleton = this;
-        } else {
+        }
+        else
+        {
             return;
         }
         EventGenerator.Singleton.AddListenerToCardRevealedEvent(OnCardRevealedEvent);
@@ -46,91 +51,118 @@ public class PopupManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToSpawnScoutingPopupEvent(OnSpawnScoutingPopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnTrackingPopupEvent(OnSpawnTrackingPopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnItemActivationPopupEvent(OnSpawnItemActivationEvent);
+        EventGenerator.Singleton.AddListenerToSpawnShortcutPopupEvent(OnSpawnShortcutPopupEvent);
     }
 
-    void OnCardRevealedEvent(Deck deckDrawnFrom, Card revealedCard, int componentIdOfRevealedCard) {
+    void OnCardRevealedEvent(Deck deckDrawnFrom, Card revealedCard, int componentIdOfRevealedCard)
+    {
         CardPopupController newPopup = Instantiate(cardPopupPrefab, parentTransform, false);
         EventGenerator.Singleton.RaiseInitializeCardPopupEvent(newPopup.ComponentId, componentIdOfRevealedCard, deckDrawnFrom, revealedCard);
     }
 
-    void OnIslandTileRevealedEvent(int sourceComponentId, Sprite sprite) {
+    void OnIslandTileRevealedEvent(int sourceComponentId, Sprite sprite)
+    {
         SpritePopupController newPopup = Instantiate(islandTilePopupPrefab, parentTransform, false);
         EventGenerator.Singleton.RaiseInitializeSpritePopupEvent(newPopup.ComponentId, sourceComponentId, sprite);
     }
 
-    void OnDiscoveryTokenRevealedEvent(int sourceComponentId, Sprite sprite) {
+    void OnDiscoveryTokenRevealedEvent(int sourceComponentId, Sprite sprite)
+    {
         SpritePopupController newPopup = Instantiate(discoveryTokenPopupPrefab, parentTransform, false);
         EventGenerator.Singleton.RaiseInitializeSpritePopupEvent(newPopup.ComponentId, sourceComponentId, sprite);
     }
 
-    void OnSpawnMoraleChoicePopupEvent() {
+    void OnSpawnMoraleChoicePopupEvent()
+    {
         MoraleChoicePopupController newPopup = Instantiate(moraleChoicePopupPrefab, parentTransform, false);
     }
 
-    void OnSpawnDiscoveryTokenActivationPopupEvent(int sourceComponentId, DiscoveryToken discoveryToken) {
-        if (ActivationRequiresTarget(discoveryToken)) {
+    void OnSpawnDiscoveryTokenActivationPopupEvent(int sourceComponentId, DiscoveryToken discoveryToken)
+    {
+        if (ActivationRequiresTarget(discoveryToken))
+        {
             DiscoveryTokenActivationPopupController newPopup = Instantiate(discoveryTokenActivationPopupWithTargetSelectPrefab, parentTransform, false);
-        } else {
+        }
+        else
+        {
             DiscoveryTokenActivationPopupController newPopup = Instantiate(discoveryTokenActivationPopupPrefab, parentTransform, false);
         }
         EventGenerator.Singleton.RaiseInitializeDiscoveryTokenActivationPopupEvent(sourceComponentId, discoveryToken);
     }
 
-    void OnSpawnVariableCostPopupEvent(ResourceCost resourceCost, ActionAssignment actionAssignment) {
+    void OnSpawnVariableCostPopupEvent(ResourceCost resourceCost, ActionAssignment actionAssignment)
+    {
         VariableCostPopupController newPopup = Instantiate(variableCostPopupPrefab, parentTransform, false);
         newPopup.Initialize(resourceCost, actionAssignment);
     }
 
-    void OnSpawnMakeCampChoicePopupEvent(int playerId) {
+    void OnSpawnMakeCampChoicePopupEvent(int playerId)
+    {
         MakeCampChoicePopupController newPopup = Instantiate(makeCampChoicePopupPrefab, parentTransform, false);
         newPopup.Initialize(playerId);
     }
 
-    void OnSpawnNightPhasePopupEvent(int totalFoodAvailable) {
+    void OnSpawnNightPhasePopupEvent(int totalFoodAvailable)
+    {
         NightPhasePopupController newPopup = Instantiate(nightPhasePopupPrefab, parentTransform, false);
         newPopup.Initialize(totalFoodAvailable);
     }
 
-    void OnSpawnDicePopupEvent(List<DieType> dieTypes, int playerId, bool hasRerollAvailable) {
+    void OnSpawnDicePopupEvent(List<DieType> dieTypes, int playerId, bool hasRerollAvailable)
+    {
         DicePopupController newPopup = Instantiate(dicePopupPrefab, parentTransform, false);
         newPopup.Initialize(dieTypes, playerId, hasRerollAvailable);
     }
 
-    void OnSpawnAbilityPopupEvent(int playerId, Ability ability) {
+    void OnSpawnAbilityPopupEvent(int playerId, Ability ability)
+    {
         AbilityPopupController newPopup = Instantiate(abilityPopupPrefab, parentTransform, false);
         newPopup.Initialize(playerId, ability);
     }
 
-    void OnSpawnChooseInventionCardPopupEvent(List<InventionCard> inventionCards) {
+    void OnSpawnChooseInventionCardPopupEvent(List<InventionCard> inventionCards)
+    {
         ChooseInventionCardPopupController newPopup = Instantiate(chooseInventionCardPopupPrefab, parentTransform, false);
         newPopup.Initialize(inventionCards);
     }
 
-    void OnSpawnReconnaissancePopupEvent(List<IslandTileController> topTiles, Stack<IslandTileController> deck) {
+    void OnSpawnReconnaissancePopupEvent(List<IslandTileController> topTiles, Stack<IslandTileController> deck)
+    {
         ReconnaissancePopupController newPopup = Instantiate(reconnaissancePopupPrefab, parentTransform, false);
         newPopup.Initialize(topTiles, deck);
     }
 
-    void OnSpawnScoutingPopupEvent(DiscoveryTokenController token1, DiscoveryTokenController token2) {
+    void OnSpawnScoutingPopupEvent(DiscoveryTokenController token1, DiscoveryTokenController token2)
+    {
         ScoutingPopupController newPopup = Instantiate(scoutingPopPrefab, parentTransform, false);
         newPopup.Initialize(token1, token2);
     }
 
-    void OnSpawnTrackingPopupEvent(BeastCardController topCard, Stack<BeastCardController> huntingDeck) {
+    void OnSpawnTrackingPopupEvent(BeastCardController topCard, Stack<BeastCardController> huntingDeck)
+    {
         TrackingPopupController newPopup = Instantiate(trackingPopupPrefab, parentTransform, false);
         newPopup.Initialize(topCard, huntingDeck);
     }
 
-    void OnSpawnItemActivationEvent(Invention invention) {
+    void OnSpawnItemActivationEvent(Invention invention)
+    {
         ItemActivationPopupController newPopup = Instantiate(itemActivationPopupPrefab, parentTransform, false);
         newPopup.SetInvention(invention);
     }
 
+    void OnSpawnShortcutPopupEvent()
+    {
+        ShortcutPopupController newPopup = Instantiate(shortcutPopupPrefab, parentTransform, false);
+    }
+
     // Helper methods
 
-    bool ActivationRequiresTarget(DiscoveryToken discoveryToken) {
-        foreach (CardEffect activationEffect in discoveryToken.effectsOnActivation) {
-            if (activationEffect.targetType == TargetType.Player) {
+    bool ActivationRequiresTarget(DiscoveryToken discoveryToken)
+    {
+        foreach (CardEffect activationEffect in discoveryToken.effectsOnActivation)
+        {
+            if (activationEffect.targetType == TargetType.Player)
+            {
                 return true;
             }
         }

@@ -29,11 +29,15 @@ public class NightPhaseManager : MonoBehaviour
     // Flags for night phase events
     bool potBuilt;
     bool fireplaceBuilt;
-    
-    void Awake() {
-        if (singleton == null) {
+
+    void Awake()
+    {
+        if (singleton == null)
+        {
             singleton = this;
-        } else {
+        }
+        else
+        {
             return;
         }
         EventGenerator.Singleton.AddListenerToPhaseStartEvent(OnPhaseStartEvent);
@@ -47,133 +51,174 @@ public class NightPhaseManager : MonoBehaviour
 
     // Listeners
 
-    void OnPhaseStartEvent(Phase phase) {
-        if (phase != Phase.Night) {
+    void OnPhaseStartEvent(Phase phase)
+    {
+        if (phase != Phase.Night)
+        {
             return;
         }
         StartCoroutine(ApplyNightPhase());
     }
 
-    void OnAdjacentTileChosenEvent(bool campIsMoving, int locationId) {
-        if (isWaitingOnMoveCampInput) {
+    void OnAdjacentTileChosenEvent(bool campIsMoving, int locationId)
+    {
+        if (isWaitingOnMoveCampInput)
+        {
             this.campIsMoving = campIsMoving;
             this.locationId = locationId;
             isWaitingOnMoveCampInput = false;
         }
     }
 
-    void OnGetResourceEvent(string eventType, int response) {
-        if (eventType == GetResourceEvent.GetFoodResponse && isWaitingOnFood) {
+    void OnGetResourceEvent(string eventType, int response)
+    {
+        if (eventType == GetResourceEvent.GetFoodResponse && isWaitingOnFood)
+        {
             foodAvailable = response;
             isWaitingOnFood = false;
-        } else if (eventType == GetResourceEvent.GetNonPerishableFoodResponse && isWaitingOnNonPerishableFood) {
+        }
+        else if (eventType == GetResourceEvent.GetNonPerishableFoodResponse && isWaitingOnNonPerishableFood)
+        {
             nonPerishableFoodAvailable = response;
             isWaitingOnNonPerishableFood = false;
         }
     }
 
-    void OnPlayersEatingEvent(List<int> playersEating) {
+    void OnPlayersEatingEvent(List<int> playersEating)
+    {
         this.playersEating = playersEating;
         isWaitingOnPopup = false;
     }
 
-    void OnCampHasNaturalShelterResponseEvent(bool campHasNaturalShelter) {
-        if (isWaitingOnCampHasNaturalShelter) {
+    void OnCampHasNaturalShelterResponseEvent(bool campHasNaturalShelter)
+    {
+        if (isWaitingOnCampHasNaturalShelter)
+        {
             this.campHasNaturalShelter = campHasNaturalShelter;
             isWaitingOnCampHasNaturalShelter = false;
         }
     }
 
-    void OnShelterIsBuiltResponseEvent(bool shelterIsBuilt) {
-        if (isWaitingOnShelterIsBuilt) {
+    void OnShelterIsBuiltResponseEvent(bool shelterIsBuilt)
+    {
+        if (isWaitingOnShelterIsBuilt)
+        {
             this.shelterIsBuilt = shelterIsBuilt;
             isWaitingOnShelterIsBuilt = false;
         }
     }
 
-    void OnUpdateBuiltInventions(Invention invention, bool isBuilt) {
-        if (invention == Invention.Pot) {
+    void OnUpdateBuiltInventions(Invention invention, bool isBuilt)
+    {
+        if (invention == Invention.Pot)
+        {
             potBuilt = isBuilt;
-        } else if (invention == Invention.Fireplace) {
+        }
+        else if (invention == Invention.Fireplace)
+        {
             fireplaceBuilt = isBuilt;
         }
     }
 
     // The main night phase method
 
-    IEnumerator ApplyNightPhase() {
+    IEnumerator ApplyNightPhase()
+    {
         isWaitingOnFood = true;
         isWaitingOnNonPerishableFood = true;
         EventGenerator.Singleton.RaiseGetFoodEvent();
         EventGenerator.Singleton.RaiseGetNonPerishableFoodEvent();
-        while (isWaitingOnFood || isWaitingOnNonPerishableFood) {
+        while (isWaitingOnFood || isWaitingOnNonPerishableFood)
+        {
             yield return null;
         }
         int foodRequired = GameSettings.PlayerCount;
-        if (foodAvailable == 0 && nonPerishableFoodAvailable == 0) {
+        if (foodAvailable == 0 && nonPerishableFoodAvailable == 0)
+        {
             EventGenerator.Singleton.RaiseLoseHealthEvent(HealthEvent.AllPlayers, 2);
-        } else if (foodAvailable + nonPerishableFoodAvailable >= foodRequired) {
-            if (foodAvailable >= foodRequired) {
+        }
+        else if (foodAvailable + nonPerishableFoodAvailable >= foodRequired)
+        {
+            if (foodAvailable >= foodRequired)
+            {
                 EventGenerator.Singleton.RaiseLoseFoodEvent(foodRequired);
-            } else {
+            }
+            else
+            {
                 EventGenerator.Singleton.RaiseLoseFoodEvent(foodAvailable);
                 EventGenerator.Singleton.RaiseLoseNonPerishableFoodEvent(foodRequired - foodAvailable);
             }
-        } else {
+        }
+        else
+        {
             isWaitingOnPopup = true;
             EventGenerator.Singleton.RaiseSpawnNightPhasePopupEvent(foodAvailable + nonPerishableFoodAvailable);
-            while (isWaitingOnPopup) {
+            while (isWaitingOnPopup)
+            {
                 yield return null;
             }
             List<int> playersGoingHungry = new List<int>();
-            for (int i = 0; i < GameSettings.PlayerCount; i++) {
-                if (!playersEating.Contains(i)) {
+            for (int i = 0; i < GameSettings.PlayerCount; i++)
+            {
+                if (!playersEating.Contains(i))
+                {
                     playersGoingHungry.Add(i);
                 }
             }
-            foreach (int playerId in playersGoingHungry) {
+            foreach (int playerId in playersGoingHungry)
+            {
                 EventGenerator.Singleton.RaiseLoseHealthEvent(playerId, 2);
             }
             EventGenerator.Singleton.RaiseLoseFoodEvent(foodAvailable);
             EventGenerator.Singleton.RaiseLoseNonPerishableFoodEvent(nonPerishableFoodAvailable);
         }
-        
+
         // Asks if the players want to move camp
         yield return new WaitForSeconds(1f);
 
         isWaitingOnMoveCampInput = true;
         EventGenerator.Singleton.RaiseGetIslandTileInputEvent(true, InputType.MoveCamp);
-        while (isWaitingOnMoveCampInput) {
+        while (isWaitingOnMoveCampInput)
+        {
             yield return null;
         }
-        if (campIsMoving) {
+        if (campIsMoving)
+        {
             EventGenerator.Singleton.RaiseSpawnIslandTileTokenEvent(TokenType.Camp, locationId);
             EventGenerator.Singleton.RaiseLoseHalfRoofEvent();
             EventGenerator.Singleton.RaiseLoseHalfPalisadeEvent();
         }
 
         // Asks if the players want to use the pot
+        isWaitingOnFood = true;
         EventGenerator.Singleton.RaiseGetFoodEvent();
-        while (isWaitingOnFood) {
+        while (isWaitingOnFood)
+        {
             yield return null;
         }
-        if (potBuilt && foodAvailable > 0) {
+        if (potBuilt && foodAvailable > 0)
+        {
             yield return new WaitForSeconds(1f);
             EventGenerator.Singleton.RaiseSpawnItemActivationPopupEvent(Invention.Pot);
-            while (popupArea.childCount > 0) {
+            while (popupArea.childCount > 0)
+            {
                 yield return null;
             }
         }
 
         // Asks if the players want to use the fireplace
+        isWaitingOnFood = true;
         EventGenerator.Singleton.RaiseGetFoodEvent();
-        while (isWaitingOnFood) {
+        while (isWaitingOnFood)
+        {
             yield return null;
         }
-        if (fireplaceBuilt && foodAvailable > 0) {
+        if (fireplaceBuilt && foodAvailable > 0)
+        {
             yield return new WaitForSeconds(1f);
             EventGenerator.Singleton.RaiseSpawnItemActivationPopupEvent(Invention.Fireplace);
-            while (popupArea.childCount > 0) {
+            while (popupArea.childCount > 0)
+            {
                 yield return null;
             }
         }
@@ -183,20 +228,23 @@ public class NightPhaseManager : MonoBehaviour
 
         isWaitingOnCampHasNaturalShelter = true;
         EventGenerator.Singleton.RaiseCampHasNaturalShelterEvent();
-        while (isWaitingOnCampHasNaturalShelter) {
+        while (isWaitingOnCampHasNaturalShelter)
+        {
             yield return null;
         }
 
         isWaitingOnShelterIsBuilt = true;
         EventGenerator.Singleton.RaiseShelterIsBuiltEvent();
-        while (isWaitingOnShelterIsBuilt) {
+        while (isWaitingOnShelterIsBuilt)
+        {
             yield return null;
         }
 
-        if (!campHasNaturalShelter && !shelterIsBuilt) {
+        if (!campHasNaturalShelter && !shelterIsBuilt)
+        {
             EventGenerator.Singleton.RaiseLoseHealthEvent(HealthEvent.AllPlayers, 1);
         }
-        
+
         // TODO: check for effects that make a player sleep outside camp
 
         yield return new WaitForSeconds(1f);

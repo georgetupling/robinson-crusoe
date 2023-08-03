@@ -4,12 +4,8 @@ using UnityEngine;
 
 public class Gain2Palisade : CardEffect
 {
-    public override void ApplyEffect() {
-        if (hasBeenApplied) {
-            Debug.LogError("Gain2Palisade effect has already been applied.");
-            return;
-        }
+    public override void ApplyEffect()
+    {
         EventGenerator.Singleton.RaiseGainPalisadeEvent(2);
-        hasBeenApplied = true;
     }
 }

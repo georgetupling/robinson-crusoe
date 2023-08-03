@@ -116,7 +116,7 @@
         "resourceCosts": [],
         "terrainTypeRequirement": "None",
         "effectsOnBuild": ["ShortcutEffect"],
-        "effectsOnLoss": ["EndShortcutEffect"],
+        "effectsOnLoss": [],
         "isDefaultInvention": false,
         "isPersonalInvention": true
     },
@@ -167,8 +167,8 @@
         "itemRequirements": [],
         "resourceCosts": [],
         "terrainTypeRequirement": "Grass",
-        "effectsOnBuild": ["BedEffect"],
-        "effectsOnLoss": ["EndBedEffect"],
+        "effectsOnBuild": [],
+        "effectsOnLoss": [],
         "isDefaultInvention": false,
         "isPersonalInvention": false
     },
@@ -205,7 +205,7 @@
     {
         "inventionName": "Sling",
         "itemRequirements": [],
-        "resourceCosts": [],
+        "resourceCosts": ["WoodOrHide"],
         "terrainTypeRequirement": "None",
         "effectsOnBuild": ["Gain2Weapon"],
         "effectsOnLoss": ["Lose2Weapon"],

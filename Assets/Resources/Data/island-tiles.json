@@ -29,7 +29,7 @@
     {
         "Id": 4,
         "TerrainType": "Hills",
-        "Sources": ["Fish", "Wood"],
+        "Sources": ["Wood", "Fish"],
         "HasTotem": true,
         "HasBeastCard": false,
         "HasNaturalShelter": false,

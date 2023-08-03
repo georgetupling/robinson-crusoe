@@ -1,5 +1,6 @@
 public enum InputType
 {
     MoveCamp,
-    Corral
+    Corral,
+    Shortcut
 }

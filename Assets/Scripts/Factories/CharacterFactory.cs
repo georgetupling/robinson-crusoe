@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public static class CharacterFactory 
+public static class CharacterFactory
 {
     static Ability carpenterAbility0 = new Ability("Economical Construction", 2, 0, true, CardEffectFactory.CreateCardEffect("EconomicalConstructionEffect"));
-    static Ability carpenterAbility1 = new Ability("Craftsmanship", 2, 0, false, CardEffectFactory.CreateCardEffect("CraftsmanshipEffect")); 
+    static Ability carpenterAbility1 = new Ability("Craftsmanship", 2, 0, false, CardEffectFactory.CreateCardEffect("CraftsmanshipEffect"));
     static Ability carpenterAbility2 = new Ability("A New Idea", 3, 0, true, CardEffectFactory.CreateCardEffect("ANewIdeaEffect"));
     static Ability carpenterAbility3 = new Ability("Handyman", 3, 0, true, CardEffectFactory.CreateCardEffect("HandymanEffect"));
     static List<Ability> carpenterAbilities = new List<Ability> { carpenterAbility0, carpenterAbility1, carpenterAbility2, carpenterAbility3 };
@@ -34,7 +34,8 @@ public static class CharacterFactory
         { CharacterType.Soldier, new Character(CharacterType.Soldier, "Soldier", 12, new List<int> { 7, 3 }, Invention.Spear, soldierAbilities) }
     };
 
-    public static Character CreateCharacter(CharacterType characterType) {
+    public static Character CreateCharacter(CharacterType characterType)
+    {
         return characters[characterType];
     }
 }

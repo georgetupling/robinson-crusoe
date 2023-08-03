@@ -13,11 +13,14 @@ public static class ComponentDimensions
         { TokenType.OrangeWeatherDie, 0.15f },
         { TokenType.RedWeatherDie, 0.15f },
         { TokenType.WhiteWeatherDie, 0.15f },
-        { TokenType.Camp, 0.01f }
+        { TokenType.Camp, 0.01f },
+        { TokenType.Shortcut, 0.01f }
     };
 
-    public static float GetHeight(TokenType tokenType) {
-        if (!tokenHeights.ContainsKey(tokenType)) {
+    public static float GetHeight(TokenType tokenType)
+    {
+        if (!tokenHeights.ContainsKey(tokenType))
+        {
             Debug.Log($"{tokenType} token height not set.");
             return 0f;
         }

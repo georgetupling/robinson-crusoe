@@ -27,12 +27,16 @@ public class MainUIController : MonoBehaviour
     List<ActionAssignment> actionAssignments;
     InputType inputType;
     string originalInstruction; // To change it back after getting island tile input
-    
 
-    void Awake() {
-        if (Singleton == null) {
+
+    void Awake()
+    {
+        if (Singleton == null)
+        {
             Singleton = this;
-        } else {
+        }
+        else
+        {
             Destroy(gameObject);
             return;
         }
@@ -44,69 +48,91 @@ public class MainUIController : MonoBehaviour
         EventGenerator.Singleton.AddListenerToGetIslandTileInputEvent(OnGetIslandTileInputEvent);
     }
 
-    void SetUpButtons() {
-        devToolsToggle.onClick.AddListener(() => {
+    void SetUpButtons()
+    {
+        devToolsToggle.onClick.AddListener(() =>
+        {
             devToolsPanel.gameObject.SetActive(!devToolsPanel.gameObject.activeSelf);
         });
-        submitActions.onClick.AddListener(() => {
+        submitActions.onClick.AddListener(() =>
+        {
             resetActions.gameObject.SetActive(false);
             submitActions.gameObject.SetActive(false);
             playerInstruction.text = "Resolving player actions...";
             EventGenerator.Singleton.RaiseActionsSubmittedEvent(actionAssignments);
         });
-        resetActions.onClick.AddListener(() => {
+        resetActions.onClick.AddListener(() =>
+        {
             List<ActionPawnController> actionPawns = new List<ActionPawnController>(FindObjectsOfType<ActionPawnController>());
-            foreach (ActionPawnController actionPawn in actionPawns) {
+            foreach (ActionPawnController actionPawn in actionPawns)
+            {
                 EventGenerator.Singleton.RaiseReturnActionPawnEvent(actionPawn.ComponentId);
             }
         });
-        continueButton.onClick.AddListener(() => {
-            switch (inputType) {
+        continueButton.onClick.AddListener(() =>
+        {
+            switch (inputType)
+            {
                 case InputType.MoveCamp: EventGenerator.Singleton.RaiseAdjacentTileChosenEvent(false, -1); break;
             }
             EventGenerator.Singleton.RaiseGetIslandTileInputEvent(false, inputType);
         });
     }
 
-    void OnEnableMainUIEvent(bool disable) {
-        if (disable == true) {
+    void OnEnableMainUIEvent(bool disable)
+    {
+        if (disable == true)
+        {
             canvasGroup.interactable = true;
             canvasGroup.alpha = 1.0f;
-        } else if (disable == false) {
+        }
+        else if (disable == false)
+        {
             canvasGroup.interactable = false;
             canvasGroup.alpha = 0.5f;
         }
     }
 
-    void OnPhaseStartEvent(Phase phaseStarted) {
+    void OnPhaseStartEvent(Phase phaseStarted)
+    {
         currentPhase.text = phaseStarted.ToString() + " Phase";
-        if (phaseStarted == Phase.Action) {
+        if (phaseStarted == Phase.Action)
+        {
             resetActions.gameObject.SetActive(true);
             submitActions.interactable = false;
             submitActions.gameObject.SetActive(true);
-        } else {
+        }
+        else
+        {
             resetActions.gameObject.SetActive(false);
             submitActions.gameObject.SetActive(false);
         }
     }
 
-    void OnActionsReadyToSubmitEvent(bool actionsAreReadyToSubmit, List<ActionAssignment> actionAssignments) {
+    void OnActionsReadyToSubmitEvent(bool actionsAreReadyToSubmit, List<ActionAssignment> actionAssignments)
+    {
         this.actionAssignments = actionAssignments;
         submitActions.interactable = actionsAreReadyToSubmit;
     }
 
-    void OnGetIslandTileInputEvent(bool isActive, InputType inputType) {
-        if (isActive) {
+    void OnGetIslandTileInputEvent(bool isActive, InputType inputType)
+    {
+        if (isActive)
+        {
             this.inputType = inputType;
             originalInstruction = playerInstruction.text;
             string newInstruction;
-            switch (inputType) {
+            switch (inputType)
+            {
                 case InputType.MoveCamp: newInstruction = "Select a highlighted tile to move camp. Otherwise press continue."; break;
                 case InputType.Corral: newInstruction = "Select a parrot source adjacent to camp. Otherwise press continue."; break;
+                case InputType.Shortcut: newInstruction = "Select a highlighted tile to place shortcut. Otherwise press continue."; break;
                 default: newInstruction = "Error: instruction not found."; break;
             }
             playerInstruction.text = newInstruction;
-        } else {
+        }
+        else
+        {
             playerInstruction.text = originalInstruction;
         }
         continueButton.gameObject.SetActive(isActive);
