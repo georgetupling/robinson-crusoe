@@ -65,7 +65,7 @@
     {
         "Id": 8,
         "TerrainType": "Beach",
-        "Sources": ["Fish", "Wood"],
+        "Sources": ["Wood", "Fish"],
         "HasTotem": false,
         "HasBeastCard": false,
         "HasNaturalShelter": false,

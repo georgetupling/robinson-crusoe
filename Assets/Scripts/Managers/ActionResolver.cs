@@ -11,6 +11,7 @@ public class ActionResolver : MonoBehaviour
 
     const float delayBetweenActions = 0.75f;
     private int animationsInProgress = 0;
+    private bool gettingIslandTileInput;
 
     // Verbiage for querying information from other classes
 
@@ -42,6 +43,7 @@ public class ActionResolver : MonoBehaviour
         EventGenerator.Singleton.AddListenerToGetDeterminationResponseEvent(OnGetDeterminationResponseEvent);
         EventGenerator.Singleton.AddListenerToEconomicalConstructionEvent(OnEconomicalConstructionEvent);
         EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
+        EventGenerator.Singleton.AddListenerToGetIslandTileInputEvent(OnGetIslandTileInputEvent);
     }
 
     // Listeners
@@ -102,6 +104,10 @@ public class ActionResolver : MonoBehaviour
         economicalConstructionApplied = false;
     }
 
+    void OnGetIslandTileInputEvent(bool isActive, InputType inputType) {
+        gettingIslandTileInput = isActive;
+    }
+
     // Methods for resolving actions
 
     IEnumerator ResolveThreatActions() {
@@ -109,18 +115,18 @@ public class ActionResolver : MonoBehaviour
             if (actionAssignment.Type != ActionType.Threat) {
                 continue;
             }
-            while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                 yield return null;
             }
             foreach (int pawnComponentId in actionAssignment.pawnComponentIds) {
                     EventGenerator.Singleton.RaiseReturnActionPawnEvent(pawnComponentId);
             }
-            while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                 yield return null;
             }
             EventCard eventCard = actionAssignment.eventCard;
             bool costsPaid = PayCosts(eventCard.threatResourceCosts, actionAssignment);
-            while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                 yield return null;
             }
             if (costsPaid) {
@@ -167,7 +173,7 @@ public class ActionResolver : MonoBehaviour
             foreach (int pawnComponentId in actionAssignment.pawnComponentIds) {
                 EventGenerator.Singleton.RaiseReturnActionPawnEvent(pawnComponentId);
             }
-            while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                 yield return null;
             }
             // Checks whether the player still has enough determination to build their signature invention
@@ -182,7 +188,7 @@ public class ActionResolver : MonoBehaviour
                 }
             }
             bool costsPaid = PayCosts(actionAssignment.resourceCosts, actionAssignment);
-            while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                 yield return null;
             }
             if (costsPaid) {
@@ -195,7 +201,7 @@ public class ActionResolver : MonoBehaviour
                     } else {
                         DiceRoller.Singleton.RollBuildDice(actionAssignment.playerIds[0]);
                     }
-                    while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+                    while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                         yield return null;
                     }
                     if (!rolledSuccess) {
@@ -224,6 +230,9 @@ public class ActionResolver : MonoBehaviour
             } else {
                 Debug.LogError("Unable to pay build costs.");
             }
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
+                yield return null;
+            }
             yield return new WaitForSeconds(delayBetweenActions);
         }
         StartCoroutine(ResolveGatherActions());
@@ -234,13 +243,13 @@ public class ActionResolver : MonoBehaviour
             if (actionAssignment.Type != ActionType.Gather) {
                 continue;
             }
-            while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                 yield return null;
             }
             foreach (int pawnComponentId in actionAssignment.pawnComponentIds) {
                 EventGenerator.Singleton.RaiseReturnActionPawnEvent(pawnComponentId);
             }
-            while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                 yield return null;
             }
             bool gatherIsSuccessful = true;
@@ -252,7 +261,7 @@ public class ActionResolver : MonoBehaviour
                 } else {
                     DiceRoller.Singleton.RollGatherDice(actionAssignment.playerIds[0], actionAssignment.islandTile.Id);
                 }
-                while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+                while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                     yield return null;
                 }
                 if (!rolledSuccess) {
@@ -272,13 +281,13 @@ public class ActionResolver : MonoBehaviour
             if (actionAssignment.Type != ActionType.Explore) {
                 continue;
             }
-            while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                 yield return null;
             }
             foreach (int pawnComponentId in actionAssignment.pawnComponentIds) {
                 EventGenerator.Singleton.RaiseReturnActionPawnEvent(pawnComponentId);
             }
-            while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                 yield return null;
             }
             bool exploreIsSuccessful = true;
@@ -290,7 +299,7 @@ public class ActionResolver : MonoBehaviour
                 } else {
                     DiceRoller.Singleton.RollExploreDice(actionAssignment.playerIds[0], actionAssignment.locationId);
                 }
-                while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+                while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                     yield return null;
                 }
                 if (!rolledSuccess) {
@@ -316,11 +325,11 @@ public class ActionResolver : MonoBehaviour
             List<int> reversedPawnComponentIds = new List<int>(actionAssignment.pawnComponentIds);
             reversedPawnComponentIds.Reverse();
             for (int i = 0; i < reversedPlayerIds.Count; i++) {
-                while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+                while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                     yield return null;
                 }
                 EventGenerator.Singleton.RaiseReturnActionPawnEvent(reversedPawnComponentIds[i]);
-                while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+                while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                     yield return null;
                 }
                 if (GameSettings.PlayerCount < 4) {
@@ -346,22 +355,22 @@ public class ActionResolver : MonoBehaviour
             List<int> reversedPawnComponentIds = new List<int>(actionAssignment.pawnComponentIds);
             reversedPawnComponentIds.Reverse();
             for (int i = 0; i < reversedPlayerIds.Count; i++) {
-                while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+                while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                     yield return null;
                 }
                 EventGenerator.Singleton.RaiseReturnActionPawnEvent(reversedPawnComponentIds[i]);
-                while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+                while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                     yield return null;
                 }
                 EventGenerator.Singleton.RaiseGainHealthEvent(reversedPlayerIds[i], 1);
                 yield return new WaitForSeconds(delayBetweenActions / 2f);
             }
         }
-        while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+        while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                     yield return null;
             }
         EventGenerator.Singleton.RaiseMakeResourcesAvailableEvent();
-        while (popupsArea.childCount > 0 || animationsInProgress > 0) {
+        while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput) {
                     yield return null;
             }
         EventGenerator.Singleton.RaiseEndPhaseEvent(Phase.Action);

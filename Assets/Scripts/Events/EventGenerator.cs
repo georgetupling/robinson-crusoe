@@ -39,6 +39,8 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<int, bool> gatherSuccessEvent = new UnityEvent<int, bool>();
     private UnityEvent campHasNaturalShelterEvent = new UnityEvent();
     private UnityEvent<bool> campHasNaturalShelterResponseEvent = new UnityEvent<bool>();
+    private UnityEvent<int, Source, bool> exhaustSourceByIslandTileIdEvent = new UnityEvent<int, Source, bool>();
+    private UnityEvent<int, TokenType> destroyIslandTileTokenEvent = new UnityEvent<int, TokenType>();
 
     // Ongoing Effects
     private OngoingEffectEvent ongoingEffectEvent = new OngoingEffectEvent();
@@ -98,6 +100,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<TokenType> spawnTokenInWeatherAreaEvent = new UnityEvent<TokenType>();
     private UnityEvent<int, WoundType, TokenType> spawnWoundTokenEvent = new UnityEvent<int, WoundType, TokenType>();
     private UnityEvent<int, WoundType, TokenType> destroyWoundTokenEvent = new UnityEvent<int, WoundType, TokenType>();
+    private UnityEvent<TokenType> spawnTokenOnCampEvent = new UnityEvent<TokenType>();
 
     // Discovery Tokens
     private InitializeDiscoveryTokenEvent initializeDiscoveryTokenEvent = new InitializeDiscoveryTokenEvent();
@@ -120,6 +123,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<int> playerCanOnlyRestBuildOrMakeCampThisTurnEvent = new UnityEvent<int>();
     private UnityEvent areSufficientResourcesAvailableEvent = new UnityEvent();
     private UnityEvent<bool> areSufficientResourcesAvailableResponseEvent = new UnityEvent<bool>();
+    private UnityEvent<Invention> additionalResourceFromGatherEvent = new UnityEvent<Invention>();
 
     // Night Phase
     private UnityEvent<List<int>> playersEatingEvent = new UnityEvent<List<int>>(); // Used by the night phase popup to communicate which players are eating
@@ -144,7 +148,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<Invention> spawnItemActivationPopupEvent = new UnityEvent<Invention>();
 
     // Player Input
-    private UnityEvent<bool> chooseAdjacentTileEvent = new UnityEvent<bool>();
+    private UnityEvent<bool, InputType> getIslandTileInputEvent = new UnityEvent<bool, InputType>();
     private UnityEvent<bool, int> adjacentTileChosenEvent = new UnityEvent<bool, int>();
 
     // Dice
@@ -362,6 +366,9 @@ public class EventGenerator : MonoBehaviour
 
     public void RaiseSetTokenPositionEvent(int componentId, IslandTileTokenController.Position position) {
         islandTileTokenEvent.Invoke(IslandTileTokenEvent.SetTokenPositionById, componentId, TokenType.Food, position);
+    }
+    public void RaiseSetTokenPositionEvent(int componentId, TokenType tokenType, IslandTileTokenController.Position position) {
+        islandTileTokenEvent.Invoke(IslandTileTokenEvent.SetTokenPositionById, componentId, tokenType, position);
     }
     public void RaiseTurnCampTokenFaceUpEvent() {
         islandTileTokenEvent.Invoke(IslandTileTokenEvent.TurnCampTokenFaceUp, 0, TokenType.Food, IslandTileTokenController.Position.None);
@@ -763,6 +770,15 @@ public class EventGenerator : MonoBehaviour
         destroyWoundTokenEvent.AddListener(listener);
     }
 
+    // Spawn token on camp
+
+    public void RaiseSpawnTokenOnCampEvent(TokenType tokenType) {
+        spawnTokenOnCampEvent.Invoke(tokenType);
+    }
+    public void AddListenerToSpawnTokenOnCampEvent(UnityAction<TokenType> listener) {
+        spawnTokenOnCampEvent.AddListener(listener);
+    }
+
     // InitializeDiscoveryTokenEvent
 
     public void RaiseInitializeDiscoveryTokenEvent(int componentId, DiscoveryToken discoveryToken) {
@@ -927,6 +943,18 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToAreSufficientResourcesAvailableResponseEvent(UnityAction<bool> listener) {
         areSufficientResourcesAvailableResponseEvent.AddListener(listener);
     }
+
+    // Additional resource from gather (used by the sack/ basket)
+
+    public void RaiseAdditionalResourceFromGatherEvent(Invention itemUsed) {
+        additionalResourceFromGatherEvent.Invoke(itemUsed);
+    }
+    public void AddListenerToAdditionalResourceFromGatherEvent(UnityAction<Invention> listener) {
+        additionalResourceFromGatherEvent.AddListener(listener);
+    }
+
+
+
     // Players eating
 
     public void RaisePlayersEatingEvent(List<int> playersEating) {
@@ -1036,6 +1064,24 @@ public class EventGenerator : MonoBehaviour
     }
     public void AddListenerToCampHasNaturalShelterResponseEvent(UnityAction<bool> listener) {
         campHasNaturalShelterResponseEvent.AddListener(listener);
+    }
+
+    // Exhaust source by island tile ID event
+
+    public void RaiseExhaustSourceByIslandTileIdEvent(int islandTileId, Source source, bool isExhausted) {
+        exhaustSourceByIslandTileIdEvent.Invoke(islandTileId, source, isExhausted);
+    }
+    public void AddListenerToExhaustSourceByIslandTileIdEvent(UnityAction<int, Source, bool> listener) {
+        exhaustSourceByIslandTileIdEvent.AddListener(listener);
+    }
+
+    // Destroy island tile token even
+
+    public void RaiseDestroyIslandTileTokenEvent(int islandTileId, TokenType tokenType) {
+        destroyIslandTileTokenEvent.Invoke(islandTileId, tokenType);
+    }
+    public void AddListenerToDestroyIslandTileTokenEvent(UnityAction<int, TokenType> listener) {
+        destroyIslandTileTokenEvent.AddListener(listener);
     }
 
     // Shelter is built event
@@ -1311,11 +1357,11 @@ public class EventGenerator : MonoBehaviour
 
     // Choose adjacent camp event
 
-    public void RaiseChooseAdjacentTileEvent(bool isActive) {
-        chooseAdjacentTileEvent.Invoke(isActive);
+    public void RaiseGetIslandTileInputEvent(bool isActive, InputType inputType) {
+        getIslandTileInputEvent.Invoke(isActive, inputType);
     }
-    public void AddListenerToChooseAdjacentTileEvent(UnityAction<bool> listener) {
-        chooseAdjacentTileEvent.AddListener(listener);
+    public void AddListenerToGetIslandTileInputEvent(UnityAction<bool, InputType> listener) {
+        getIslandTileInputEvent.AddListener(listener);
     }
 
     // Adjacent tile chosen event

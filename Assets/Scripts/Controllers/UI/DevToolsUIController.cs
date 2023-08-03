@@ -33,6 +33,9 @@ public class DevToolsUIController : MonoBehaviour
 
     [SerializeField] private Button gainWeapon;
     [SerializeField] private Button spawnWeather;
+    [SerializeField] private Button exhaustFish;
+
+    bool fishExhausted;
     
     void Awake() {
         if (singleton == null) {
@@ -118,6 +121,11 @@ public class DevToolsUIController : MonoBehaviour
                 TokenType.OrangeWeatherDie, TokenType.WhiteWeatherDie, TokenType.RedWeatherDie };
             int randomIndex = Random.Range(0, weatherTokens.Count);
             EventGenerator.Singleton.RaiseSpawnTokenInWeatherAreaEvent(weatherTokens[randomIndex]);
+        });
+
+        exhaustFish.onClick.AddListener(() => {
+            EventGenerator.Singleton.RaiseExhaustSourceByIslandTileIdEvent(8, Source.Fish, !fishExhausted);
+            fishExhausted = !fishExhausted;
         });
     }
 

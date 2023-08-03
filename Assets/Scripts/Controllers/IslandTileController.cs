@@ -21,20 +21,35 @@ public class IslandTileController : ComponentController
     private Material material;
 
     private Transform islandTileArea;
-    private int tileLocationId;
+    public int tileLocationId { get; private set; }
     public bool IsCampTile { get; private set; }
 
     private Dictionary<int, Vector3> tileLocations = new Dictionary<int, Vector3>();
-
     private Dictionary<Position, TokenController> positionTokenMap = new Dictionary<Position, TokenController>();
-
     const int NumberOfTileLocations = 10;
     const int TileDeckLocationId = -1;
 
+    // Other classes to initialize
     [SerializeField] private GatherActionSpaceController leftGatherActionSpace;
     [SerializeField] private GatherActionSpaceController rightGatherActionSpace;
 
+    // Popup area
+    private Transform popupArea;
+
+    // Fields for resolving certain effects
     private bool shelterIsBuilt;
+    private bool snareIsBuilt;
+    private bool pitIsBuilt;
+    private bool sackIsBuilt;
+    private bool sackUsedThisRound;
+    private bool basketIsBuilt;
+    private bool basketUsedThisRound;
+    private int additionalResource = 0;
+
+    // E.g. if you have 2 effects both giving you additional food tokens, the first will be spawned, the second will go in the list
+    // Then if you lose one of those effects, DestroyToken will check the list before destroying the token
+    private List<TokenType> tokenLimitOverflow = new List<TokenType>();
+    List<TokenType> tokensLimitedToOneCopy = new List<TokenType> { TokenType.AdditionalFood, TokenType.AdditionalWood, TokenType.Shortcut };
 
     protected override void Awake() {
         base.Awake();
@@ -46,21 +61,24 @@ public class IslandTileController : ComponentController
         islandTileArea = GameObject.Find("IslandTileArea").transform;
         tileLocationId = TileDeckLocationId;
         IsCampTile = false;
+        popupArea = GameObject.Find("Popups").transform;
         InitializeTileLocations();
         TurnFaceDown();
         EventGenerator.Singleton.AddListenerToMoveIslandTileEvent(OnMoveIslandTileEvent);
         EventGenerator.Singleton.AddListenerToSpawnIslandTileTokenEvent(OnSpawnIslandTileTokenEvent);
+        EventGenerator.Singleton.AddListenerToDestroyIslandTileTokenEvent(OnDestroyIslandTileTokenEvent);
         EventGenerator.Singleton.AddListenerToCampHasNaturalShelterEvent(OnCampHasNaturalShelterEvent);
-    }
-
-    protected override void Start() {
-        base.Start();
         EventGenerator.Singleton.AddListenerToIslandTileDrawnEvent(OnIslandTileDrawn);
         EventGenerator.Singleton.AddListenerToPhaseStartEvent(OnPhaseStartEvent);
         EventGenerator.Singleton.AddListenerToSpritePopupClosedEvent(OnSpritePopupClosedEvent);
         EventGenerator.Singleton.AddListenerToGetTokensOnIslandTileEvent(OnGetTokensOnIslandTileEvent);
         EventGenerator.Singleton.AddListenerToGatherSuccessEvent(OnGatherSuccessEvent);
         EventGenerator.Singleton.AddListenerToShelterIsBuiltResponseEvent(OnShelterIsBuiltResponseEvent);
+        EventGenerator.Singleton.AddListenerToSpawnTokenOnCampEvent(OnSpawnTokenOnCampEvent);
+        EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
+        EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
+        EventGenerator.Singleton.AddListenerToAdditionalResourceFromGatherEvent(OnAdditionalResourceFromGatherEvent);
+        EventGenerator.Singleton.AddListenerToExhaustSourceByIslandTileIdEvent(OnExhaustSourceByIslandTileIdEvent);
     }
 
     void OnCampHasNaturalShelterEvent() {
@@ -122,13 +140,24 @@ public class IslandTileController : ComponentController
 
     void OnSpawnIslandTileTokenEvent(TokenType tokenType, int locationId) {
         if (tokenType == TokenType.Camp && !IsCampTile && locationId == tileLocationId) {
-            SpawnToken(Camp, misc1);
+            SpawnToken(TokenType.Camp, misc1);
+            if (snareIsBuilt) {
+                SpawnToken(TokenType.AdditionalFood, misc1);
+            }
             IsCampTile = true;
             EventGenerator.Singleton.RaiseCampMovedEvent();
         } else if (tokenType == TokenType.Camp && IsCampTile && locationId != tileLocationId) {
             DestroyToken(TokenType.Camp);
+            // Destroys the snare's additional food token if it's built (since it moves with the camp)
+            if (snareIsBuilt) {
+                DestroyToken(TokenType.AdditionalFood);
+            }
             IsCampTile = false;
         }
+    }
+
+    void OnDestroyIslandTileTokenEvent(int islandTileId, TokenType tokenType) {
+        DestroyToken(tokenType);
     }
     
     void OnGetTokensOnIslandTileEvent(string eventType, int islandTileId, List<TokenType> tokenTypes) {
@@ -162,8 +191,12 @@ public class IslandTileController : ComponentController
     }
 
     void OnGatherSuccessEvent(int islandTileId, bool isRightSource) {
+        StartCoroutine(ApplyGatherSuccess(islandTileId, isRightSource));
+    }
+
+    IEnumerator ApplyGatherSuccess(int islandTileId, bool isRightSource) {
         if (islandTileId != IslandTile.Id) {
-            return;
+            yield break;
         }
         Source source;
         // Island tile 3 has its source on the right. All other tiles with only 1 source have it on the left.
@@ -178,10 +211,90 @@ public class IslandTileController : ComponentController
         }
         int additionalWood = tokenTypes.Contains(TokenType.AdditionalWood) ? 1 : 0;
         int additionalFood = tokenTypes.Contains(TokenType.AdditionalFood) ? 1 : 0;
+
+        // If the sack/basket are built and haven't been used this round, asks whether the user want to use them
+        additionalResource = 0;
+        if (sackIsBuilt && !sackUsedThisRound) {
+            EventGenerator.Singleton.RaiseSpawnItemActivationPopupEvent(Invention.Sack);
+            while (popupArea.childCount > 0) {
+                yield return null;
+            }
+        }
+        if (basketIsBuilt && !basketUsedThisRound) {
+            EventGenerator.Singleton.RaiseSpawnItemActivationPopupEvent(Invention.Basket);
+            while (popupArea.childCount > 0) {
+                yield return null;
+            }
+        }
+
         if (source == Source.Wood) {
-            EventGenerator.Singleton.RaiseGainWoodEvent(1 + additionalWood);
+            EventGenerator.Singleton.RaiseGainWoodEvent(1 + additionalWood + additionalResource);
         } else {
-            EventGenerator.Singleton.RaiseGainFoodEvent(1 + additionalFood);
+            EventGenerator.Singleton.RaiseGainFoodEvent(1 + additionalFood + additionalResource);
+        }
+    }
+
+    void OnSpawnTokenOnCampEvent(TokenType tokenType) {
+        if (!IsCampTile) {
+            return;
+        }
+        SpawnToken(tokenType, misc1);
+    }
+
+    void OnUpdateBuiltInventionsEvent(Invention invention, bool isBuilt) {
+        if (invention == Invention.Snare) {
+            if (snareIsBuilt && IsCampTile && !isBuilt) {
+                // Removes the snare's additional food token if the snare is destroyed
+                DestroyToken(TokenType.AdditionalFood);
+            }
+            snareIsBuilt = isBuilt;
+        } else if (invention == Invention.Pit) {
+            pitIsBuilt = isBuilt;
+        } else if (invention == Invention.Sack) {
+            sackIsBuilt = isBuilt;
+        } else if (invention == Invention.Basket) {
+            basketIsBuilt = isBuilt;
+        }
+    }
+
+    void OnTurnStartEvent(int turnStarted) {
+        sackUsedThisRound = false;
+        basketUsedThisRound = false;
+    }
+
+    void OnAdditionalResourceFromGatherEvent(Invention itemUsed) {
+        additionalResource++;
+        if (itemUsed == Invention.Sack) {
+            sackUsedThisRound = true;
+        } else if (itemUsed == Invention.Basket) {
+            basketUsedThisRound = true;
+        }
+    }
+
+    void OnExhaustSourceByIslandTileIdEvent(int islandTileId, Source source, bool isExhausted) {
+        if (islandTileId != IslandTile.Id) {
+            return;
+        }
+        if (!IslandTile.Sources.Contains(source)) {
+            Debug.LogError($"Can't exhaust {source} on island tile {islandTileId} because the tile doesn't have a source of that type.");
+            return;
+        }
+        if (isExhausted) {
+            if (IslandTile.Sources[0] == source) {
+                SpawnToken(TokenType.BlackMarker, Position.leftSource);
+                leftGatherActionSpace.gameObject.SetActive(false);
+            } else if (IslandTile.Sources[1] == source) {
+                SpawnToken(TokenType.BlackMarker, Position.rightSource);
+                rightGatherActionSpace.gameObject.SetActive(false);
+            }
+        } else {
+            if (IslandTile.Sources[0] == source) {
+                DestroyToken(TokenType.BlackMarker, Position.leftSource);
+                leftGatherActionSpace.gameObject.SetActive(true);
+            } else if (IslandTile.Sources[1] == source) {
+                DestroyToken(TokenType.BlackMarker, Position.rightSource);
+                rightGatherActionSpace.gameObject.SetActive(true);
+            }
         }
     }
 
@@ -195,8 +308,24 @@ public class IslandTileController : ComponentController
                 foodSources++;
             }
         }
-        EventGenerator.Singleton.RaiseGainFoodEvent(foodSources);
-        EventGenerator.Singleton.RaiseGainWoodEvent(woodSources);
+        // Takes additonal food/wood tokens into account
+        List<TokenType> tokenTypes = new List<TokenType>();
+        foreach (TokenController token in positionTokenMap.Values) {
+            tokenTypes.Add(token.tokenType);
+        }
+        int additionalWood = tokenTypes.Contains(TokenType.AdditionalWood) ? 1 : 0;
+        int additionalFood = tokenTypes.Contains(TokenType.AdditionalFood) ? 1 : 0;
+
+        // Rolls for the pit
+        if (pitIsBuilt) {
+            EventGenerator.Singleton.RaiseSpawnDicePopupEvent(new List<DieType> { DieType.BuildDamage });
+            while (popupArea.childCount > 0) {
+                yield return null;
+            }
+        }
+
+        EventGenerator.Singleton.RaiseGainFoodEvent(foodSources + additionalFood);
+        EventGenerator.Singleton.RaiseGainWoodEvent(woodSources + additionalWood);
         yield return new WaitForSeconds(1.5f);
         EventGenerator.Singleton.RaiseEndPhaseEvent(Phase.Production);
     }
@@ -215,6 +344,22 @@ public class IslandTileController : ComponentController
     }
 
     void SpawnToken(TokenType tokenType, Position position) {
+        // Checks token limits
+        if (tokensLimitedToOneCopy.Contains(tokenType)) {
+            bool alreadyContainsSameTypeToken = false;
+            foreach (TokenController token in positionTokenMap.Values) {
+                if (token.tokenType == tokenType) {
+                    alreadyContainsSameTypeToken = true;
+                    break;
+                }
+            }
+            if (alreadyContainsSameTypeToken) {
+                // Instead of spawning a second copy, makes a note that another effect is applying the same type of token
+                tokenLimitOverflow.Add(tokenType);
+                return;
+            }
+        }
+
         if (position >= Position.misc1) {
             position = FindUnoccupiedPosition(position);
         }
@@ -239,8 +384,13 @@ public class IslandTileController : ComponentController
             newTokenWithCorrectController = newToken as IslandTileTokenController;
         }
         newTokenWithCorrectController.tokenType = tokenType;
-        positionTokenMap.Add(position, newTokenWithCorrectController);
-        EventGenerator.Singleton.RaiseSetTokenPositionEvent(newTokenWithCorrectController.ComponentId, position);
+        if (!positionTokenMap.ContainsKey(position)) {
+            positionTokenMap.Add(position, newTokenWithCorrectController);
+        } else {
+            positionTokenMap[position] = newTokenWithCorrectController;
+        }
+        
+        EventGenerator.Singleton.RaiseSetTokenPositionEvent(newTokenWithCorrectController.ComponentId, tokenType, position);
 
         // If the token spawned is the camp token, checks whether the camp is built
         if (tokenType == TokenType.Camp) {
@@ -260,11 +410,35 @@ public class IslandTileController : ComponentController
     }
 
     void DestroyToken(TokenType tokenType) {
-        foreach(TokenController token in positionTokenMap.Values) {
-            if (token != null && token.tokenType == tokenType) {
-                Destroy(token.gameObject);
-                break;
+        DestroyToken(tokenType, Position.None);
+    }
+
+    void DestroyToken(TokenType tokenType, Position position) {
+        // Checks token limits
+        if (tokenLimitOverflow.Contains(tokenType)) {
+            // If there are multiple effects applying one token, keep the token
+            tokenLimitOverflow.Remove(tokenType);
+            return;
+        }
+        
+        TokenController tokenToDestroy = null;
+        if (position != Position.None) {
+            foreach (TokenController token in positionTokenMap.Values) {
+                if (token != null && token.tokenType == tokenType && positionTokenMap.ContainsKey(position) && positionTokenMap[position] != null && positionTokenMap[position] == token) {
+                    tokenToDestroy = token;
+                    break;
+                }
             }
+        } else {
+            foreach (TokenController token in positionTokenMap.Values) {
+                if (token != null && token.tokenType == tokenType) {
+                    tokenToDestroy = token;
+                    break;
+                }
+            }
+        }
+        if (tokenToDestroy != null) {
+            Destroy(tokenToDestroy.gameObject);
         }
     }
 

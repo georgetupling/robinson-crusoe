@@ -25,6 +25,8 @@ public class MainUIController : MonoBehaviour
 
     // Stored info
     List<ActionAssignment> actionAssignments;
+    InputType inputType;
+    string originalInstruction; // To change it back after getting island tile input
     
 
     void Awake() {
@@ -39,8 +41,7 @@ public class MainUIController : MonoBehaviour
         EventGenerator.Singleton.AddListenerToEnableMainUIEvent(OnEnableMainUIEvent);
         EventGenerator.Singleton.AddListenerToPhaseStartEvent(OnPhaseStartEvent);
         EventGenerator.Singleton.AddListenerToActionsReadyToSubmitEvent(OnActionsReadyToSubmitEvent);
-        EventGenerator.Singleton.AddListenerToChooseAdjacentTileEvent(OnChooseAdjacentTileEvent);
-        EventGenerator.Singleton.AddListenerToChooseAdjacentTileEvent(OnChooseAdjacentTileEvent);
+        EventGenerator.Singleton.AddListenerToGetIslandTileInputEvent(OnGetIslandTileInputEvent);
     }
 
     void SetUpButtons() {
@@ -60,8 +61,10 @@ public class MainUIController : MonoBehaviour
             }
         });
         continueButton.onClick.AddListener(() => {
-            EventGenerator.Singleton.RaiseAdjacentTileChosenEvent(false, -1);
-            EventGenerator.Singleton.RaiseChooseAdjacentTileEvent(false);
+            switch (inputType) {
+                case InputType.MoveCamp: EventGenerator.Singleton.RaiseAdjacentTileChosenEvent(false, -1); break;
+            }
+            EventGenerator.Singleton.RaiseGetIslandTileInputEvent(false, inputType);
         });
     }
 
@@ -92,11 +95,19 @@ public class MainUIController : MonoBehaviour
         submitActions.interactable = actionsAreReadyToSubmit;
     }
 
-    void OnChooseAdjacentTileEvent(bool isActive) {
+    void OnGetIslandTileInputEvent(bool isActive, InputType inputType) {
         if (isActive) {
-            playerInstruction.text = "Select a highlighted tile to move camp. Otherwise press continue.";
+            this.inputType = inputType;
+            originalInstruction = playerInstruction.text;
+            string newInstruction;
+            switch (inputType) {
+                case InputType.MoveCamp: newInstruction = "Select a highlighted tile to move camp. Otherwise press continue."; break;
+                case InputType.Corral: newInstruction = "Select a parrot source adjacent to camp. Otherwise press continue."; break;
+                default: newInstruction = "Error: instruction not found."; break;
+            }
+            playerInstruction.text = newInstruction;
         } else {
-            playerInstruction.text = "Resolving night phase...";
+            playerInstruction.text = originalInstruction;
         }
         continueButton.gameObject.SetActive(isActive);
     }

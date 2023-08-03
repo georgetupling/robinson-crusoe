@@ -4,16 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/*
-    Right now all activated items target a player.
-    If later you need this popup for item activations without the dropdown, you'll need to add some code for hiding it.
-*/
-
 public class ItemActivationPopupController : MonoBehaviour
 {
     [SerializeField] Button confirmButton;
     [SerializeField] Button cancelButton;
     [SerializeField] Image cardImage;
+    [SerializeField] RectTransform background;
 
     [SerializeField] private TMP_Dropdown playerSelect;
     private int selectedPlayerId;
@@ -83,6 +79,21 @@ public class ItemActivationPopupController : MonoBehaviour
         }
         if (inventionCard != null && inventionCard.cardSprite != null) {
             cardImage.sprite = inventionCard.cardSprite;
+        }
+        // Hides the player select and shrinks the background if the invention doesn't target a player
+        if (inventionCard != null && inventionCard.effectsOnActivation != null) {
+            bool targetsPlayer = false;
+            foreach (CardEffect activationEffect in inventionCard.effectsOnActivation) {
+                if (activationEffect.targetType == TargetType.Player) {
+                    targetsPlayer = true;
+                    break;
+                }
+            }
+            if (!targetsPlayer) {
+                float buttonHeightPlusGapBetweenButtons = 50f;
+                background.sizeDelta = new Vector2(background.sizeDelta.x, background.sizeDelta.y - buttonHeightPlusGapBetweenButtons);
+                playerSelect.gameObject.SetActive(false);
+            }
         }
     }
 }

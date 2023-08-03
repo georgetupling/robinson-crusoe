@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class IslandTileInputController : MonoBehaviour
+public class IslandTileInputController : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] IslandTileController islandTileController;
     [SerializeField] Transform islandTileArea;
@@ -10,6 +11,7 @@ public class IslandTileInputController : MonoBehaviour
 
     private int campTileLocation;
     bool isActive;
+    InputType activeInputType;
     MeshRenderer MeshRenderer;
 
     private bool[,] adjacencyMatrix = new bool[,] {
@@ -26,7 +28,7 @@ public class IslandTileInputController : MonoBehaviour
     };
 
     void Awake() {
-        EventGenerator.Singleton.AddListenerToChooseAdjacentTileEvent(OnChooseAdjacentTileEvent);
+        EventGenerator.Singleton.AddListenerToGetIslandTileInputEvent(OnGetIslandTileInputEvent);
         EventGenerator.Singleton.AddListenerToSpawnIslandTileTokenEvent(OnSpawnIslandTileTokenEvent);
         islandTileArea = GameObject.Find("IslandTileArea").transform;
         MeshRenderer = GetComponent<MeshRenderer>();
@@ -36,24 +38,27 @@ public class IslandTileInputController : MonoBehaviour
         campTileLocation = ScenarioManager.Singleton.GetStartingIslandTileLocation(); // Replace this at some point
     }
 
-    void OnChooseAdjacentTileEvent(bool isActive) {
+    void OnGetIslandTileInputEvent(bool isActive, InputType inputType) {
         if (transform.parent == null || transform.parent != islandTileArea) {
             return;
         }
-        IslandTile islandTile;
-        if (isActive == false) {
+        if (inputType == InputType.MoveCamp) {
+            IslandTile islandTile;
+            if (isActive == false) {
+                islandTile = islandTileController.GetIslandTile();
+                MeshRenderer.material = islandTile.Material;
+                this.isActive = false;
+                return;
+            }
+            int locationId = islandTileController.GetLocationId();
+            if (!adjacencyMatrix[campTileLocation, locationId]) {
+                return;
+            }
             islandTile = islandTileController.GetIslandTile();
-            MeshRenderer.material = islandTile.Material;
-            this.isActive = false;
-            return;
+            MeshRenderer.material = islandTile.HighlightedMaterial;
+            this.isActive = true;
+            activeInputType = inputType;
         }
-        int locationId = islandTileController.GetLocationId();
-        if (!adjacencyMatrix[campTileLocation, locationId]) {
-            return;
-        }
-        islandTile = islandTileController.GetIslandTile();
-        MeshRenderer.material = islandTile.HighlightedMaterial;
-        this.isActive = true;
     }
 
     void OnSpawnIslandTileTokenEvent(TokenType tokenType, int locationId) {
@@ -62,12 +67,14 @@ public class IslandTileInputController : MonoBehaviour
         }
     }
 
-    void OnMouseDown() {
+    public void OnPointerClick(PointerEventData data) {
         if (!isActive) {
             return;
         }
-        EventGenerator.Singleton.RaiseChooseAdjacentTileEvent(false);
-        int locationId = islandTileController.GetLocationId();
-        EventGenerator.Singleton.RaiseAdjacentTileChosenEvent(true, locationId);
+        if (activeInputType == InputType.MoveCamp) {
+            EventGenerator.Singleton.RaiseGetIslandTileInputEvent(false, InputType.MoveCamp);
+            int locationId = islandTileController.GetLocationId();
+            EventGenerator.Singleton.RaiseAdjacentTileChosenEvent(true, locationId);
+        }
     }
 }

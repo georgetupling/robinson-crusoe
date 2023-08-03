@@ -20,7 +20,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] Transform islandTileArea;
 
     void Awake() {
-        EventGenerator.Singleton.AddListenerToChooseAdjacentTileEvent(OnChooseAdjacentTileEvent);
+        EventGenerator.Singleton.AddListenerToGetIslandTileInputEvent(OnGetIslandTileInputEvent);
     }
 
     void Start() {
@@ -57,7 +57,7 @@ public class CameraController : MonoBehaviour
     void HandleResetCamera() {
         if (Input.GetKeyDown("r")) {
             cameraLocked = true;
-            float duration = 0.75f;
+            float duration = GameSettings.AnimationDuration * 0.75f;
             transform.DOLocalMove(initialPosition, duration);
             cameraLocked = false;
         }
@@ -65,15 +65,14 @@ public class CameraController : MonoBehaviour
 
     // This code locks the camera over the island tile area when selecting an island tile!
 
-    void OnChooseAdjacentTileEvent(bool isActive) {
-        float duration = 0.75f;
+    void OnGetIslandTileInputEvent(bool isActive, InputType inputType) {
+        float duration = GameSettings.AnimationDuration * 0.75f;
         if (!isActive) {
             transform.DOLocalMove(initialPosition, duration);
             cameraLocked = false;
             return;
         }
-        float hoverDistance = 2.5f;
-        Vector3 lockedPosition = new Vector3(islandTileArea.localPosition.x, islandTileArea.localPosition.y, islandTileArea.localPosition.z - hoverDistance);
+        Vector3 lockedPosition = new Vector3(-1.5f, 0.2f, -2.75f);
         transform.DOLocalMove(lockedPosition, duration);
         cameraLocked = true;
     }

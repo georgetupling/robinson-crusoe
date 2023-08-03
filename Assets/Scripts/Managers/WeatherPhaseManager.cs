@@ -25,6 +25,9 @@ public class WeatherPhaseManager : MonoBehaviour
     int cancelledRainClouds = 0;
     int snowCloudsConvertedToRain = 0;
 
+    // Inventions
+    bool furnaceIsBuilt;
+
 
     void Awake() {
         if (singleton == null) {
@@ -38,6 +41,7 @@ public class WeatherPhaseManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToGetDeterminationResponseEvent(OnGetDeterminationResponseEvent);
         EventGenerator.Singleton.AddListenerToCancelRainCloudEvent(OnCancelRainCloudEvent);
         EventGenerator.Singleton.AddListenerToConvertSnowToRainEvent(OnConvertSnowToRainEvent);
+        EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
     }
 
     // Listeners
@@ -98,6 +102,11 @@ public class WeatherPhaseManager : MonoBehaviour
     void OnConvertSnowToRainEvent() {
         snowCloudsConvertedToRain++;
     }
+    void OnUpdateBuiltInventionsEvent(Invention invention, bool isBuilt) {
+        if (invention == Invention.Furnace) {
+            furnaceIsBuilt = isBuilt;
+        }
+    }
 
     IEnumerator ApplyWeatherPhase() {
         isWaitingOnRoofLevel = true;
@@ -124,6 +133,10 @@ public class WeatherPhaseManager : MonoBehaviour
             } else if (token.tokenType == TokenType.SnowCloud) {
                 numberOfSnowClouds += 1;
             }
+        }
+        // Reduces snow by 1 if the furnace is built
+        if (furnaceIsBuilt && numberOfSnowClouds > 0) {
+            numberOfSnowClouds--;
         }
         // If there are one or more clouds, checks whether there is a cook with enough determination to use Hooch
         if (numberOfRainClouds > 0 || numberOfSnowClouds > 0) {

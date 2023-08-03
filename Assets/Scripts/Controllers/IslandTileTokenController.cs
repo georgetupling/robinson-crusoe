@@ -29,7 +29,7 @@ public class IslandTileTokenController : TokenController
 
     void OnIslandTileTokenEvent(string eventType, int componentId, TokenType tokenType, Position position) {
         if (eventType == IslandTileTokenEvent.SetTokenPositionById && componentId == ComponentId) {
-            MoveToIslandTilePosition(position);
+            MoveToIslandTilePosition(tokenType, position);
         } else if (this.tokenType == TokenType.Camp && eventType == IslandTileTokenEvent.TurnCampTokenFaceDown) {
             TurnFaceDown();
         } else if (this.tokenType == TokenType.Camp && eventType == IslandTileTokenEvent.TurnCampTokenFaceUp) {
@@ -37,10 +37,11 @@ public class IslandTileTokenController : TokenController
         }
     }
 
-    void MoveToIslandTilePosition(Position position) {
+    void MoveToIslandTilePosition(TokenType tokenType, Position position) {
         if (!positions.ContainsKey(position)) {
             Debug.LogError($"position dictionary does not contain key {position}.");
         }
-        MoveToLocalPosition(positions[position], MoveStyle.Instant);
+        float zPosition = (-ComponentDimensions.GetHeight(tokenType) / 2f);
+        transform.localPosition = new Vector3(positions[position].x, positions[position].y, zPosition);
     }
 }

@@ -2,5 +2,6 @@ public enum Source
 {
     Fish, 
     Parrot, 
-    Wood
+    Wood,
+    None
 }

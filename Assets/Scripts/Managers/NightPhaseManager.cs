@@ -28,6 +28,7 @@ public class NightPhaseManager : MonoBehaviour
 
     // Flags for night phase events
     bool potBuilt;
+    bool fireplaceBuilt;
     
     void Awake() {
         if (singleton == null) {
@@ -93,6 +94,8 @@ public class NightPhaseManager : MonoBehaviour
     void OnUpdateBuiltInventions(Invention invention, bool isBuilt) {
         if (invention == Invention.Pot) {
             potBuilt = isBuilt;
+        } else if (invention == Invention.Fireplace) {
+            fireplaceBuilt = isBuilt;
         }
     }
 
@@ -131,13 +134,15 @@ public class NightPhaseManager : MonoBehaviour
             foreach (int playerId in playersGoingHungry) {
                 EventGenerator.Singleton.RaiseLoseHealthEvent(playerId, 2);
             }
+            EventGenerator.Singleton.RaiseLoseFoodEvent(foodAvailable);
+            EventGenerator.Singleton.RaiseLoseNonPerishableFoodEvent(nonPerishableFoodAvailable);
         }
         
         // Asks if the players want to move camp
         yield return new WaitForSeconds(1f);
 
         isWaitingOnMoveCampInput = true;
-        EventGenerator.Singleton.RaiseChooseAdjacentTileEvent(true);
+        EventGenerator.Singleton.RaiseGetIslandTileInputEvent(true, InputType.MoveCamp);
         while (isWaitingOnMoveCampInput) {
             yield return null;
         }
@@ -165,9 +170,9 @@ public class NightPhaseManager : MonoBehaviour
         while (isWaitingOnFood) {
             yield return null;
         }
-        if (potBuilt && foodAvailable > 0) {
+        if (fireplaceBuilt && foodAvailable > 0) {
             yield return new WaitForSeconds(1f);
-            EventGenerator.Singleton.RaiseSpawnItemActivationPopupEvent(Invention.Pot);
+            EventGenerator.Singleton.RaiseSpawnItemActivationPopupEvent(Invention.Fireplace);
             while (popupArea.childCount > 0) {
                 yield return null;
             }

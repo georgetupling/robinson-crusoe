@@ -39,6 +39,10 @@ public class DiceRoller : MonoBehaviour
     bool waitingOnFirstPlayer;
     int firstPlayerId;
 
+    // Specific flags
+    bool pitIsBuilt;
+    bool isProductionPhase;
+
     void Awake() {
         if (Singleton == null) {
             Singleton = this;
@@ -49,11 +53,21 @@ public class DiceRoller : MonoBehaviour
         EventGenerator.Singleton.AddListenerToAdventureCardPopupClosedEvent(OnAdventureCardPopupClosedEvent);
         EventGenerator.Singleton.AddListenerToGetDeterminationResponseEvent(OnGetDeterminationResponseEvent);
         EventGenerator.Singleton.AddListenerToGetFirstPlayerEvent(OnGetFirstPlayerEvent);
+        EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
+        EventGenerator.Singleton.AddListenerToPhaseStartEvent(OnPhaseStartEvent);
     }
 
     // Listeners
 
     void OnDieRolledEvent(DieType dieType, int faceRolled) {
+        // Checks for pit roll during production phase
+        if (isProductionPhase && pitIsBuilt && dieType == DieType.BuildDamage) {
+            if (faceRolled < 4) {
+                EventGenerator.Singleton.RaiseGainFoodEvent(2);
+            }
+            return;
+        }
+        
         switch (dieType) {
             case DieType.BuildSuccess:
                 if (faceRolled < 2) {
@@ -142,6 +156,16 @@ public class DiceRoller : MonoBehaviour
             this.firstPlayerId = firstPlayerId;
             waitingOnFirstPlayer = false;
         }
+    }
+
+    void OnUpdateBuiltInventionsEvent(Invention invention, bool isBuilt) {
+        if (invention == Invention.Pit) {
+            pitIsBuilt = isBuilt;
+        }
+    }
+
+    void OnPhaseStartEvent(Phase phaseStarted) {
+        isProductionPhase = phaseStarted == Phase.Production;
     }
 
     // Public methods
