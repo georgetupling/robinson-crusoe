@@ -14,5 +14,6 @@ public enum ResourceCost
     ReducedToZero,
     WoodOrHide,
     TwoWoodOrTwoHide,
-    ThreeWoodOrThreeHide
+    ThreeWoodOrThreeHide,
+    Food
 }

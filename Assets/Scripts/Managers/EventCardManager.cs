@@ -33,10 +33,14 @@ public class EventCardManager : MonoBehaviour
 
     private const float CardThickness = 0.005f;
 
-    void Awake() {
-        if (singleton == null) {
+    void Awake()
+    {
+        if (singleton == null)
+        {
             singleton = this;
-        } else {
+        }
+        else
+        {
             Destroy(gameObject);
             return;
         }
@@ -46,49 +50,58 @@ public class EventCardManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToShuffleIntoEventDeckEvent(OnShuffleIntoEventDeckEvent);
     }
 
-    void Start() {
+    void Start()
+    {
         SpawnEventDeck();
         SpawnStartingEventCard();
     }
 
-    void InitializeEventCards() {
+    void InitializeEventCards()
+    {
         TextAsset jsonTextAsset = Resources.Load<TextAsset>(Path.Combine("Data", "event-cards"));
         string jsonString = jsonTextAsset.text;
         List<string> jsonStrings = Json.ToList(jsonString);
-        foreach (string str in jsonStrings) {
+        foreach (string str in jsonStrings)
+        {
             EventCardUnprocessedData data = JsonUtility.FromJson<EventCardUnprocessedData>(str);
             EventCard eventCard = new EventCard(data);
             eventCards.Add(eventCard);
         }
     }
 
-    void SpawnEventDeck() {
+    void SpawnEventDeck()
+    {
         int numberOfTurns = ScenarioManager.Singleton.Turns;
         int deckSize = numberOfTurns % 2 == 0 ? numberOfTurns : numberOfTurns + 1; // Rounds the deck size up to the nearest even number
         int bookCards = 0;
         int adventureCards = 0;
         int limit = deckSize / 2;
         List<EventCard> eventCardsCopy = new List<EventCard>(eventCards);
-        while (eventDeck.Count < deckSize) {
+        while (eventDeck.Count < deckSize)
+        {
             int index = UnityEngine.Random.Range(0, eventCardsCopy.Count);
             EventCard randCard = eventCardsCopy[index];
             eventCardsCopy.RemoveAt(index);
-            if (randCard.cardSymbol == CardSymbol.Book && bookCards < limit) {
+            if (randCard.cardSymbol == CardSymbol.Book && bookCards < limit)
+            {
                 SpawnEventCard(randCard);
                 bookCards++;
-            } else if (
-                (randCard.cardSymbol == CardSymbol.BuildAdventure || 
-                randCard.cardSymbol == CardSymbol.GatherAdventure || 
-                randCard.cardSymbol == CardSymbol.ExploreAdventure) && 
+            }
+            else if (
+                (randCard.cardSymbol == CardSymbol.BuildAdventure ||
+                randCard.cardSymbol == CardSymbol.GatherAdventure ||
+                randCard.cardSymbol == CardSymbol.ExploreAdventure) &&
                 adventureCards < limit
-            ) {
+            )
+            {
                 SpawnEventCard(randCard);
                 adventureCards++;
             }
         }
     }
 
-    void SpawnEventCard(EventCard eventCard) {
+    void SpawnEventCard(EventCard eventCard)
+    {
         EventCardController newCard = Instantiate(eventCardPrefab, eventDeckArea, false);
         newCard.transform.localPosition = new Vector3(0, 0, (-1) * eventDeck.Count * CardThickness);
         newCard.transform.localRotation = Quaternion.identity;
@@ -96,14 +109,17 @@ public class EventCardManager : MonoBehaviour
         eventDeck.Push(newCard);
     }
 
-    void SpawnStartingEventCard() {
+    void SpawnStartingEventCard()
+    {
         EventCardController newCard = Instantiate(eventCardPrefab, rightThreatArea, false);
         newCard.transform.localPosition = Vector3.zero;
         newCard.transform.localEulerAngles = new Vector3(0, 180, 0);
 
         List<EventCard> startingEventCards = new List<EventCard>();
-        foreach (EventCard eventCard in eventCards) {
-            if (eventCard.isStartingEvent) {
+        foreach (EventCard eventCard in eventCards)
+        {
+            if (eventCard.isStartingEvent)
+            {
                 startingEventCards.Add(eventCard);
             }
         }
@@ -113,39 +129,54 @@ public class EventCardManager : MonoBehaviour
         DeckShuffler.Singleton.ShuffleDeck(eventDeck, CardThickness);
     }
 
-    void OnPhaseStartEvent(Phase phaseStarted) {
-        if (phaseStarted == Phase.Event) {
+    void OnPhaseStartEvent(Phase phaseStarted)
+    {
+        if (phaseStarted == Phase.Event)
+        {
+            StartCoroutine(WaitBrieflyThenDrawCard());
+        }
+    }
+
+    void OnDrawCardEvent(Deck deck)
+    {
+        if (deck == Deck.Event)
+        {
             DrawCard();
         }
     }
 
-    void OnDrawCardEvent(Deck deck) {
-        if (deck == Deck.Event) {
-            DrawCard();
-        }
-    }
-
-    void DrawCard() {
+    void DrawCard()
+    {
         CardController drawnCard = eventDeck.Pop();
         EventGenerator.Singleton.RaiseCardDrawnEvent(Deck.Event, drawnCard.ComponentId);
     }
 
-    void OnShuffleIntoEventDeckEvent(CardController cardController) {
+    void OnShuffleIntoEventDeckEvent(CardController cardController)
+    {
         cardController.transform.SetParent(eventDeckArea, true);
         float duration = GameSettings.AnimationDuration;
         Vector3 topOfEventDeck = new Vector3(0, 0, (-1) * eventDeck.Count * CardThickness);
         EventGenerator.Singleton.RaiseAnimationInProgressEvent(true);
         cardController.transform.DOLocalMove(topOfEventDeck, duration)
-            .OnKill(() => {
+            .OnKill(() =>
+            {
                 eventDeck.Push(cardController);
                 StartCoroutine(WaitBrieflyThenShuffle(cardController));
                 EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
             });
     }
 
-    IEnumerator WaitBrieflyThenShuffle(CardController cardController) {
+    IEnumerator WaitBrieflyThenShuffle(CardController cardController)
+    {
         yield return new WaitForSeconds(0.25f);
         cardController.transform.eulerAngles = Vector3.zero;
         DeckShuffler.Singleton.ShuffleDeck(eventDeck, CardThickness);
+    }
+
+    IEnumerator WaitBrieflyThenDrawCard()
+    {
+        float waitTime = GameSettings.AnimationDuration;
+        yield return new WaitForSeconds(waitTime);
+        DrawCard();
     }
 }

@@ -54,6 +54,8 @@ public class MoraleManager : MonoBehaviour
 
     IEnumerator ApplyMoralePhase()
     {
+        float waitTime = GameSettings.AnimationDuration;
+        yield return new WaitForSeconds(waitTime);
         if (moraleLevel == 3)
         {
             EventGenerator.Singleton.RaiseSpawnMoraleChoicePopupEvent();
