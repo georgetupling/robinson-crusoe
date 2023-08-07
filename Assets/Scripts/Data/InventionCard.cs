@@ -16,8 +16,10 @@ public class InventionCard : Card
     public List<CardEffect> effectsOnActivation { get; private set; }
     public bool isDefaultInvention { get; private set; }
     public bool isPersonalInvention { get; private set; }
+    public bool isScenarioInvention { get; private set; }
 
-    public InventionCard(InventionCardUnprocessedData data) {
+    public InventionCard(InventionCardUnprocessedData data)
+    {
         invention = EnumParser.ParseInvention(data.inventionName);
         itemRequirements = EnumParser.ParseInventionList(data.itemRequirements);
         resourceCosts = EnumParser.ParseResourceCostList(data.resourceCosts);
@@ -27,19 +29,23 @@ public class InventionCard : Card
         effectsOnActivation = CardEffectFactory.CreateCardEffectList(data.effectsOnActivation);
         isDefaultInvention = data.isDefaultInvention;
         isPersonalInvention = data.isPersonalInvention;
+        isScenarioInvention = data.isScenarioInvention;
         string materialName = data.inventionName + "Material";
         cardMaterial = Resources.Load<Material>(Path.Combine("Materials/Invention Cards", materialName));
-        if (cardMaterial == null) {
+        if (cardMaterial == null)
+        {
             Debug.LogError($"Failed to load {materialName}.");
         }
         string spriteName = data.inventionName.Replace(" ", "") + "FrontSprite";
         cardSprite = Resources.Load<Sprite>(Path.Combine("Sprites/Invention Cards", spriteName));
-        if (cardSprite == null) {
+        if (cardSprite == null)
+        {
             Debug.LogError($"Failed to load {spriteName}.");
         }
         string spriteBackName = data.inventionName.Replace(" ", "") + "BackSprite";
         cardBackSprite = Resources.Load<Sprite>(Path.Combine("Sprites/Invention Cards", spriteBackName));
-        if (cardBackSprite == null) {
+        if (cardBackSprite == null)
+        {
             Debug.LogError($"Failed to load {spriteBackName}.");
         }
     }

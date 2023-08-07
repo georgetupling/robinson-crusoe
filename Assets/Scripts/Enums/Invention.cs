@@ -30,5 +30,8 @@ public enum Invention
     Wall,
     Raft,
     Belts,
-    None
+    None,
+    // Scenario-specific inventions
+    Hatchet,
+    Mast
 }

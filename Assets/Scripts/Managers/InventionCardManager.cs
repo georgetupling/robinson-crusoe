@@ -43,12 +43,6 @@ public class InventionCardManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToInventionCardChosenFromSelectionEvent(OnInventionCardChosenFromSelectonEvent);
         EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
     }
-
-    void Start()
-    {
-
-    }
-
     void InitializeInventionCards()
     {
         TextAsset jsonTextAsset = Resources.Load<TextAsset>(Path.Combine("Data", "invention-cards"));
@@ -94,7 +88,7 @@ public class InventionCardManager : MonoBehaviour
     {
         foreach (InventionCard inventionCard in inventionCards)
         {
-            if (!inventionCard.isDefaultInvention && !inventionCard.isPersonalInvention)
+            if (!inventionCard.isDefaultInvention && !inventionCard.isPersonalInvention && !inventionCard.isScenarioInvention)
             {
                 inventionCardDeck.Push(inventionCard);
             }

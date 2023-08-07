@@ -210,7 +210,8 @@ public class ActionResolver : MonoBehaviour
                 actionAssignment.Type != ActionType.BuildRoof &&
                 actionAssignment.Type != ActionType.BuildPalisade &&
                 actionAssignment.Type != ActionType.BuildWeapon &&
-                actionAssignment.Type != ActionType.BuildInvention
+                actionAssignment.Type != ActionType.BuildInvention &&
+                actionAssignment.Type != ActionType.BuildWoodpile
             )
             {
                 continue;
@@ -283,6 +284,9 @@ public class ActionResolver : MonoBehaviour
                             break;
                         case ActionType.BuildWeapon:
                             EventGenerator.Singleton.RaiseGainWeaponEvent(1);
+                            break;
+                        case ActionType.BuildWoodpile:
+                            EventGenerator.Singleton.RaiseGainWoodpileEvent();
                             break;
                     }
                 }
@@ -518,6 +522,10 @@ public class ActionResolver : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            modifiedResourceCosts = resourceCosts;
+        }
 
         // This code sorts costs into payable costs (i.e. fixed costs) and costs to query (i.e. variable costs that the player can afford to pay more than one way)
         bool canPayWithHide = false;
@@ -601,6 +609,17 @@ public class ActionResolver : MonoBehaviour
                     {
                         payableCosts.Add(resourceCost);
                         woodAvailable -= 4;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                    break;
+                case ResourceCost.FiveWood:
+                    if (woodAvailable >= 5)
+                    {
+                        payableCosts.Add(resourceCost);
+                        woodAvailable -= 5;
                     }
                     else
                     {

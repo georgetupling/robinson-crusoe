@@ -59,6 +59,9 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<int> getPalisadeLevelResponseEvent = new UnityEvent<int>();
     private UnityEvent shelterIsBuiltEvent = new UnityEvent();
     private UnityEvent<bool> shelterIsBuiltResponseEvent = new UnityEvent<bool>();
+    private UnityEvent gainWoodpileEvent = new UnityEvent();
+    private UnityEvent getWoodpileLevelEvent = new UnityEvent();
+    private UnityEvent<int> getWoodpileLevelResponseEvent = new UnityEvent<int>();
 
     // Inventions
     private UnityEvent<Invention> buildInventionSuccessEvent = new UnityEvent<Invention>();
@@ -69,6 +72,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<InventionCardController, Invention> personalInventionSpawnedEvent = new UnityEvent<InventionCardController, Invention>();
     private UnityEvent<int> drawInventionCardsAndChooseOneEvent = new UnityEvent<int>();
     private UnityEvent<List<InventionCard>, int> inventionCardChosenFromSelectionEvent = new UnityEvent<List<InventionCard>, int>();
+    private UnityEvent<Invention, bool> enableInventionRequirementMarkersEvent = new UnityEvent<Invention, bool>();
 
 
     // Miscellaneous
@@ -742,6 +746,17 @@ public class EventGenerator : MonoBehaviour
         inventionCardChosenFromSelectionEvent.AddListener(listener);
     }
 
+    // Enable invention requirement markers event
+
+    public void RaiseEnableInventionRequirementMarkersEvent(Invention invention, bool enable)
+    {
+        enableInventionRequirementMarkersEvent.Invoke(invention, enable);
+    }
+    public void AddListenerToEnableInventionRequirementMarkersEvent(UnityAction<Invention, bool> listener)
+    {
+        enableInventionRequirementMarkersEvent.AddListener(listener);
+    }
+
     // TrackerTokenEvent
 
     public void RaiseSetMoraleTrackerEvent(int newValue)
@@ -770,6 +785,15 @@ public class EventGenerator : MonoBehaviour
             case 3: trackerTokenEvent.Invoke(TrackerTokenEvent.SetPlayer3HealthTracker, newValue); break;
             default: Debug.LogError("Invalid player ID passed to RaiseSetHealthTrackerEvent(int playerId, int newValue)."); break;
         }
+    }
+    public void RaiseSetTurnTrackerEvent(int newValue)
+    {
+        trackerTokenEvent.Invoke(TrackerTokenEvent.SetTurnTracker, newValue);
+    }
+
+    public void RaiseSetWoodpileTrackerEvent(int newValue)
+    {
+        trackerTokenEvent.Invoke(TrackerTokenEvent.SetWoodpileTracker, newValue);
     }
     public void AddListenerToTrackerTokenEvent(UnityAction<string, int> listener)
     {
@@ -1329,6 +1353,39 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToShelterIsBuiltResponseEvent(UnityAction<bool> listener)
     {
         shelterIsBuiltResponseEvent.AddListener(listener);
+    }
+
+    // Gain woodpile event
+
+    public void RaiseGainWoodpileEvent()
+    {
+        gainWoodpileEvent.Invoke();
+    }
+    public void AddListenerToGainWoodpileEvent(UnityAction listener)
+    {
+        gainWoodpileEvent.AddListener(listener);
+    }
+
+    // Get woodpile level event
+
+    public void RaiseGetWoodpileLevelEvent()
+    {
+        getWoodpileLevelEvent.Invoke();
+    }
+    public void AddListenerToGetWoodpileLevelEvent(UnityAction listener)
+    {
+        getWoodpileLevelEvent.AddListener(listener);
+    }
+
+    // Get woodpile level response event
+
+    public void RaiseGetWoodpileLevelResponseEvent(int woodpileLevel)
+    {
+        getWoodpileLevelResponseEvent.Invoke(woodpileLevel);
+    }
+    public void AddListenerToGetWoodpileLevelResponseEvent(UnityAction<int> listener)
+    {
+        getWoodpileLevelResponseEvent.AddListener(listener);
     }
 
     // EndPhaseEvent

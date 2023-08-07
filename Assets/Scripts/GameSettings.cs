@@ -4,7 +4,8 @@ using UnityEngine;
 
 public static class GameSettings
 {
-    public static int PlayerCount = 4;
+    public static int PlayerCount = 2;
+    public static Scenario CurrentScenario = Scenario.Castaways;
     public static float AnimationDuration = 1f;
 
     public static Dictionary<int, string> PlayerNames = new Dictionary<int, string> {

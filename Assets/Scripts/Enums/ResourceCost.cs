@@ -7,6 +7,7 @@ public enum ResourceCost
     ThreeHide,
     ThreeWood,
     FourWood,
+    FiveWood,
     TwoWoodOrHide,
     ThreeWoodOrTwoHide,
     FourWoodOrThreeHide,

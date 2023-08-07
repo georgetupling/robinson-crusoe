@@ -1,14 +1,14 @@
 public enum TokenType
 {
-    AdditionalFood, 
-    AdditionalWood, 
-    BlackMarker, 
-    Camp, 
-    Food, 
-    Hide, 
-    NonPerishableFood, 
-    WhiteMarker, 
-    Wood, 
+    AdditionalFood,
+    AdditionalWood,
+    BlackMarker,
+    Camp,
+    Food,
+    Hide,
+    NonPerishableFood,
+    WhiteMarker,
+    Wood,
     MoraleTracker,
     PalisadeTracker,
     RoofTracker,
@@ -33,5 +33,7 @@ public enum TokenType
     Discovery,
     RedWeatherDie,
     WhiteWeatherDie,
-    OrangeWeatherDie
+    OrangeWeatherDie,
+    TurnTracker,
+    WoodpileTracker
 }

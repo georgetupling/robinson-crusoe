@@ -13,71 +13,87 @@ public class TurnManager : MonoBehaviour
         - The turn manager raises a TurnStartEvent at the start of a new turn.
         - Other classes listen for these events and take appropriate actions to manage the flow of the game (e.g. the MoraleManager controls the morale phase).
     */
-    
+
     private static TurnManager singleton;
 
     private Phase[] phaseOrder = { Phase.Event, Phase.Morale, Phase.Production, Phase.Action, Phase.Weather, Phase.Night };
 
-    private int currentTurn;
-    private Phase currentPhase;
+    private int currentTurn = 0;
+    private Phase currentPhase = Phase.Event;
 
     private int animationsInProgress;
 
-    void Awake() {
-        if (singleton == null) {
+    void Awake()
+    {
+        if (singleton == null)
+        {
             singleton = this;
-        } else {
+        }
+        else
+        {
             return;
         }
-        currentTurn = 1;
-        currentPhase = Phase.Event;
         EventGenerator.Singleton.AddListenerToEndPhaseEvent(OnEndPhaseEvent);
         EventGenerator.Singleton.AddListenerToAnimationInProgressEvent(OnAnimationInProgressEvent);
         EventGenerator.Singleton.AddListenerToGetPhaseEvent(OnGetPhaseEvent);
     }
 
-    void Start() {
+    void Start()
+    {
         EventGenerator.Singleton.RaiseGainDeterminationEvent(DeterminationEvent.AllPlayers, 2);
         StartCoroutine(WaitForAnimationsThenEndPhase());
     }
 
-    void OnEndPhaseEvent(Phase phase) {
-        if (phase != currentPhase) {
+    void OnEndPhaseEvent(Phase phase)
+    {
+        if (phase != currentPhase)
+        {
             Debug.LogError("Phase parameter passed to EndPhaseEvent does not match current phase.");
             return;
         }
         StartCoroutine(WaitForAnimationsThenEndPhase());
     }
 
-    void OnAnimationInProgressEvent(bool isInProgress) {
-        if (isInProgress) {
+    void OnAnimationInProgressEvent(bool isInProgress)
+    {
+        if (isInProgress)
+        {
             animationsInProgress++;
-        } else {
+        }
+        else
+        {
             animationsInProgress--;
         }
     }
 
-    void OnGetPhaseEvent() {
+    void OnGetPhaseEvent()
+    {
         EventGenerator.Singleton.RaiseGetPhaseResponseEvent(currentPhase);
     }
 
-    IEnumerator WaitForAnimationsThenEndPhase() {
-        while(animationsInProgress > 0) {
+    IEnumerator WaitForAnimationsThenEndPhase()
+    {
+        while (animationsInProgress > 0)
+        {
             yield return null;
         }
         StartNextPhase();
     }
 
-    void StartNextPhase() {
+    void StartNextPhase()
+    {
         currentPhase = GetNextPhase();
         EventGenerator.Singleton.RaisePhaseStartEvent(currentPhase);
-        if (currentPhase == Phase.Event) {
+        if (currentPhase == Phase.Event)
+        {
             currentTurn++;
             EventGenerator.Singleton.RaiseTurnStartEvent(currentTurn);
+            EventGenerator.Singleton.RaiseSetTurnTrackerEvent(currentTurn);
         }
     }
 
-    Phase GetNextPhase() {
+    Phase GetNextPhase()
+    {
         int currentIndex = Array.IndexOf(phaseOrder, currentPhase);
         int nextIndex = (currentIndex + 1) % phaseOrder.Length;
         return phaseOrder[nextIndex];

@@ -302,5 +302,27 @@
         "effectsOnLoss": [],
         "isDefaultInvention": false,
         "isPersonalInvention": false
+    },
+    {
+        "inventionName": "Hatchet",
+        "itemRequirements": [],
+        "resourceCosts": ["Wood"],
+        "terrainTypeRequirement": "Mountains",
+        "effectsOnBuild": ["AdditionalWoodOnCamp"],
+        "effectsOnLoss": ["EndAdditionalWoodOnCamp"],
+        "isDefaultInvention": false,
+        "isPersonalInvention": false,
+        "isScenarioInvention": true
+    },
+    {
+        "inventionName": "Mast",
+        "itemRequirements": ["Rope"],
+        "resourceCosts": ["Wood", "Hide"],
+        "terrainTypeRequirement": "None",
+        "effectsOnBuild": ["Gain3OilyWood"],
+        "effectsOnLoss": ["Lose3OilyWood"],
+        "isDefaultInvention": false,
+        "isPersonalInvention": false,
+        "isScenarioInvention": true
     }
 ]

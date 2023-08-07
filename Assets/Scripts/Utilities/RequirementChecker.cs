@@ -14,6 +14,7 @@ public class RequirementChecker : MonoBehaviour
     private int weaponLevel = 0;
     private int roofLevel = 0;
     private int palisadeLevel = 0;
+    private int woodpileLevel = 0;
     private bool shelterIsBuilt;
     private Dictionary<int, int> playerDetermination = new Dictionary<int, int>(); // Maps playerId to determination
     public bool sufficientResourcesAvailable;
@@ -21,15 +22,6 @@ public class RequirementChecker : MonoBehaviour
 
     private List<Terrain> terrainRequirementsMet = new List<Terrain>();
     private List<Invention> itemRequirementsMet = new List<Invention>();
-
-    // Building costs for the roof, palisade, and shelter
-
-    private Dictionary<int, ResourceCost> buildingCostsByPlayerCount = new Dictionary<int, ResourceCost>() {
-        { 1, ResourceCost.TwoWoodOrHide },
-        { 2, ResourceCost.TwoWoodOrHide },
-        { 3, ResourceCost.ThreeWoodOrTwoHide },
-        { 4, ResourceCost.FourWoodOrThreeHide }
-    };
 
     void Awake()
     {
@@ -45,6 +37,7 @@ public class RequirementChecker : MonoBehaviour
         EventGenerator.Singleton.AddListenerToGetPalisadeLevelResponseEvent(OnGetPalisadeLevelResponseEvent);
         EventGenerator.Singleton.AddListenerToGetDeterminationResponseEvent(OnGetDeterminationResponseEvent);
         EventGenerator.Singleton.AddListenerToAreSufficientResourcesAvailableResponseEvent(OnAreSufficentResourcesAvailableResponseEvent);
+        EventGenerator.Singleton.AddListenerToGetWoodpileLevelResponseEvent(OnGetWoodpileLevelResponseEvent);
     }
 
     // Listeners
@@ -118,6 +111,11 @@ public class RequirementChecker : MonoBehaviour
         }
     }
 
+    void OnGetWoodpileLevelResponseEvent(int woodpileLevel)
+    {
+        this.woodpileLevel = woodpileLevel;
+    }
+
     // Public methods
 
     public bool InventionRequirementsMet(int playerId, InventionCardController inventionCardController)
@@ -162,22 +160,8 @@ public class RequirementChecker : MonoBehaviour
 
     public bool BuildRequirementsMet(ActionType actionType)
     {
-        // TODO: check for additional wood token
-        ResourceCost resourceCost;
-        if (actionType == ActionType.BuildWeapon)
-        {
-            resourceCost = ResourceCost.Wood;
-        }
-        else
-        {
-            resourceCost = buildingCostsByPlayerCount[GameSettings.PlayerCount];
-        }
         waitingOnAreSufficientResourcesAvailable = true;
         EventGenerator.Singleton.RaiseAreSufficientResourcesAvailableEvent();
-        while (waitingOnAreSufficientResourcesAvailable)
-        {
-            // Do nothing
-        }
         if (!sufficientResourcesAvailable)
         {
             return false;
@@ -215,6 +199,14 @@ public class RequirementChecker : MonoBehaviour
             StartCoroutine(UpdateWeaponLevel());
             const int maximumWeaponLevel = 10;
             if (weaponLevel >= maximumWeaponLevel)
+            {
+                return false;
+            }
+        }
+        else if (actionType == ActionType.BuildWoodpile)
+        {
+            const int maximumWoodpileLevel = 5;
+            if (woodpileLevel >= maximumWoodpileLevel)
             {
                 return false;
             }

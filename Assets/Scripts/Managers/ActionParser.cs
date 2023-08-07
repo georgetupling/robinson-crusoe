@@ -6,7 +6,7 @@ public class ActionParser : MonoBehaviour
 {
     static ActionParser singleton;
     public List<Transform> actionSpaces = new List<Transform>();
-    public bool actionsReadyToSubmit = false;
+    private bool actionsReadyToSubmit = false;
     public List<ActionAssignment> actionAssignments = new List<ActionAssignment>();
 
     // A list of all player action pawns in the scene (including disabled ones!)
@@ -17,6 +17,14 @@ public class ActionParser : MonoBehaviour
         { 2, ResourceCost.TwoWoodOrHide },
         { 3, ResourceCost.ThreeWoodOrTwoHide },
         { 4, ResourceCost.FourWoodOrThreeHide }
+    };
+
+    private Dictionary<int, ResourceCost> woodpileCostByWoodpileLevel = new Dictionary<int, ResourceCost>() {
+        { 0, ResourceCost.Wood },
+        { 1, ResourceCost.TwoWood },
+        { 2, ResourceCost.ThreeWood },
+        { 3, ResourceCost.FourWood },
+        { 4, ResourceCost.FiveWood }
     };
 
     // For handling queries
@@ -33,124 +41,166 @@ public class ActionParser : MonoBehaviour
     private int woodAvailable = 0;
 
     private List<Invention> itemRequirementsMet = new List<Invention>();
-    
+
+    private int woodpileLevel = 0;
+
     // Flags for applying specific effects
-    
+
     int economicalConstructionPlayerId = -1;
 
-    void Awake() {
-        if (singleton == null) {
+    void Awake()
+    {
+        if (singleton == null)
+        {
             singleton = this;
         }
         EventGenerator.Singleton.AddListenerToActionPawnAssignedEvent(OnActionPawnAssignedEvent);
         EventGenerator.Singleton.AddListenerToGetDistanceFromCampEvent(OnGetDistanceFromCampEvent);
         EventGenerator.Singleton.AddListenerToGetDistanceFromCampToLocationEvent(OnGetDistanceFromCampToLocationEvent);
         EventGenerator.Singleton.AddListenerToGetResourceEvent(OnGetResourceEvent);
+        EventGenerator.Singleton.AddListenerToGetWoodpileLevelResponseEvent(OnGetWoodpileLevelResponseEvent);
         EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
         EventGenerator.Singleton.AddListenerToActionPawnInitializedEvent(OnActionPawnInitializedEvent);
         EventGenerator.Singleton.AddListenerToAreSufficientResourcesAvailableEvent(OnAreSufficientResourcesAvailableEvent);
         EventGenerator.Singleton.AddListenerToEconomicalConstructionEvent(OnEconomicalConstructionEvent);
         EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
+        EventGenerator.Singleton.AddListenerToGetWoodpileLevelResponseEvent(OnGetWoodpileLevelResponseEvent);
     }
 
     // Listeners
 
-    void OnAreSufficientResourcesAvailableEvent() {
+    void OnAreSufficientResourcesAvailableEvent()
+    {
         UpdateActionSpaces();
         ParseActions();
         bool response = SufficientResourcesAvailable();
         EventGenerator.Singleton.RaiseAreSufficientResourcesAvailableResponseEvent(response);
     }
 
-    void OnActionPawnAssignedEvent() {
+    void OnActionPawnAssignedEvent()
+    {
         UpdateActionSpaces();
         ParseActions();
         actionsReadyToSubmit = ValidateActions();
         EventGenerator.Singleton.RaiseActionsReadyToSubmitEvent(actionsReadyToSubmit, actionAssignments);
     }
 
-    void UpdateActionSpaces() {
+    void UpdateActionSpaces()
+    {
         actionSpaces.Clear();
         GameObject[] actionSpaceObjects = GameObject.FindGameObjectsWithTag("ActionSpace");
-        foreach (GameObject actionSpaceObject in actionSpaceObjects) {
+        foreach (GameObject actionSpaceObject in actionSpaceObjects)
+        {
             actionSpaces.Add(actionSpaceObject.transform);
         }
     }
 
-    void OnGetDistanceFromCampEvent(string eventType, int islandTileId, int distance) {
-        if (eventType == GetDistanceFromCampEvent.Response && distancesFromCampQueries.Contains(islandTileId)) {
+    void OnGetDistanceFromCampEvent(string eventType, int islandTileId, int distance)
+    {
+        if (eventType == GetDistanceFromCampEvent.Response && distancesFromCampQueries.Contains(islandTileId))
+        {
             distancesFromCampQueries.Remove(islandTileId);
             distancesFromCampByIslandTileId[islandTileId] = distance;
         }
     }
 
-    void OnGetDistanceFromCampToLocationEvent(string eventType, int locationId, int distance) {
-        if (eventType == GetDistanceFromCampEvent.Response && distancesFromCampToLocationQueries.Contains(locationId)) {
+    void OnGetDistanceFromCampToLocationEvent(string eventType, int locationId, int distance)
+    {
+        if (eventType == GetDistanceFromCampEvent.Response && distancesFromCampToLocationQueries.Contains(locationId))
+        {
             distancesFromCampToLocationQueries.Remove(locationId);
             distancesFromCampByLocation[locationId] = distance;
         }
     }
 
-    void OnGetResourceEvent(string eventType, int amount) {
-        if (eventType == GetResourceEvent.GetHideResponse) {
+    void OnGetResourceEvent(string eventType, int amount)
+    {
+        if (eventType == GetResourceEvent.GetHideResponse)
+        {
             hideAvailable = amount;
             isWaitingForHideAvailable = false;
-        } else if (eventType == GetResourceEvent.GetWoodResponse) {
+        }
+        else if (eventType == GetResourceEvent.GetWoodResponse)
+        {
             woodAvailable = amount;
             isWaitingForWoodAvailable = false;
         }
     }
 
-    void OnUpdateBuiltInventionsEvent(Invention invention, bool isBuilt) {
-        if (isBuilt) {
+    void OnGetWoodpileLevelResponseEvent(int woodpileLevel)
+    {
+        this.woodpileLevel = woodpileLevel;
+    }
+
+    void OnUpdateBuiltInventionsEvent(Invention invention, bool isBuilt)
+    {
+        if (isBuilt)
+        {
             itemRequirementsMet.Add(invention);
-        } else {
+        }
+        else
+        {
             itemRequirementsMet.Remove(invention);
         }
     }
 
-    void OnActionPawnInitializedEvent(ActionPawnController actionPawn) {
+    void OnActionPawnInitializedEvent(ActionPawnController actionPawn)
+    {
         // Adds the action pawn to the list
         actionPawns.Add(actionPawn);
     }
-    
-    void OnEconomicalConstructionEvent(int playerId) {
+
+    void OnEconomicalConstructionEvent(int playerId)
+    {
         economicalConstructionPlayerId = playerId;
     }
 
-    void OnTurnStartEvent(int turnStarted) {
+    void OnTurnStartEvent(int turnStarted)
+    {
         economicalConstructionPlayerId = -1;
     }
 
     // Methods for parsing and validating actions
 
-    void ParseActions() {
+    void ParseActions()
+    {
         actionAssignments.Clear();
-        foreach(Transform actionSpace in actionSpaces) {
-            if (HasPawnAssigned(actionSpace)) {
+        foreach (Transform actionSpace in actionSpaces)
+        {
+            if (HasPawnAssigned(actionSpace))
+            {
                 ParseAction(actionSpace);
             }
         }
     }
 
-    void ParseAction(Transform actionSpace) {
+    void ParseAction(Transform actionSpace)
+    {
         ActionAssignment actionAssignment = new ActionAssignment();
         actionAssignment.Type = actionSpace.GetComponent<ActionSpace>().Type;
         actionAssignment.playerIds = GetPlayerIds(actionSpace);
-        if (actionAssignment.playerIds.Count == 0) {
+        if (actionAssignment.playerIds.Count == 0)
+        {
             Debug.LogError("Failed to assign player IDs while parsing actions.");
         }
         actionAssignment.numberOfActions = GetNumberOfActions(actionSpace);
         actionAssignment.resourceCosts = GetResourceCosts(actionSpace, actionAssignment.Type);
         actionAssignment.pawnComponentIds = GetPawnComponentIds(actionSpace);
-        if (actionAssignment.Type == ActionType.Gather) {
+        if (actionAssignment.Type == ActionType.Gather)
+        {
             actionAssignment.islandTile = GetIslandTile(actionSpace);
             actionAssignment.isRightSource = GetIsRightSource(actionSpace);
-        } else if (actionAssignment.Type == ActionType.Explore) {
+        }
+        else if (actionAssignment.Type == ActionType.Explore)
+        {
             actionAssignment.locationId = GetLocationId(actionSpace);
-        } else if (actionAssignment.Type == ActionType.BuildInvention) {
+        }
+        else if (actionAssignment.Type == ActionType.BuildInvention)
+        {
             actionAssignment.inventionCard = GetInventionCard(actionSpace);
-        } else if (actionAssignment.Type == ActionType.Threat) {
+        }
+        else if (actionAssignment.Type == ActionType.Threat)
+        {
             actionAssignment.eventCard = GetEventCard(actionSpace);
             actionAssignment.isTwoActionThreat = GetIsTwoActionThreat(actionSpace);
             actionAssignment.eventCardControllerComponentId = GetEventCardControllerComponentId(actionSpace);
@@ -158,35 +208,44 @@ public class ActionParser : MonoBehaviour
         actionAssignments.Add(actionAssignment);
     }
 
-    bool ValidateActions() {
+    bool ValidateActions()
+    {
         // First checks that the correct number of actions is assigned for each action...
-        foreach(ActionAssignment actionAssignment in actionAssignments) {
-            if (!NumberOfActionsValid(actionAssignment)) {
+        foreach (ActionAssignment actionAssignment in actionAssignments)
+        {
+            if (!NumberOfActionsValid(actionAssignment))
+            {
                 return false;
             };
         }
         // Then checks that all player action pawns are assigned
         int assignedPlayerActions = 0;
         int disabledActionPawns = 0;
-        foreach (ActionPawnController actionPawn in actionPawns) {
+        foreach (ActionPawnController actionPawn in actionPawns)
+        {
             if (
-                actionPawn.GetPlayerId() < GameSettings.PlayerCount && 
-                actionPawn.gameObject.activeInHierarchy && 
+                actionPawn.GetPlayerId() < GameSettings.PlayerCount &&
+                actionPawn.gameObject.activeInHierarchy &&
                 actionPawn.transform.parent != null &&
                 actionPawn.transform.parent.parent != null &&
                 actionPawn.transform.parent.parent.CompareTag("ActionSpace")
-            ) {
+            )
+            {
                 assignedPlayerActions++;
-            } else if (!actionPawn.gameObject.activeSelf) {
+            }
+            else if (!actionPawn.gameObject.activeSelf)
+            {
                 disabledActionPawns++;
             }
         }
         int totalPlayerActions = GameSettings.PlayerCount * 2;
-        if (assignedPlayerActions + disabledActionPawns < totalPlayerActions) {
+        if (assignedPlayerActions + disabledActionPawns < totalPlayerActions)
+        {
             return false;
         }
         // Then checks the resources are available and return if not
-        if (!SufficientResourcesAvailable()) {
+        if (!SufficientResourcesAvailable())
+        {
             return false;
         }
         return true;
@@ -194,23 +253,30 @@ public class ActionParser : MonoBehaviour
 
     // Action parsing helper methods
 
-    bool HasPawnAssigned(Transform actionSpace) {
-        for (int index = 0; index < actionSpace.childCount; index++) {
+    bool HasPawnAssigned(Transform actionSpace)
+    {
+        for (int index = 0; index < actionSpace.childCount; index++)
+        {
             Transform childTransform = actionSpace.GetChild(index);
-            if (childTransform != null && childTransform.gameObject.activeInHierarchy && childTransform.childCount > 0) {
+            if (childTransform != null && childTransform.gameObject.activeInHierarchy && childTransform.childCount > 0)
+            {
                 return true;
             }
         }
         return false;
     }
 
-    List<int> GetPlayerIds(Transform actionSpace) {
+    List<int> GetPlayerIds(Transform actionSpace)
+    {
         List<int> playerIds = new List<int>();
-        for (int index = 0; index < actionSpace.childCount; index++) {
+        for (int index = 0; index < actionSpace.childCount; index++)
+        {
             Transform childTransform = actionSpace.GetChild(index);
-            if (childTransform != null && childTransform.gameObject.activeInHierarchy && childTransform.childCount > 0) {
+            if (childTransform != null && childTransform.gameObject.activeInHierarchy && childTransform.childCount > 0)
+            {
                 ActionPawnController actionPawn = childTransform.GetChild(0).GetComponent<ActionPawnController>();
-                if (actionPawn == null) {
+                if (actionPawn == null)
+                {
                     Debug.LogError("Child object is not an action pawn!");
                     continue;
                 }
@@ -220,29 +286,45 @@ public class ActionParser : MonoBehaviour
         return playerIds;
     }
 
-    int GetNumberOfActions(Transform actionSpace) {
+    int GetNumberOfActions(Transform actionSpace)
+    {
         int actionPawnCount = 0;
-        for (int index = 0; index < actionSpace.childCount; index++) {
+        for (int index = 0; index < actionSpace.childCount; index++)
+        {
             Transform childTransform = actionSpace.GetChild(index);
-            if (childTransform != null && childTransform.gameObject.activeInHierarchy && childTransform.childCount > 0) {
+            if (childTransform != null && childTransform.gameObject.activeInHierarchy && childTransform.childCount > 0)
+            {
                 actionPawnCount++;
             }
         }
         return actionPawnCount;
     }
 
-    List<ResourceCost> GetResourceCosts(Transform actionSpace, ActionType actionType) {
-        if (actionType == ActionType.BuildShelter || actionType == ActionType.BuildRoof || actionType == ActionType.BuildPalisade) {
+    List<ResourceCost> GetResourceCosts(Transform actionSpace, ActionType actionType)
+    {
+        if (actionType == ActionType.BuildShelter || actionType == ActionType.BuildRoof || actionType == ActionType.BuildPalisade)
+        {
             return new List<ResourceCost> { buildingCostsByPlayerCount[GameSettings.PlayerCount] };
-        } else if (actionType == ActionType.BuildWeapon) {
+        }
+        else if (actionType == ActionType.BuildWeapon)
+        {
             return new List<ResourceCost> { ResourceCost.Wood };
-        } else if (actionType == ActionType.BuildInvention) {
+        }
+        else if (actionType == ActionType.BuildWoodpile)
+        {
+            return new List<ResourceCost> { woodpileCostByWoodpileLevel[woodpileLevel] };
+        }
+        else if (actionType == ActionType.BuildInvention)
+        {
             InventionCardController inventionCardController = actionSpace.parent.GetComponent<InventionCardController>();
-            if (inventionCardController != null) {
+            if (inventionCardController != null)
+            {
                 InventionCard data = inventionCardController.GetInventionCard();
                 return data.resourceCosts;
             }
-        } else if (actionType == ActionType.Threat) {
+        }
+        else if (actionType == ActionType.Threat)
+        {
             EventCardController eventCardController = actionSpace.parent.GetComponent<EventCardController>();
             EventCard eventCard = eventCardController.GetEventCard();
             return eventCard.threatResourceCosts;
@@ -250,11 +332,14 @@ public class ActionParser : MonoBehaviour
         return new List<ResourceCost>();
     }
 
-    List<int> GetPawnComponentIds(Transform actionSpace) {
+    List<int> GetPawnComponentIds(Transform actionSpace)
+    {
         List<int> pawnComponentIds = new List<int>();
-        for (int index = 0; index < actionSpace.childCount; index++) { 
+        for (int index = 0; index < actionSpace.childCount; index++)
+        {
             Transform childTransform = actionSpace.GetChild(index);
-            if (childTransform != null && childTransform.childCount > 0) {
+            if (childTransform != null && childTransform.childCount > 0)
+            {
                 ActionPawnController actionPawn = childTransform.GetChild(0).GetComponent<ActionPawnController>();
                 pawnComponentIds.Add(actionPawn.ComponentId);
             }
@@ -262,182 +347,254 @@ public class ActionParser : MonoBehaviour
         return pawnComponentIds;
     }
 
-    IslandTile GetIslandTile(Transform actionSpace) {
+    IslandTile GetIslandTile(Transform actionSpace)
+    {
         IslandTileController islandTileController = actionSpace.parent.parent.GetComponent<IslandTileController>();
-        if (islandTileController == null) {
+        if (islandTileController == null)
+        {
             Debug.LogError("Failed to find island tile controller.");
+            return null;
         }
         return islandTileController.GetIslandTile();
     }
 
-    bool GetIsRightSource(Transform actionSpace) {
+    bool GetIsRightSource(Transform actionSpace)
+    {
         GatherActionSpaceController gatherActionSpaceController = actionSpace.GetComponent<GatherActionSpaceController>();
         return gatherActionSpaceController.GetIsRightSource();
     }
 
-    int GetLocationId(Transform actionSpace) {
+    int GetLocationId(Transform actionSpace)
+    {
         ExploreActionAreaController exploreActionAreaController = actionSpace.GetComponent<ExploreActionAreaController>();
         return exploreActionAreaController.GetLocationId();
     }
 
-    InventionCard GetInventionCard(Transform actionSpace) {
+    InventionCard GetInventionCard(Transform actionSpace)
+    {
         InventionCardController inventionCardController = actionSpace.parent.GetComponent<InventionCardController>();
-            if (inventionCardController != null) {
-                InventionCard data = inventionCardController.GetInventionCard();
-                return data;
-            }
+        if (inventionCardController != null)
+        {
+            InventionCard data = inventionCardController.GetInventionCard();
+            return data;
+        }
         return null; // Default
     }
 
-    EventCard GetEventCard(Transform actionSpace) {
+    EventCard GetEventCard(Transform actionSpace)
+    {
         EventCardController eventCardController = actionSpace.parent.GetComponent<EventCardController>();
-        if (eventCardController == null) {
+        if (eventCardController == null)
+        {
             Debug.LogError("EventCardController not found during Threat action assignment.");
             return null;
-        } else {
+        }
+        else
+        {
             return eventCardController.GetEventCard();
         }
     }
 
-    bool GetIsTwoActionThreat(Transform actionSpace) {
+    bool GetIsTwoActionThreat(Transform actionSpace)
+    {
         ThreatActionSpaceController threatActionSpaceController = actionSpace.GetComponent<ThreatActionSpaceController>();
-        if (threatActionSpaceController == null) {
+        if (threatActionSpaceController == null)
+        {
             Debug.LogError("ThreatActionSpaceController not found during Threat action assignment.");
             return false;
-        } else {
+        }
+        else
+        {
             return threatActionSpaceController.GetIsTwoActionThreat();
         }
     }
 
-    int GetEventCardControllerComponentId(Transform actionSpace) {
+    int GetEventCardControllerComponentId(Transform actionSpace)
+    {
         EventCardController eventCardController = actionSpace.parent.GetComponent<EventCardController>();
-        if (eventCardController == null) {
+        if (eventCardController == null)
+        {
             Debug.LogError("EventCardController not found during Threat action assignment.");
             return -1;
-        } else {
+        }
+        else
+        {
             return eventCardController.ComponentId;
         }
     }
 
     // Validation helper methods
 
-    bool NumberOfActionsValid(ActionAssignment actionAssignment) {
+    bool NumberOfActionsValid(ActionAssignment actionAssignment)
+    {
         ActionType actionType = actionAssignment.Type;
-        if (actionType == ActionType.BuildShelter || actionType == ActionType.BuildRoof || actionType == ActionType.BuildPalisade || actionType == ActionType.BuildWeapon) {
+        if (actionType == ActionType.BuildShelter || actionType == ActionType.BuildRoof || actionType == ActionType.BuildPalisade || actionType == ActionType.BuildWeapon || actionType == ActionType.BuildWoodpile)
+        {
             // TODO - check for time-consuming action tokens
-            if (actionAssignment.numberOfActions == 1) {
+            if (actionAssignment.numberOfActions == 1)
+            {
                 actionAssignment.mustRoll = true;
                 return true;
-            } else if (actionAssignment.numberOfActions == 2) {
+            }
+            else if (actionAssignment.numberOfActions == 2)
+            {
                 actionAssignment.mustRoll = false;
                 return true;
-            } else {
+            }
+            else
+            {
                 return false;
             }
-        } else if (actionType == ActionType.BuildInvention) {
+        }
+        else if (actionType == ActionType.BuildInvention)
+        {
             // TODO - check for time-consuming action tokens
-            if (actionAssignment.numberOfActions == 1) {
+            if (actionAssignment.numberOfActions == 1)
+            {
                 actionAssignment.mustRoll = true;
                 return true;
-            } else if (actionAssignment.numberOfActions == 2) {
+            }
+            else if (actionAssignment.numberOfActions == 2)
+            {
                 actionAssignment.mustRoll = false;
                 return true;
-            } else {
+            }
+            else
+            {
                 return false;
             }
-        } else if (actionType == ActionType.Gather) {
+        }
+        else if (actionType == ActionType.Gather)
+        {
             int numberOfActions = actionAssignment.numberOfActions;
             StartCoroutine(UpdateDistanceFromCamp(actionAssignment.islandTile.Id));
             int distanceFromCamp = distancesFromCampByIslandTileId[actionAssignment.islandTile.Id];
-            if (distanceFromCamp == -1 || distanceFromCamp == 0) {
+            if (distanceFromCamp == -1 || distanceFromCamp == 0)
+            {
                 return false;
             }
             int numberOfActionsToRoll = distanceFromCamp;
             int numberOfActionsToGuarantee = distanceFromCamp + 1;
-            if (numberOfActions == numberOfActionsToRoll) {
+            if (numberOfActions == numberOfActionsToRoll)
+            {
                 actionAssignment.mustRoll = true;
                 return true;
-            } else if (numberOfActions == numberOfActionsToGuarantee) {
+            }
+            else if (numberOfActions == numberOfActionsToGuarantee)
+            {
                 actionAssignment.mustRoll = false;
                 return true;
-            } else {
+            }
+            else
+            {
                 return false;
             }
-        } else if (actionType == ActionType.Explore) {
+        }
+        else if (actionType == ActionType.Explore)
+        {
             int numberOfActions = actionAssignment.numberOfActions;
             StartCoroutine(UpdateDistanceFromCampToLocation(actionAssignment.locationId));
             int distanceFromCamp = distancesFromCampByLocation[actionAssignment.locationId];
-            if (distanceFromCamp == -1) {
+            if (distanceFromCamp == -1)
+            {
                 return false;
             }
             int numberOfActionsToRoll = distanceFromCamp;
             int numberOfActionsToGuarantee = distanceFromCamp + 1;
-            if (numberOfActions == numberOfActionsToRoll) {
+            if (numberOfActions == numberOfActionsToRoll)
+            {
                 actionAssignment.mustRoll = true;
                 return true;
-            } else if (numberOfActions == numberOfActionsToGuarantee) {
+            }
+            else if (numberOfActions == numberOfActionsToGuarantee)
+            {
                 actionAssignment.mustRoll = false;
                 return true;
-            } else {
+            }
+            else
+            {
                 return false;
             }
-        } else if (actionType == ActionType.Hunting) {
+        }
+        else if (actionType == ActionType.Hunting)
+        {
             return actionAssignment.numberOfActions == 2;
-        } else if (actionType == ActionType.Threat) {
-            if (actionAssignment.isTwoActionThreat) {
+        }
+        else if (actionType == ActionType.Threat)
+        {
+            if (actionAssignment.isTwoActionThreat)
+            {
                 return actionAssignment.numberOfActions == 2;
-            } else {
+            }
+            else
+            {
                 return actionAssignment.numberOfActions == 1;
             }
-        } else {
+        }
+        else
+        {
             return actionAssignment.numberOfActions <= 8;
             // Make camp and rest can have up to 8 actions each!
         }
     }
 
-    IEnumerator UpdateDistanceFromCamp(int islandTileId) {
+    IEnumerator UpdateDistanceFromCamp(int islandTileId)
+    {
         distancesFromCampQueries.Add(islandTileId);
         EventGenerator.Singleton.RaiseGetDistanceFromCampEvent(islandTileId);
-        while (distancesFromCampQueries.Contains(islandTileId)) {
+        while (distancesFromCampQueries.Contains(islandTileId))
+        {
             yield return null;
         }
     }
 
-    IEnumerator UpdateDistanceFromCampToLocation(int locationId) {
+    IEnumerator UpdateDistanceFromCampToLocation(int locationId)
+    {
         distancesFromCampToLocationQueries.Add(locationId);
         EventGenerator.Singleton.RaiseGetDistanceFromCampToLocationEvent(locationId);
-        while (distancesFromCampToLocationQueries.Contains(locationId)) {
+        while (distancesFromCampToLocationQueries.Contains(locationId))
+        {
             yield return null;
         }
     }
 
-    bool SufficientResourcesAvailable() {
+    bool SufficientResourcesAvailable()
+    {
         Dictionary<ResourceCost, int> requiredResources = new Dictionary<ResourceCost, int>();
 
         bool economicalConstructionApplied = false;
-        foreach (ActionAssignment actionAssignment in actionAssignments) {
-            foreach (ResourceCost resourceCost in actionAssignment.resourceCosts) {
+        foreach (ActionAssignment actionAssignment in actionAssignments)
+        {
+            foreach (ResourceCost resourceCost in actionAssignment.resourceCosts)
+            {
                 // Checks if economical construction is active and takes it into account by reducing wood costs by 1
                 ResourceCost requiredCost = resourceCost;
-                if (actionAssignment.playerIds[0] == economicalConstructionPlayerId && !economicalConstructionApplied) {
-                    switch (resourceCost) {
+                if (actionAssignment.playerIds[0] == economicalConstructionPlayerId && !economicalConstructionApplied)
+                {
+                    switch (resourceCost)
+                    {
                         case ResourceCost.Wood: requiredCost = ResourceCost.ReducedToZero; economicalConstructionApplied = true; break;
                         case ResourceCost.TwoWood: requiredCost = ResourceCost.Wood; economicalConstructionApplied = true; break;
                         case ResourceCost.ThreeWood: requiredCost = ResourceCost.TwoWood; economicalConstructionApplied = true; break;
                         case ResourceCost.FourWood: requiredCost = ResourceCost.ThreeWood; economicalConstructionApplied = true; break;
+                        case ResourceCost.FiveWood: requiredCost = ResourceCost.FourWood; economicalConstructionApplied = true; break;
                         case ResourceCost.TwoWoodOrHide: requiredCost = ResourceCost.WoodOrHide; economicalConstructionApplied = true; break;
                         case ResourceCost.ThreeWoodOrTwoHide: requiredCost = ResourceCost.TwoWoodOrTwoHide; economicalConstructionApplied = true; break;
                         case ResourceCost.FourWoodOrThreeHide: requiredCost = ResourceCost.ThreeWoodOrThreeHide; economicalConstructionApplied = true; break;
                     }
                 }
-                if (requiredCost == ResourceCost.ReducedToZero) {
+                if (requiredCost == ResourceCost.ReducedToZero)
+                {
                     continue;
                 }
 
                 // Then adds the resources to the dictionary
-                if (requiredResources.ContainsKey(requiredCost)) {
+                if (requiredResources.ContainsKey(requiredCost))
+                {
                     requiredResources[requiredCost]++;
-                } else {
+                }
+                else
+                {
                     requiredResources[requiredCost] = 1;
                 }
             }
@@ -445,69 +602,109 @@ public class ActionParser : MonoBehaviour
 
         // Converts all the multiple resource requirements into just Wood and Hide requirements
 
-        if (requiredResources.ContainsKey(ResourceCost.TwoWood)) {
+        if (requiredResources.ContainsKey(ResourceCost.TwoWood))
+        {
             int requiredTwoWoodCount = requiredResources[ResourceCost.TwoWood];
             requiredResources.Remove(ResourceCost.TwoWood);
 
-            if (requiredResources.ContainsKey(ResourceCost.Wood)) {
+            if (requiredResources.ContainsKey(ResourceCost.Wood))
+            {
                 requiredResources[ResourceCost.Wood] += requiredTwoWoodCount * 2;
-            } else {
+            }
+            else
+            {
                 requiredResources[ResourceCost.Wood] = requiredTwoWoodCount * 2;
             }
         }
 
-        if (requiredResources.ContainsKey(ResourceCost.ThreeWood)) {
+        if (requiredResources.ContainsKey(ResourceCost.ThreeWood))
+        {
             int requiredThreeWoodCount = requiredResources[ResourceCost.ThreeWood];
             requiredResources.Remove(ResourceCost.ThreeWood);
 
-            if (requiredResources.ContainsKey(ResourceCost.Wood)) {
+            if (requiredResources.ContainsKey(ResourceCost.Wood))
+            {
                 requiredResources[ResourceCost.Wood] += requiredThreeWoodCount * 3;
-            } else {
+            }
+            else
+            {
                 requiredResources[ResourceCost.Wood] = requiredThreeWoodCount * 3;
             }
         }
 
-        if (requiredResources.ContainsKey(ResourceCost.FourWood)) {
+        if (requiredResources.ContainsKey(ResourceCost.FourWood))
+        {
             int requiredFourWoodCount = requiredResources[ResourceCost.FourWood];
             requiredResources.Remove(ResourceCost.FourWood);
 
-            if (requiredResources.ContainsKey(ResourceCost.Wood)) {
+            if (requiredResources.ContainsKey(ResourceCost.Wood))
+            {
                 requiredResources[ResourceCost.Wood] += requiredFourWoodCount * 4;
-            } else {
+            }
+            else
+            {
                 requiredResources[ResourceCost.Wood] = requiredFourWoodCount * 4;
             }
         }
 
-        if (requiredResources.ContainsKey(ResourceCost.TwoHide)) {
+        if (requiredResources.ContainsKey(ResourceCost.FiveWood))
+        {
+            int requiredFiveWoodCount = requiredResources[ResourceCost.FiveWood];
+            requiredResources.Remove(ResourceCost.FiveWood);
+
+            if (requiredResources.ContainsKey(ResourceCost.Wood))
+            {
+                requiredResources[ResourceCost.Wood] += requiredFiveWoodCount * 5;
+            }
+            else
+            {
+                requiredResources[ResourceCost.Wood] = requiredFiveWoodCount * 5;
+            }
+        }
+
+        if (requiredResources.ContainsKey(ResourceCost.TwoHide))
+        {
             int requiredTwoHideCount = requiredResources[ResourceCost.TwoHide];
             requiredResources.Remove(ResourceCost.TwoHide);
 
-            if (requiredResources.ContainsKey(ResourceCost.Hide)) {
+            if (requiredResources.ContainsKey(ResourceCost.Hide))
+            {
                 requiredResources[ResourceCost.Hide] += requiredTwoHideCount * 2;
-            } else {
+            }
+            else
+            {
                 requiredResources[ResourceCost.Hide] = requiredTwoHideCount * 2;
             }
         }
 
-        if (requiredResources.ContainsKey(ResourceCost.ThreeHide)) {
+        if (requiredResources.ContainsKey(ResourceCost.ThreeHide))
+        {
             int requiredThreeHideCount = requiredResources[ResourceCost.ThreeHide];
             requiredResources.Remove(ResourceCost.ThreeHide);
 
-            if (requiredResources.ContainsKey(ResourceCost.Hide)) {
+            if (requiredResources.ContainsKey(ResourceCost.Hide))
+            {
                 requiredResources[ResourceCost.Hide] += requiredThreeHideCount * 3;
-            } else {
+            }
+            else
+            {
                 requiredResources[ResourceCost.Hide] = requiredThreeHideCount * 3;
             }
         }
 
-        if (requiredResources.ContainsKey(ResourceCost.WoodUnlessShovel)) {
+        if (requiredResources.ContainsKey(ResourceCost.WoodUnlessShovel))
+        {
             int requiredWoodUnlessShovelCount = requiredResources[ResourceCost.WoodUnlessShovel];
             requiredResources.Remove(ResourceCost.WoodUnlessShovel);
 
-            if (!itemRequirementsMet.Contains(Invention.Shovel)) {
-                if (requiredResources.ContainsKey(ResourceCost.Wood)) {
+            if (!itemRequirementsMet.Contains(Invention.Shovel))
+            {
+                if (requiredResources.ContainsKey(ResourceCost.Wood))
+                {
                     requiredResources[ResourceCost.Wood] += requiredWoodUnlessShovelCount;
-                } else {
+                }
+                else
+                {
                     requiredResources[ResourceCost.Wood] = requiredWoodUnlessShovelCount;
                 }
             }
@@ -519,49 +716,65 @@ public class ActionParser : MonoBehaviour
         isWaitingForWoodAvailable = true;
         EventGenerator.Singleton.RaiseGetHideEvent();
         EventGenerator.Singleton.RaiseGetWoodEvent();
-        while (isWaitingForHideAvailable || isWaitingForWoodAvailable) {
+        while (isWaitingForHideAvailable || isWaitingForWoodAvailable)
+        {
             // Do nothing
         }
         int unspentWood = woodAvailable;
         int unspentHide = hideAvailable;
-        if (requiredResources.ContainsKey(ResourceCost.Wood)) {
+        if (requiredResources.ContainsKey(ResourceCost.Wood))
+        {
             int woodRequirement = requiredResources[ResourceCost.Wood];
-            if (unspentWood < woodRequirement) {
+            if (unspentWood < woodRequirement)
+            {
                 return false;
-            } else {
+            }
+            else
+            {
                 unspentWood -= woodRequirement;
                 requiredResources.Remove(ResourceCost.Wood);
             }
         }
-        if (requiredResources.ContainsKey(ResourceCost.Hide)) {
+        if (requiredResources.ContainsKey(ResourceCost.Hide))
+        {
             int hideRequirement = requiredResources[ResourceCost.Hide];
-            if (unspentHide < hideRequirement) {
+            if (unspentHide < hideRequirement)
+            {
                 return false;
-            } else {
+            }
+            else
+            {
                 unspentHide -= hideRequirement;
                 requiredResources.Remove(ResourceCost.Hide);
             }
         }
-        
+
         // Creates parallel lists of required resources and whether they're paid with hide or not
 
         List<ResourceCost> requiredResourcesList = new List<ResourceCost>();
-        foreach (ResourceCost resourceCost in requiredResources.Keys) {
-            for (int i = 0; i < requiredResources[resourceCost]; i++) {
+        foreach (ResourceCost resourceCost in requiredResources.Keys)
+        {
+            for (int i = 0; i < requiredResources[resourceCost]; i++)
+            {
                 requiredResourcesList.Add(resourceCost);
             }
         }
         List<bool> paidWithHide = new List<bool>();
-        foreach(ResourceCost resourceCost in requiredResourcesList) {
+        foreach (ResourceCost resourceCost in requiredResourcesList)
+        {
             paidWithHide.Add(false);
         }
 
         // Searches for a combination that can be paid by randomly modifying whether costs are paid with hide or not
 
-        for (int i = 0; i < 100; i++) {
-            if (CombinationIsValid(requiredResourcesList, paidWithHide, unspentWood, unspentHide)) {
+        for (int i = 0; i < 100; i++)
+        {
+            if (CombinationIsValid(requiredResourcesList, paidWithHide, unspentWood, unspentHide))
+            {
                 return true;
-            } else {
+            }
+            else
+            {
                 int randomIndex = Random.Range(0, paidWithHide.Count);
                 paidWithHide[randomIndex] = paidWithHide[randomIndex] == false ? true : false;
             }
@@ -570,51 +783,84 @@ public class ActionParser : MonoBehaviour
 
     }
 
-    bool CombinationIsValid(List<ResourceCost> requiredResourcesList, List<bool> paidWithHide, int unspentWood, int unspentHide) {
+    bool CombinationIsValid(List<ResourceCost> requiredResourcesList, List<bool> paidWithHide, int unspentWood, int unspentHide)
+    {
         int hideRequirement = 0;
         int woodRequirement = 0;
-        for (int i = 0; i < requiredResourcesList.Count; i++) {
-            if (requiredResourcesList[i] == ResourceCost.TwoWoodOrHide) {
-                if (paidWithHide[i] == true) {
+        for (int i = 0; i < requiredResourcesList.Count; i++)
+        {
+            if (requiredResourcesList[i] == ResourceCost.TwoWoodOrHide)
+            {
+                if (paidWithHide[i] == true)
+                {
                     hideRequirement++;
-                } else {
+                }
+                else
+                {
                     woodRequirement += 2;
                 }
-            } else if (requiredResourcesList[i] == ResourceCost.ThreeWoodOrTwoHide) {
-                if (paidWithHide[i] == true) {
+            }
+            else if (requiredResourcesList[i] == ResourceCost.ThreeWoodOrTwoHide)
+            {
+                if (paidWithHide[i] == true)
+                {
                     hideRequirement += 2;
-                } else {
+                }
+                else
+                {
                     woodRequirement += 3;
                 }
-            } else if (requiredResourcesList[i] == ResourceCost.FourWoodOrThreeHide) {
-                if (paidWithHide[i] == true) {
+            }
+            else if (requiredResourcesList[i] == ResourceCost.FourWoodOrThreeHide)
+            {
+                if (paidWithHide[i] == true)
+                {
                     hideRequirement += 3;
-                } else {
+                }
+                else
+                {
                     woodRequirement += 4;
                 }
-            } else if (requiredResourcesList[i] == ResourceCost.WoodOrHide) {
-                if (paidWithHide[i] == true) {
+            }
+            else if (requiredResourcesList[i] == ResourceCost.WoodOrHide)
+            {
+                if (paidWithHide[i] == true)
+                {
                     hideRequirement += 1;
-                } else {
+                }
+                else
+                {
                     woodRequirement += 1;
                 }
-            } else if (requiredResourcesList[i] == ResourceCost.TwoWoodOrTwoHide) {
-                if (paidWithHide[i] == true) {
+            }
+            else if (requiredResourcesList[i] == ResourceCost.TwoWoodOrTwoHide)
+            {
+                if (paidWithHide[i] == true)
+                {
                     hideRequirement += 2;
-                } else {
+                }
+                else
+                {
                     woodRequirement += 2;
-                } 
-            } else if (requiredResourcesList[i] == ResourceCost.ThreeWoodOrThreeHide) {
-                if (paidWithHide[i] == true) {
+                }
+            }
+            else if (requiredResourcesList[i] == ResourceCost.ThreeWoodOrThreeHide)
+            {
+                if (paidWithHide[i] == true)
+                {
                     hideRequirement += 3;
-                } else {
+                }
+                else
+                {
                     woodRequirement += 3;
                 }
-            } else {
+            }
+            else
+            {
                 Debug.LogError("Invalid resource cost.");
             }
         }
         return hideRequirement <= unspentHide && woodRequirement <= unspentWood;
     }
-    
+
 }

@@ -19,7 +19,7 @@ public class FirstPlayerTokenController : ComponentController
 
     void OnTurnStartEvent(int turnStarted)
     {
-        Transform nextPosition = positions[(turnStarted - 1) % GameSettings.PlayerCount];
+        Transform nextPosition = positions[turnStarted % GameSettings.PlayerCount];
         MoveToTransform(nextPosition, MoveStyle.Default);
     }
 }

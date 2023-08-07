@@ -1,0 +1,4 @@
+public enum Scenario
+{
+    Castaways
+}

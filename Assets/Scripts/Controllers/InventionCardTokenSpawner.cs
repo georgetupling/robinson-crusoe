@@ -7,7 +7,7 @@ public class InventionCardTokenSpawner : MonoBehaviour
     InventionCard inventionCard;
     int numberOfRequirements;
     [SerializeField] Transform inventionCardTokenArea;
-    
+
     // Positions for cards with only 1 requirement
     Transform centrePosition;
 
@@ -19,90 +19,132 @@ public class InventionCardTokenSpawner : MonoBehaviour
     Transform topLeftPosition;
     Transform topRightPosition;
 
+    // Position for a marker to indicate a scenario invention has been built (since they can't be turned face down
+    Transform scenarioInventionBuiltPosition;
+
     List<TokenController> tokens = new List<TokenController>();
 
     List<(Terrain, bool)> queuedTerrainEvents = new List<(Terrain, bool)>();
     List<(Invention, bool)> queuedInventionEvents = new List<(Invention, bool)>();
-    
-    void Awake() {
+
+    void Awake()
+    {
         centrePosition = transform.Find("CentrePosition");
         leftPosition = transform.Find("LeftPosition");
         rightPosition = transform.Find("RightPosition");
         topLeftPosition = transform.Find("TopLeftPosition");
         topRightPosition = transform.Find("TopRightPosition");
+        scenarioInventionBuiltPosition = transform.Find("ScenarioInventionBuiltPosition");
         EventGenerator.Singleton.AddListenerToTerrainRequirementMetEvent(OnTerrainRequirementMetEvent);
         EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
+        EventGenerator.Singleton.AddListenerToEnableInventionRequirementMarkersEvent(OnEnableInventionRequirementMarkersEvent);
     }
 
     // Method for initializing the token spawner
 
-    public void Initialize(InventionCard inventionCard) {
+    public void Initialize(InventionCard inventionCard)
+    {
         this.inventionCard = inventionCard;
         numberOfRequirements = 0;
-        if (inventionCard.terrainTypeRequirement != Terrain.None) {
+        if (inventionCard.terrainTypeRequirement != Terrain.None)
+        {
             numberOfRequirements++;
         }
         numberOfRequirements += inventionCard.resourceCosts.Count;
         numberOfRequirements += inventionCard.itemRequirements.Count;
         // Go through queued events in order
-        foreach ((Terrain, bool) queuedTerrainEvent in queuedTerrainEvents) {
+        foreach ((Terrain, bool) queuedTerrainEvent in queuedTerrainEvents)
+        {
             OnTerrainRequirementMetEvent(queuedTerrainEvent.Item1, queuedTerrainEvent.Item2);
-            queuedTerrainEvents.Clear();
         }
-        foreach ((Invention, bool) queuedInventionEvent in queuedInventionEvents) {
+        queuedTerrainEvents.Clear();
+        foreach ((Invention, bool) queuedInventionEvent in queuedInventionEvents)
+        {
             OnUpdateBuiltInventionsEvent(queuedInventionEvent.Item1, queuedInventionEvent.Item2);
-            queuedInventionEvents.Clear();
         }
+        queuedInventionEvents.Clear();
     }
 
     // Spawns/destroys the black marker on the terrain symbol
 
-    void OnTerrainRequirementMetEvent(Terrain terrainType, bool requirementMet) {
-        if (inventionCard == null) {
+    void OnTerrainRequirementMetEvent(Terrain terrainType, bool requirementMet)
+    {
+        if (inventionCard == null)
+        {
             // if the token spawner hasn't been initialized, queue the requirement met event
             queuedTerrainEvents.Add((terrainType, requirementMet));
             return;
         }
-        if (inventionCard.terrainTypeRequirement != terrainType) {
+        if (inventionCard.terrainTypeRequirement != terrainType)
+        {
             return;
         }
         Transform terrainPosition = FindTerrainPosition();
-        if (requirementMet) {
+        if (requirementMet)
+        {
             SpawnToken(TokenType.BlackMarker, terrainPosition);
-        } else {
+        }
+        else
+        {
             DestroyToken(TokenType.BlackMarker, terrainPosition);
         }
     }
 
     // Spawns/destroys the black marker on invention requirements
 
-    void OnUpdateBuiltInventionsEvent(Invention invention, bool isBuilt) {
-        if (inventionCard == null) {
+    void OnUpdateBuiltInventionsEvent(Invention invention, bool isBuilt)
+    {
+        if (inventionCard == null)
+        {
             queuedInventionEvents.Add((invention, isBuilt));
             return;
         }
-        if (invention == inventionCard.invention) {
-            // Disable the token area when the card is turned face down!
-            inventionCardTokenArea.gameObject.SetActive(!isBuilt);
+        // If this invention card is a scenario-specific invention, add or remove a marker to indicate it is built
+        if (inventionCard.invention == invention)
+        {
+            if (isBuilt)
+            {
+                SpawnToken(TokenType.BlackMarker, scenarioInventionBuiltPosition);
+            }
+            else
+            {
+                DestroyToken(TokenType.BlackMarker, scenarioInventionBuiltPosition);
+            }
         }
-        if (!inventionCard.itemRequirements.Contains(invention)) {
+        // This code spawns/despawns markers for the item requirements
+        if (!inventionCard.itemRequirements.Contains(invention))
+        {
             return;
         }
         Transform inventionPosition = FindInventionPosition(invention);
-        if (isBuilt) {
+        if (isBuilt)
+        {
             SpawnToken(TokenType.BlackMarker, inventionPosition);
-        } else {
+        }
+        else
+        {
             DestroyToken(TokenType.BlackMarker, inventionPosition);
         }
     }
 
-    void SpawnToken(TokenType tokenType, Transform parentTransform) {
-        if (parentTransform == null || parentTransform.childCount > 0) {
+    void OnEnableInventionRequirementMarkersEvent(Invention invention, bool enable)
+    {
+        if (inventionCard != null && invention == inventionCard.invention)
+        {
+            gameObject.SetActive(enable);
+        }
+    }
+
+    void SpawnToken(TokenType tokenType, Transform parentTransform)
+    {
+        if (parentTransform == null || parentTransform.childCount > 0)
+        {
             Debug.LogError($"Failed to find position to spawn {tokenType} on {inventionCard.invention}.");
             return;
         }
         TokenController prefab = PrefabLoader.Singleton.GetPrefab(tokenType);
-        if (prefab == null) {
+        if (prefab == null)
+        {
             Debug.LogError($"Failed to load {tokenType} token prefab.");
             return;
         }
@@ -112,9 +154,12 @@ public class InventionCardTokenSpawner : MonoBehaviour
         tokens.Add(newToken);
     }
 
-    void DestroyToken(TokenType tokenType, Transform parentTransform) {
-        foreach(TokenController token in tokens) {
-            if (token.tokenType == tokenType && token.transform.parent == parentTransform) {
+    void DestroyToken(TokenType tokenType, Transform parentTransform)
+    {
+        foreach (TokenController token in tokens)
+        {
+            if (token.tokenType == tokenType && token.transform.parent == parentTransform)
+            {
                 tokens.Remove(token);
                 Destroy(token.gameObject);
                 return;
@@ -125,32 +170,52 @@ public class InventionCardTokenSpawner : MonoBehaviour
 
     // Helper methods
 
-    Transform FindTerrainPosition() {
-        if (numberOfRequirements == 1) {
+    Transform FindTerrainPosition()
+    {
+        if (numberOfRequirements == 1)
+        {
             return centrePosition;
-        } else if (numberOfRequirements == 2) {
+        }
+        else if (numberOfRequirements == 2)
+        {
             return leftPosition;
-        } else if (numberOfRequirements == 3) {
+        }
+        else if (numberOfRequirements == 3)
+        {
             return topLeftPosition;
-        } else {
+        }
+        else
+        {
             Debug.LogError("Invalid number of requirements.");
             return null;
         }
     }
 
-    Transform FindInventionPosition(Invention invention) {
-        if (inventionCard.terrainTypeRequirement == Terrain.None) {
-            if (numberOfRequirements == 1) {
+    Transform FindInventionPosition(Invention invention)
+    {
+        if (inventionCard.terrainTypeRequirement == Terrain.None)
+        {
+            if (numberOfRequirements == 1)
+            {
                 return centrePosition;
-            } else if (numberOfRequirements == 2) {
+            }
+            else if (numberOfRequirements == 2)
+            {
                 return inventionCard.itemRequirements.IndexOf(invention) == 0 ? leftPosition : rightPosition;
-            } else if (numberOfRequirements == 3) {
+            }
+            else if (numberOfRequirements == 3)
+            {
                 return inventionCard.itemRequirements.IndexOf(invention) == 0 ? topLeftPosition : topRightPosition;
             }
-        } else {
-            if (numberOfRequirements == 2) {
+        }
+        else
+        {
+            if (numberOfRequirements == 2)
+            {
                 return rightPosition;
-            } else if (numberOfRequirements == 3) {
+            }
+            else if (numberOfRequirements == 3)
+            {
                 return topRightPosition;
             }
         }
