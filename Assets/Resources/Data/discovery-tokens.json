@@ -28,7 +28,7 @@
     },
     {
         "discovery": "Herbs",
-        "activationMessage": "Cook herbs?",
+        "activationMessage": "Use herbs?",
         "effectsOnDraw": [],
         "canBeActivated": true,
         "activationRequiresWeapon": false,
@@ -54,13 +54,13 @@
         "effectsOnActivation": []
     },
     {
-        "discovery": "SaltireSymbol",
-        "activationMessage": "",
-        "effectsOnDraw": ["SaltireSymbolEffect"],
-        "canBeActivated": false,
+        "discovery": "CrossSymbol",
+        "activationMessage": "Use discovery?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
         "activationRequiresWeapon": false,
         "activationRequiresPot": false,
-        "effectsOnActivation": []
+        "effectsOnActivation": ["CrossSymbolEffect"]
     },
     {
         "discovery": "ThornyBushes",
@@ -82,12 +82,12 @@
     },
     {
         "discovery": "SaltireSymbol",
-        "activationMessage": "",
-        "effectsOnDraw": ["SaltireSymbolEffect"],
-        "canBeActivated": false,
+        "activationMessage": "Use discovery?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
         "activationRequiresWeapon": false,
         "activationRequiresPot": false,
-        "effectsOnActivation": []
+        "effectsOnActivation": ["SaltireSymbolEffect"]
     },
     {
         "discovery": "Poison",
@@ -154,12 +154,12 @@
     },
     {
         "discovery": "TwoLinesSymbol",
-        "activationMessage": "",
-        "effectsOnDraw": ["TwoLinesSymbolEffect"],
-        "canBeActivated": false,
+        "activationMessage": "Use discovery?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
         "activationRequiresWeapon": false,
         "activationRequiresPot": false,
-        "effectsOnActivation": []
+        "effectsOnActivation": ["TwoLinesSymbolEffect"]
     },
     {
         "discovery": "Vegetables",
@@ -190,11 +190,11 @@
     },
     {
         "discovery": "LineSymbol",
-        "activationMessage": "",
-        "effectsOnDraw": ["LineSymbolEffect"],
-        "canBeActivated": false,
+        "activationMessage": "Use discovery?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
         "activationRequiresWeapon": false,
         "activationRequiresPot": false,
-        "effectsOnActivation": []
+        "effectsOnActivation": ["LineSymbolEffect"]
     }
 ]

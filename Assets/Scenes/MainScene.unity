@@ -2138,9 +2138,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tokenType: 10
-  eventTypeToListenFor: 
-  minimumValue: 0
-  maximumValue: 0
 --- !u!1 &205887026
 GameObject:
   m_ObjectHideFlags: 0
@@ -5039,6 +5036,7 @@ MonoBehaviour:
   trackingPopupPrefab: {fileID: 8052845952018398224, guid: 1b111d18509017c4295ba54189ed5fe5, type: 3}
   itemActivationPopupPrefab: {fileID: 12715543615101853, guid: f17fa8faddb4ce042be31813a894f17c, type: 3}
   shortcutPopupPrefab: {fileID: 7030425179592506963, guid: c425d6c0dc764744a94a6fc97033587c, type: 3}
+  woodpilePopupPrefab: {fileID: 5970723794488731425, guid: cfcee655ae8c39b469c931bc50f24385, type: 3}
   parentTransform: {fileID: 473154762}
 --- !u!1 &794049183
 GameObject:
@@ -6252,7 +6250,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: -0.021814799, y: 0, z: 0, w: 0.999762}
-  m_LocalPosition: {x: 0, y: -0.25, z: -5}
+  m_LocalPosition: {x: 0, y: -0.25, z: -8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9541,7 +9539,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionSpaces: []
-  actionsReadyToSubmit: 0
   actionAssignments: []
 --- !u!4 &1365661812
 Transform:
@@ -10361,9 +10358,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tokenType: 9
-  eventTypeToListenFor: 
-  minimumValue: 0
-  maximumValue: 0
 --- !u!1 &1472876656
 GameObject:
   m_ObjectHideFlags: 0
@@ -10693,9 +10687,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tokenType: 12
-  eventTypeToListenFor: 
-  minimumValue: 0
-  maximumValue: 0
 --- !u!1 &1520612156
 GameObject:
   m_ObjectHideFlags: 0
@@ -14894,9 +14885,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tokenType: 11
-  eventTypeToListenFor: 
-  minimumValue: 0
-  maximumValue: 0
 --- !u!1 &2010127099
 GameObject:
   m_ObjectHideFlags: 0

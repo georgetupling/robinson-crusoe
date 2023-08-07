@@ -19,14 +19,6 @@ public class ActionParser : MonoBehaviour
         { 4, ResourceCost.FourWoodOrThreeHide }
     };
 
-    private Dictionary<int, ResourceCost> woodpileCostByWoodpileLevel = new Dictionary<int, ResourceCost>() {
-        { 0, ResourceCost.Wood },
-        { 1, ResourceCost.TwoWood },
-        { 2, ResourceCost.ThreeWood },
-        { 3, ResourceCost.FourWood },
-        { 4, ResourceCost.FiveWood }
-    };
-
     // For handling queries
 
     List<int> distancesFromCampQueries = new List<int>();
@@ -42,8 +34,6 @@ public class ActionParser : MonoBehaviour
 
     private List<Invention> itemRequirementsMet = new List<Invention>();
 
-    private int woodpileLevel = 0;
-
     // Flags for applying specific effects
 
     int economicalConstructionPlayerId = -1;
@@ -58,13 +48,11 @@ public class ActionParser : MonoBehaviour
         EventGenerator.Singleton.AddListenerToGetDistanceFromCampEvent(OnGetDistanceFromCampEvent);
         EventGenerator.Singleton.AddListenerToGetDistanceFromCampToLocationEvent(OnGetDistanceFromCampToLocationEvent);
         EventGenerator.Singleton.AddListenerToGetResourceEvent(OnGetResourceEvent);
-        EventGenerator.Singleton.AddListenerToGetWoodpileLevelResponseEvent(OnGetWoodpileLevelResponseEvent);
         EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
         EventGenerator.Singleton.AddListenerToActionPawnInitializedEvent(OnActionPawnInitializedEvent);
         EventGenerator.Singleton.AddListenerToAreSufficientResourcesAvailableEvent(OnAreSufficientResourcesAvailableEvent);
         EventGenerator.Singleton.AddListenerToEconomicalConstructionEvent(OnEconomicalConstructionEvent);
         EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
-        EventGenerator.Singleton.AddListenerToGetWoodpileLevelResponseEvent(OnGetWoodpileLevelResponseEvent);
     }
 
     // Listeners
@@ -125,11 +113,6 @@ public class ActionParser : MonoBehaviour
             woodAvailable = amount;
             isWaitingForWoodAvailable = false;
         }
-    }
-
-    void OnGetWoodpileLevelResponseEvent(int woodpileLevel)
-    {
-        this.woodpileLevel = woodpileLevel;
     }
 
     void OnUpdateBuiltInventionsEvent(Invention invention, bool isBuilt)
@@ -310,10 +293,6 @@ public class ActionParser : MonoBehaviour
         {
             return new List<ResourceCost> { ResourceCost.Wood };
         }
-        else if (actionType == ActionType.BuildWoodpile)
-        {
-            return new List<ResourceCost> { woodpileCostByWoodpileLevel[woodpileLevel] };
-        }
         else if (actionType == ActionType.BuildInvention)
         {
             InventionCardController inventionCardController = actionSpace.parent.GetComponent<InventionCardController>();
@@ -428,7 +407,7 @@ public class ActionParser : MonoBehaviour
     bool NumberOfActionsValid(ActionAssignment actionAssignment)
     {
         ActionType actionType = actionAssignment.Type;
-        if (actionType == ActionType.BuildShelter || actionType == ActionType.BuildRoof || actionType == ActionType.BuildPalisade || actionType == ActionType.BuildWeapon || actionType == ActionType.BuildWoodpile)
+        if (actionType == ActionType.BuildShelter || actionType == ActionType.BuildRoof || actionType == ActionType.BuildPalisade || actionType == ActionType.BuildWeapon)
         {
             // TODO - check for time-consuming action tokens
             if (actionAssignment.numberOfActions == 1)

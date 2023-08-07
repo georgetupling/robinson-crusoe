@@ -319,8 +319,8 @@
         "itemRequirements": ["Rope"],
         "resourceCosts": ["Wood", "Hide"],
         "terrainTypeRequirement": "None",
-        "effectsOnBuild": ["Gain3OilyWood"],
-        "effectsOnLoss": ["Lose3OilyWood"],
+        "effectsOnBuild": ["MastEffect"],
+        "effectsOnLoss": [],
         "isDefaultInvention": false,
         "isPersonalInvention": false,
         "isScenarioInvention": true

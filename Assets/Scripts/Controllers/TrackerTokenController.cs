@@ -67,7 +67,6 @@ public class TrackerTokenController : TokenController
             case TokenType.RoofTracker: eventTypeToListenFor = TrackerTokenEvent.SetRoofTracker; break;
             case TokenType.WeaponTracker: eventTypeToListenFor = TrackerTokenEvent.SetWeaponTracker; break;
             case TokenType.TurnTracker: eventTypeToListenFor = TrackerTokenEvent.SetTurnTracker; break;
-            case TokenType.WoodpileTracker: eventTypeToListenFor = TrackerTokenEvent.SetWoodpileTracker; break;
             case TokenType.HealthTracker:
                 switch (playerId)
                 {
@@ -88,7 +87,6 @@ public class TrackerTokenController : TokenController
             case TokenType.PalisadeTracker: minimumValue = 0; maximumValue = 4; break;
             case TokenType.RoofTracker: minimumValue = 0; maximumValue = 4; break;
             case TokenType.WeaponTracker: minimumValue = 0; maximumValue = 10; break;
-            case TokenType.WoodpileTracker: minimumValue = 1; maximumValue = 5; break;
             case TokenType.TurnTracker:
                 minimumValue = 0;
                 switch (GameSettings.CurrentScenario)

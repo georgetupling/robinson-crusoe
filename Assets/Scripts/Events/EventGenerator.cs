@@ -59,9 +59,8 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<int> getPalisadeLevelResponseEvent = new UnityEvent<int>();
     private UnityEvent shelterIsBuiltEvent = new UnityEvent();
     private UnityEvent<bool> shelterIsBuiltResponseEvent = new UnityEvent<bool>();
-    private UnityEvent gainWoodpileEvent = new UnityEvent();
-    private UnityEvent getWoodpileLevelEvent = new UnityEvent();
-    private UnityEvent<int> getWoodpileLevelResponseEvent = new UnityEvent<int>();
+    private UnityEvent<int> addWoodToPileEvent = new UnityEvent<int>();
+    private UnityEvent woodpileCompletedEvent = new UnityEvent();
 
     // Inventions
     private UnityEvent<Invention> buildInventionSuccessEvent = new UnityEvent<Invention>();
@@ -151,6 +150,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<BeastCardController, Stack<BeastCardController>> spawnTrackingPopupEvent = new UnityEvent<BeastCardController, Stack<BeastCardController>>();
     private UnityEvent<Invention> spawnItemActivationPopupEvent = new UnityEvent<Invention>();
     private UnityEvent spawnShortcutPopupEvent = new UnityEvent();
+    private UnityEvent<int> spawnWoodpilePopupEvent = new UnityEvent<int>();
 
     // Player Input
     private UnityEvent<bool, InputType> getIslandTileInputEvent = new UnityEvent<bool, InputType>();
@@ -790,11 +790,6 @@ public class EventGenerator : MonoBehaviour
     {
         trackerTokenEvent.Invoke(TrackerTokenEvent.SetTurnTracker, newValue);
     }
-
-    public void RaiseSetWoodpileTrackerEvent(int newValue)
-    {
-        trackerTokenEvent.Invoke(TrackerTokenEvent.SetWoodpileTracker, newValue);
-    }
     public void AddListenerToTrackerTokenEvent(UnityAction<string, int> listener)
     {
         trackerTokenEvent.AddListener(listener);
@@ -1355,37 +1350,26 @@ public class EventGenerator : MonoBehaviour
         shelterIsBuiltResponseEvent.AddListener(listener);
     }
 
-    // Gain woodpile event
+    // Add wood to woodpile event
 
-    public void RaiseGainWoodpileEvent()
+    public void RaiseAddWoodToPileEvent(int amount)
     {
-        gainWoodpileEvent.Invoke();
+        addWoodToPileEvent.Invoke(amount);
     }
-    public void AddListenerToGainWoodpileEvent(UnityAction listener)
+    public void AddListenerToAddWoodToPileEvent(UnityAction<int> listener)
     {
-        gainWoodpileEvent.AddListener(listener);
-    }
-
-    // Get woodpile level event
-
-    public void RaiseGetWoodpileLevelEvent()
-    {
-        getWoodpileLevelEvent.Invoke();
-    }
-    public void AddListenerToGetWoodpileLevelEvent(UnityAction listener)
-    {
-        getWoodpileLevelEvent.AddListener(listener);
+        addWoodToPileEvent.AddListener(listener);
     }
 
-    // Get woodpile level response event
+    // Woodpile completed event
 
-    public void RaiseGetWoodpileLevelResponseEvent(int woodpileLevel)
+    public void RaiseWoodpileCompletedEvent()
     {
-        getWoodpileLevelResponseEvent.Invoke(woodpileLevel);
+        woodpileCompletedEvent.Invoke();
     }
-    public void AddListenerToGetWoodpileLevelResponseEvent(UnityAction<int> listener)
+    public void AddListenerToWoodpileCompletedEvent(UnityAction listener)
     {
-        getWoodpileLevelResponseEvent.AddListener(listener);
+        woodpileCompletedEvent.AddListener(listener);
     }
 
     // EndPhaseEvent
@@ -1704,6 +1688,17 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToSpawnShortcutPopupEvent(UnityAction listener)
     {
         spawnShortcutPopupEvent.AddListener(listener);
+    }
+
+    // Spawn woodpile popup event
+
+    public void RaiseSpawnWoodpilePopupEvent(int woodLimit)
+    {
+        spawnWoodpilePopupEvent.Invoke(woodLimit);
+    }
+    public void AddListenerToSpawnWoodpilePopupEvent(UnityAction<int> listener)
+    {
+        spawnWoodpilePopupEvent.AddListener(listener);
     }
 
 

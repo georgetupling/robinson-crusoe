@@ -8,27 +8,31 @@ public class CameraController : MonoBehaviour
     private float movementSpeed = 5.0f;
     private float zoomSpeed = 350.0f;
 
-    private float maximumPanY = 3.0f;
-    private float maximumPanX = 6.0f;
+    private float maximumPanY = 6.0f;
+    private float maximumPanX = 12.0f;
 
-    private float maximumZoomIn = 4.0f;
-    private float maximumZoomOut = 2.5f;
+    private float maximumZoomIn = 7.0f;
+    private float maximumZoomOut = 5.0f;
 
     private Vector3 initialPosition;
 
     private bool cameraLocked;
     [SerializeField] Transform islandTileArea;
 
-    void Awake() {
+    void Awake()
+    {
         EventGenerator.Singleton.AddListenerToGetIslandTileInputEvent(OnGetIslandTileInputEvent);
     }
 
-    void Start() {
+    void Start()
+    {
         initialPosition = transform.position;
     }
 
-    void Update() {
-        if (cameraLocked) {
+    void Update()
+    {
+        if (cameraLocked)
+        {
             return;
         }
         HandleMovementInput();
@@ -36,7 +40,8 @@ public class CameraController : MonoBehaviour
         HandleResetCamera();
     }
 
-    void HandleMovementInput() {
+    void HandleMovementInput()
+    {
         float horizontal = Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime;
         float vertical = Input.GetAxis("Vertical") * movementSpeed * Time.deltaTime;
         float fractionZoomedIn = 1 - (transform.position.z - initialPosition.z + maximumZoomOut) / (maximumZoomIn + maximumZoomOut); // 1 if fully zoomed in, 0 if fully zoomed out
@@ -48,14 +53,17 @@ public class CameraController : MonoBehaviour
         transform.position = new Vector3(newXPosition, newYPosition, transform.position.z);
     }
 
-    void HandleZoomInput() {
+    void HandleZoomInput()
+    {
         float zoom = Input.GetAxis("Mouse ScrollWheel") * zoomSpeed * Time.deltaTime;
         float newZPosition = Mathf.Clamp(transform.position.z + zoom, initialPosition.z - maximumZoomOut, initialPosition.z + maximumZoomIn);
         transform.position = new Vector3(transform.position.x, transform.position.y, newZPosition);
     }
 
-    void HandleResetCamera() {
-        if (Input.GetKeyDown("r")) {
+    void HandleResetCamera()
+    {
+        if (Input.GetKeyDown("r"))
+        {
             cameraLocked = true;
             float duration = GameSettings.AnimationDuration * 0.75f;
             transform.DOLocalMove(initialPosition, duration);
@@ -65,9 +73,11 @@ public class CameraController : MonoBehaviour
 
     // This code locks the camera over the island tile area when selecting an island tile!
 
-    void OnGetIslandTileInputEvent(bool isActive, InputType inputType) {
+    void OnGetIslandTileInputEvent(bool isActive, InputType inputType)
+    {
         float duration = GameSettings.AnimationDuration * 0.75f;
-        if (!isActive) {
+        if (!isActive)
+        {
             transform.DOLocalMove(initialPosition, duration);
             cameraLocked = false;
             return;

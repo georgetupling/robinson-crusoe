@@ -11,6 +11,5 @@ public enum ActionType
     Explore,
     MakeCamp,
     Rest,
-    NotFound,
-    BuildWoodpile,
+    NotFound
 }

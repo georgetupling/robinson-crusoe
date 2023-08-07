@@ -195,7 +195,7 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
             actionType = nearestActionSpace.GetComponent<ActionSpace>().Type;
         }
         // Applies restrictions for specific pawn types
-        List<ActionType> buildTypes = new List<ActionType> { ActionType.BuildShelter, ActionType.BuildRoof, ActionType.BuildPalisade, ActionType.BuildWeapon, ActionType.BuildWoodpile };
+        List<ActionType> buildTypes = new List<ActionType> { ActionType.BuildShelter, ActionType.BuildRoof, ActionType.BuildPalisade, ActionType.BuildWeapon };
         if (pawnType != PawnType.Player)
         {
             if (

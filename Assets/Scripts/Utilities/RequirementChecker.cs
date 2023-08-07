@@ -14,7 +14,6 @@ public class RequirementChecker : MonoBehaviour
     private int weaponLevel = 0;
     private int roofLevel = 0;
     private int palisadeLevel = 0;
-    private int woodpileLevel = 0;
     private bool shelterIsBuilt;
     private Dictionary<int, int> playerDetermination = new Dictionary<int, int>(); // Maps playerId to determination
     public bool sufficientResourcesAvailable;
@@ -37,7 +36,6 @@ public class RequirementChecker : MonoBehaviour
         EventGenerator.Singleton.AddListenerToGetPalisadeLevelResponseEvent(OnGetPalisadeLevelResponseEvent);
         EventGenerator.Singleton.AddListenerToGetDeterminationResponseEvent(OnGetDeterminationResponseEvent);
         EventGenerator.Singleton.AddListenerToAreSufficientResourcesAvailableResponseEvent(OnAreSufficentResourcesAvailableResponseEvent);
-        EventGenerator.Singleton.AddListenerToGetWoodpileLevelResponseEvent(OnGetWoodpileLevelResponseEvent);
     }
 
     // Listeners
@@ -109,11 +107,6 @@ public class RequirementChecker : MonoBehaviour
         {
             playerDetermination.Add(playerId, determination);
         }
-    }
-
-    void OnGetWoodpileLevelResponseEvent(int woodpileLevel)
-    {
-        this.woodpileLevel = woodpileLevel;
     }
 
     // Public methods
@@ -199,14 +192,6 @@ public class RequirementChecker : MonoBehaviour
             StartCoroutine(UpdateWeaponLevel());
             const int maximumWeaponLevel = 10;
             if (weaponLevel >= maximumWeaponLevel)
-            {
-                return false;
-            }
-        }
-        else if (actionType == ActionType.BuildWoodpile)
-        {
-            const int maximumWoodpileLevel = 5;
-            if (woodpileLevel >= maximumWoodpileLevel)
             {
                 return false;
             }

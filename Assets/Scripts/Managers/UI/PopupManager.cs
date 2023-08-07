@@ -23,6 +23,7 @@ public class PopupManager : MonoBehaviour
     [SerializeField] private TrackingPopupController trackingPopupPrefab;
     [SerializeField] private ItemActivationPopupController itemActivationPopupPrefab;
     [SerializeField] private ShortcutPopupController shortcutPopupPrefab;
+    [SerializeField] private WoodpilePopupController woodpilePopupPrefab;
 
     [SerializeField] private Transform parentTransform;
 
@@ -52,6 +53,7 @@ public class PopupManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToSpawnTrackingPopupEvent(OnSpawnTrackingPopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnItemActivationPopupEvent(OnSpawnItemActivationEvent);
         EventGenerator.Singleton.AddListenerToSpawnShortcutPopupEvent(OnSpawnShortcutPopupEvent);
+        EventGenerator.Singleton.AddListenerToSpawnWoodpilePopupEvent(OnSpawnWoodpilePopupEvent);
     }
 
     void OnCardRevealedEvent(Deck deckDrawnFrom, Card revealedCard, int componentIdOfRevealedCard)
@@ -153,6 +155,12 @@ public class PopupManager : MonoBehaviour
     void OnSpawnShortcutPopupEvent()
     {
         ShortcutPopupController newPopup = Instantiate(shortcutPopupPrefab, parentTransform, false);
+    }
+
+    void OnSpawnWoodpilePopupEvent(int woodLimit)
+    {
+        WoodpilePopupController newPopup = Instantiate(woodpilePopupPrefab, parentTransform, false);
+        newPopup.SetWoodLimit(woodLimit);
     }
 
     // Helper methods

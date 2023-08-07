@@ -34,6 +34,5 @@ public enum TokenType
     RedWeatherDie,
     WhiteWeatherDie,
     OrangeWeatherDie,
-    TurnTracker,
-    WoodpileTracker
+    TurnTracker
 }

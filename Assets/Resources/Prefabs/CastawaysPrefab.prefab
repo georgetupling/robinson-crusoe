@@ -55,7 +55,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 984159552328890973}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.491, y: -0.041, z: 0}
+  m_LocalPosition: {x: 0.491, y: -0.085, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -86,7 +86,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2117952761468045953}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.061, y: -0.065, z: 0}
+  m_LocalPosition: {x: -0.061, y: -0.079, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -500,8 +500,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb0eb623200ab3a4098ddf24b47b397f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trackerToken: {fileID: 4411814568315145601}
-  woodpileLevel: 0
+  stage0: {fileID: 8662358862899892568}
+  stage1: {fileID: 7889350431952566628}
+  stage2: {fileID: 8364959950037152762}
+  stage3: {fileID: 8028946891868045668}
+  stage4: {fileID: 7003870297406267979}
+  woodAvailable: 0
+  woodInPile: 0
+  currentStage: 0
 --- !u!1 &6698194817209290902
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,7 +532,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6698194817209290902}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.46, y: -0.065, z: 0}
+  m_LocalPosition: {x: -0.46, y: -0.076, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -557,7 +563,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7205513075883344722}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.29, y: -0.065, z: 0}
+  m_LocalPosition: {x: -0.29, y: -0.083, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -774,7 +780,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9049691722347512110}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.208, y: -0.065, z: 0}
+  m_LocalPosition: {x: 0.208, y: -0.08, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

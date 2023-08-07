@@ -210,8 +210,7 @@ public class ActionResolver : MonoBehaviour
                 actionAssignment.Type != ActionType.BuildRoof &&
                 actionAssignment.Type != ActionType.BuildPalisade &&
                 actionAssignment.Type != ActionType.BuildWeapon &&
-                actionAssignment.Type != ActionType.BuildInvention &&
-                actionAssignment.Type != ActionType.BuildWoodpile
+                actionAssignment.Type != ActionType.BuildInvention
             )
             {
                 continue;
@@ -284,9 +283,6 @@ public class ActionResolver : MonoBehaviour
                             break;
                         case ActionType.BuildWeapon:
                             EventGenerator.Singleton.RaiseGainWeaponEvent(1);
-                            break;
-                        case ActionType.BuildWoodpile:
-                            EventGenerator.Singleton.RaiseGainWoodpileEvent();
                             break;
                     }
                 }
