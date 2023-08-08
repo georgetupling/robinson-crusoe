@@ -510,7 +510,7 @@ public class IslandTileController : ComponentController
 
         EventGenerator.Singleton.RaiseGainFoodEvent(foodSources + additionalFood);
         EventGenerator.Singleton.RaiseGainWoodEvent(woodSources + additionalWood);
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2f * GameSettings.AnimationDuration);
         EventGenerator.Singleton.RaiseEndPhaseEvent(Phase.Production);
     }
 

@@ -5027,7 +5027,7 @@ MonoBehaviour:
   discoveryTokenActivationPopupWithTargetSelectPrefab: {fileID: 7707923365525591159, guid: 597b7a70aa7051543b48fdc55961a45e, type: 3}
   variableCostPopupPrefab: {fileID: 8588609941744571645, guid: 066760f1dffbb794b8b3a745b82ae57e, type: 3}
   makeCampChoicePopupPrefab: {fileID: 6804288373813744710, guid: 47ee3e8fff0355d4b96e6c8ebef13fb2, type: 3}
-  nightPhasePopupPrefab: {fileID: 5894890414741770321, guid: 51022d4c5ee8b214ebd530529c138e52, type: 3}
+  nightPhasePopupPrefab: {fileID: 4727434533846995102, guid: 51022d4c5ee8b214ebd530529c138e52, type: 3}
   dicePopupPrefab: {fileID: 4151864331969145337, guid: 450d8148656f8294cb98a7f8705003dd, type: 3}
   abilityPopupPrefab: {fileID: 4448420331352022548, guid: 91959ab629a6c99439209fc664697c7f, type: 3}
   chooseInventionCardPopupPrefab: {fileID: 6864355774286461605, guid: cb426bc20c3919c40919fcabe64214cf, type: 3}
@@ -5036,7 +5036,8 @@ MonoBehaviour:
   trackingPopupPrefab: {fileID: 8052845952018398224, guid: 1b111d18509017c4295ba54189ed5fe5, type: 3}
   itemActivationPopupPrefab: {fileID: 12715543615101853, guid: f17fa8faddb4ce042be31813a894f17c, type: 3}
   shortcutPopupPrefab: {fileID: 7030425179592506963, guid: c425d6c0dc764744a94a6fc97033587c, type: 3}
-  woodpilePopupPrefab: {fileID: 5970723794488731425, guid: cfcee655ae8c39b469c931bc50f24385, type: 3}
+  woodpilePopupPrefab: {fileID: 8878097232206975650, guid: cfcee655ae8c39b469c931bc50f24385, type: 3}
+  combatPopupPrefab: {fileID: 605854797989373581, guid: 57256dd22a422334f82b7141fd3de5c2, type: 3}
   parentTransform: {fileID: 473154762}
 --- !u!1 &794049183
 GameObject:
@@ -5624,7 +5625,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Current Phase
+  m_text: Morale Phase
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -8590,7 +8591,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Instruction
+  m_text: Resolving morale phase...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

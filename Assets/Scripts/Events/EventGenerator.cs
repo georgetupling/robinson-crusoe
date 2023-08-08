@@ -104,6 +104,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<int, WoundType, TokenType> spawnWoundTokenEvent = new UnityEvent<int, WoundType, TokenType>();
     private UnityEvent<int, WoundType, TokenType> destroyWoundTokenEvent = new UnityEvent<int, WoundType, TokenType>();
     private UnityEvent<TokenType> spawnTokenOnCampEvent = new UnityEvent<TokenType>();
+    private UnityEvent<int, int> setDeterminationTokensEvent = new UnityEvent<int, int>();
 
     // Discovery Tokens
     private InitializeDiscoveryTokenEvent initializeDiscoveryTokenEvent = new InitializeDiscoveryTokenEvent();
@@ -127,6 +128,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent areSufficientResourcesAvailableEvent = new UnityEvent();
     private UnityEvent<bool> areSufficientResourcesAvailableResponseEvent = new UnityEvent<bool>();
     private UnityEvent<Invention> additionalResourceFromGatherEvent = new UnityEvent<Invention>();
+    private UnityEvent<int> resolveHuntingActionEvent = new UnityEvent<int>();
 
     // Night Phase
     private UnityEvent<List<int>> playersEatingEvent = new UnityEvent<List<int>>(); // Used by the night phase popup to communicate which players are eating
@@ -151,6 +153,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<Invention> spawnItemActivationPopupEvent = new UnityEvent<Invention>();
     private UnityEvent spawnShortcutPopupEvent = new UnityEvent();
     private UnityEvent<int> spawnWoodpilePopupEvent = new UnityEvent<int>();
+    private UnityEvent<int, int, BeastCard> spawnCombatPopupEvent = new UnityEvent<int, int, BeastCard>();
 
     // Player Input
     private UnityEvent<bool, InputType> getIslandTileInputEvent = new UnityEvent<bool, InputType>();
@@ -954,6 +957,17 @@ public class EventGenerator : MonoBehaviour
         spawnTokenOnCampEvent.AddListener(listener);
     }
 
+    // Set determination tokens event
+
+    public void RaiseSetDeterminationTokensEvent(int playerId, int determination)
+    {
+        setDeterminationTokensEvent.Invoke(playerId, determination);
+    }
+    public void AddListenerToSetDeterminationTokensEvent(UnityAction<int, int> listener)
+    {
+        setDeterminationTokensEvent.AddListener(listener);
+    }
+
     // InitializeDiscoveryTokenEvent
 
     public void RaiseInitializeDiscoveryTokenEvent(int componentId, DiscoveryToken discoveryToken)
@@ -1167,6 +1181,16 @@ public class EventGenerator : MonoBehaviour
         additionalResourceFromGatherEvent.AddListener(listener);
     }
 
+    // Resolve hunting action
+
+    public void RaiseResolveHuntingActionEvent(int playerId)
+    {
+        resolveHuntingActionEvent.Invoke(playerId);
+    }
+    public void AddListenerToResolveHuntingActionEvent(UnityAction<int> listener)
+    {
+        resolveHuntingActionEvent.AddListener(listener);
+    }
 
 
     // Players eating
@@ -1699,6 +1723,17 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToSpawnWoodpilePopupEvent(UnityAction<int> listener)
     {
         spawnWoodpilePopupEvent.AddListener(listener);
+    }
+
+    // Spawn combat popup event
+
+    public void RaiseSpawnCombatPopupEvent(int playerId, int componentId, BeastCard beastCard)
+    {
+        spawnCombatPopupEvent.Invoke(playerId, componentId, beastCard);
+    }
+    public void AddListenerToSpawnCombatPopupEvent(UnityAction<int, int, BeastCard> listener)
+    {
+        spawnCombatPopupEvent.AddListener(listener);
     }
 
 

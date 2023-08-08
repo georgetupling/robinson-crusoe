@@ -15,10 +15,10 @@ public static class GameSettings
         { 3, "Rose" }
     };
     public static Dictionary<int, CharacterType> PlayerCharacters = new Dictionary<int, CharacterType> {
-        { 0, CharacterType.Cook },
+        { 0, CharacterType.Soldier },
         { 1, CharacterType.Carpenter },
         { 2, CharacterType.Explorer },
-        { 3, CharacterType.Soldier }
+        { 3, CharacterType.Cook }
     };
     public static Dictionary<int, Gender> PlayerGenders = new Dictionary<int, Gender> {
         { 0, Gender.Male },

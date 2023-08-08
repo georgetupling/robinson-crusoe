@@ -22,9 +22,12 @@ public class BeastCardManager : MonoBehaviour
 
     void Awake()
     {
-        if (singleton == null) {
+        if (singleton == null)
+        {
             singleton = this;
-        } else {
+        }
+        else
+        {
             Destroy(gameObject);
             return;
         }
@@ -32,18 +35,23 @@ public class BeastCardManager : MonoBehaviour
         SpawnBeastDeck();
         EventGenerator.Singleton.AddListenerToDrawCardEvent(OnDrawCardEvent);
         EventGenerator.Singleton.AddListenerToTrackingEvent(OnTrackingEvent);
+        EventGenerator.Singleton.AddListenerToResolveHuntingActionEvent(OnResolveHuntingActionEvent);
     }
 
     // Listeners
 
-    void OnDrawCardEvent(Deck deck) {
-        if (deck == Deck.Beast) {
-            DrawCard();
+    void OnDrawCardEvent(Deck deck)
+    {
+        if (deck == Deck.Beast)
+        {
+            DrawCardFromBeastDeck();
         }
     }
 
-    void OnTrackingEvent() {
-        if (huntingDeck.Count == 0) {
+    void OnTrackingEvent()
+    {
+        if (huntingDeck.Count == 0)
+        {
             Debug.LogError("Hunting deck is empty. Failed to action tracking ability.");
             return;
         }
@@ -51,21 +59,49 @@ public class BeastCardManager : MonoBehaviour
         EventGenerator.Singleton.RaiseSpawnTrackingPopupEvent(topCard, huntingDeck);
     }
 
+    void OnResolveHuntingActionEvent(int playerId)
+    {
+        if (huntingDeck.Count == 0)
+        {
+            Debug.LogError("Hunting deck is empty.");
+            return;
+        }
+        BeastCardController drawnCard = huntingDeck.Pop();
+
+        float height = 0.3f;
+        float duration = GameSettings.AnimationDuration / 2f;
+        EventGenerator.Singleton.RaiseAnimationInProgressEvent(true);
+        drawnCard.transform.DOMoveZ(transform.position.z - height, duration)
+            .OnKill(() =>
+            {
+                drawnCard.transform.DORotate(Vector3.zero, duration)
+                    .OnKill(() =>
+                    {
+                        EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
+                        EventGenerator.Singleton.RaiseSpawnCombatPopupEvent(playerId, drawnCard.ComponentId, drawnCard.data);
+                    });
+            });
+    }
+
     // Methods for initializing beast cards and spawning the beast deck
 
-    void InitializeBeastCards() {
+    void InitializeBeastCards()
+    {
         TextAsset jsonTextAsset = Resources.Load<TextAsset>(Path.Combine("Data", "beast-cards"));
         string jsonString = jsonTextAsset.text;
         List<string> jsonStrings = Json.ToList(jsonString);
-        foreach (string str in jsonStrings) {
+        foreach (string str in jsonStrings)
+        {
             BeastCardUnprocessedData data = JsonUtility.FromJson<BeastCardUnprocessedData>(str);
             BeastCard beastCard = new BeastCard(data);
             beastCards.Add(beastCard);
         }
     }
 
-    void SpawnBeastDeck() {
-        foreach (BeastCard beastCard in beastCards) {
+    void SpawnBeastDeck()
+    {
+        foreach (BeastCard beastCard in beastCards)
+        {
             BeastCardController newCard = Instantiate(beastCardPrefab, beastDeckArea, false);
             Vector3 localPosition = new Vector3(0, 0, (-1) * beastDeck.Count * CardThickness);
             EventGenerator.Singleton.RaiseMoveComponentEvent(newCard.ComponentId, localPosition, MoveStyle.Instant);
@@ -78,9 +114,11 @@ public class BeastCardManager : MonoBehaviour
 
     // Methods for actioning events
 
-    void DrawCard() {
+    void DrawCardFromBeastDeck()
+    {
         BeastCardController drawnCard = beastDeck.Pop();
-        if (huntingDeck.Count == 0) {
+        if (huntingDeck.Count == 0)
+        {
             EventGenerator.Singleton.RaiseEnableHuntingActionSpaceEvent(true);
         }
         huntingDeck.Push(drawnCard);
@@ -93,9 +131,11 @@ public class BeastCardManager : MonoBehaviour
         float height = -0.05f;
         float totalHeight = Mathf.Min(drawnCard.transform.position.z + height, localPosition.z + height);
         drawnCard.transform.DOLocalMoveZ(totalHeight, duration / 2)
-                .OnKill(() => {
+                .OnKill(() =>
+                {
                     drawnCard.transform.DOLocalMoveZ(localPosition.z, duration / 2)
-                        .OnKill(() => {
+                        .OnKill(() =>
+                        {
                             EventGenerator.Singleton.RaiseAnimationInProgressEvent(false);
                             DeckShuffler.Singleton.ShuffleDeck(huntingDeck, CardThickness);
                         });

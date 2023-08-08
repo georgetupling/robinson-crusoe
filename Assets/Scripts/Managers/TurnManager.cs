@@ -41,7 +41,7 @@ public class TurnManager : MonoBehaviour
     void Start()
     {
         EventGenerator.Singleton.RaiseGainDeterminationEvent(DeterminationEvent.AllPlayers, 2);
-        StartCoroutine(WaitForAnimationsThenEndPhase());
+        StartNextPhase();
     }
 
     void OnEndPhaseEvent(Phase phase)

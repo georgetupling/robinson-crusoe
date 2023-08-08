@@ -12,13 +12,16 @@ public class AbilityAreaClickHandler : MonoBehaviour, IPointerClickHandler
 
     [SerializeField] Transform blackMarkerPosition;
 
-    void Awake() {
+    void Awake()
+    {
         EventGenerator.Singleton.AddListenerToAbilityActivatedEvent(OnAbilityActivatedEvent);
         EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
     }
 
-    void OnAbilityActivatedEvent(int playerId, Ability ability) {
-        if (playerId == this.playerId && ability == this.ability) {
+    void OnAbilityActivatedEvent(int playerId, Ability ability)
+    {
+        if (playerId == this.playerId && ability == this.ability)
+        {
             TokenController blackMarkerPrefab = PrefabLoader.Singleton.GetPrefab(TokenType.BlackMarker);
             TokenController spawnedToken = Instantiate(blackMarkerPrefab, blackMarkerPosition, false);
             float tokenHeight = ComponentDimensions.GetHeight(TokenType.BlackMarker);
@@ -26,27 +29,34 @@ public class AbilityAreaClickHandler : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    void OnTurnStartEvent(int turnStarted) {
-        if (blackMarkerPosition.childCount > 0) {
+    void OnTurnStartEvent(int turnStarted)
+    {
+        if (blackMarkerPosition.childCount > 0)
+        {
             TokenController token = blackMarkerPosition.GetChild(0).GetComponent<TokenController>();
-            if (token != null) {
+            if (token != null)
+            {
                 Destroy(token.gameObject);
             }
         }
     }
 
-    public void OnPointerClick(PointerEventData pointerEventData) {
-        if (ability == null) {
+    public void OnPointerClick(PointerEventData pointerEventData)
+    {
+        if (ability == null)
+        {
             Debug.LogError("Ability is null.");
             return;
         }
-        if (blackMarkerPosition.childCount > 0) {
+        if (blackMarkerPosition.childCount > 0)
+        {
             return;
         }
         EventGenerator.Singleton.RaiseSpawnAbilityPopupEvent(playerId, ability);
     }
 
-    public void Initialize(int playerId, Ability ability) {
+    public void Initialize(int playerId, Ability ability)
+    {
         this.playerId = playerId;
         this.ability = ability;
     }

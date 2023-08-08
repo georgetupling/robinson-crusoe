@@ -190,11 +190,31 @@ public class ActionResolver : MonoBehaviour
             {
                 continue;
             }
-            // TODO: once combat is implemented, you need to call the relevant events
-
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput)
+            {
+                yield return null;
+            }
             foreach (int pawnComponentId in actionAssignment.pawnComponentIds)
             {
                 EventGenerator.Singleton.RaiseReturnActionPawnEvent(pawnComponentId);
+            }
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput)
+            {
+                yield return null;
+            }
+            // The only time the ID of the second pawn is used is when the first one is a neutral pawn (e.g. the Map pawn)
+            // These pawns have playerId 6 since they're "owned" by the first player
+            if (actionAssignment.playerIds[0] == 6 && actionAssignment.playerIds.Count > 1)
+            {
+                EventGenerator.Singleton.RaiseResolveHuntingActionEvent(actionAssignment.playerIds[1]);
+            }
+            else
+            {
+                EventGenerator.Singleton.RaiseResolveHuntingActionEvent(actionAssignment.playerIds[0]);
+            }
+            while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput)
+            {
+                yield return null;
             }
             yield return new WaitForSeconds(delayBetweenActions);
         }

@@ -6,10 +6,10 @@ public class CharacterSheetController : ComponentController
 {
     public CharacterType characterType;
     public Gender gender;
-    
+
     // Transform character sheet model is attached to
     [SerializeField] Transform characterSheetTransform;
-    
+
     List<TokenController> tokens = new List<TokenController>();
 
     // Pre-spawned tokens
@@ -52,34 +52,35 @@ public class CharacterSheetController : ComponentController
 
     // Single use pawn spawner
     [SerializeField] SingleUsePawnSpawner singleUsePawnSpawner;
-    
+
     int playerId;
     Character character;
     bool isInitialized;
 
-    int firstPlayer;
-    bool waitingOnFirstPlayerQuery;
-
-    protected override void Awake() {
+    protected override void Awake()
+    {
         base.Awake();
         positions = new List<Transform> { position0, position1, position2, position3, position4, position5, position6, position7, position8, position9, position10, position11 };
         abilityAreas = new List<AbilityAreaClickHandler>() { abilityArea0, abilityArea1, abilityArea2, abilityArea3 };
         EventGenerator.Singleton.AddListenerToInitializeCharacterSheetEvent(OnInitializeCharacterSheetEvent);
-        EventGenerator.Singleton.AddListenerToDeterminationEvent(OnDeterminationEvent);
-        EventGenerator.Singleton.AddListenerToGetFirstPlayerEvent(OnGetFirstPlayerEvent);
+        EventGenerator.Singleton.AddListenerToSetDeterminationTokensEvent(OnSetDeterminationTokensEvent);
         EventGenerator.Singleton.AddListenerToSpawnWoundTokenEvent(OnSpawnWoundTokenEvent);
         EventGenerator.Singleton.AddListenerToDestroyWoundTokenEvent(OnDestroyWoundTokenEvent);
     }
 
-    protected override void Start() {
+    protected override void Start()
+    {
         base.Start();
     }
-    
+
     // Listeners
 
-    void OnInitializeCharacterSheetEvent(int componentId, int playerId, Character character) {
-        if (componentId == this.ComponentId) {
-            if (isInitialized) {
+    void OnInitializeCharacterSheetEvent(int componentId, int playerId, Character character)
+    {
+        if (componentId == this.ComponentId)
+        {
+            if (isInitialized)
+            {
                 Debug.LogError($"{GameSettings.PlayerNames[playerId]}'s character sheet is already initialized.");
                 return;
             }
@@ -89,11 +90,14 @@ public class CharacterSheetController : ComponentController
             EventGenerator.Singleton.RaiseInitializeActionPawnEvent(actionPawn0.ComponentId, playerId);
             EventGenerator.Singleton.RaiseInitializeActionPawnEvent(actionPawn1.ComponentId, playerId);
             personalInvention.InitializePersonalInvention(playerId, character.personalInvention);
-            if (singleUsePawnSpawner != null) {
+            if (singleUsePawnSpawner != null)
+            {
                 singleUsePawnSpawner.SetPlayerId(playerId);
             }
-            for (int i = 0; i < abilityAreas.Count; i++) {
-                if (abilityAreas[i] != null) {
+            for (int i = 0; i < abilityAreas.Count; i++)
+            {
+                if (abilityAreas[i] != null)
+                {
                     abilityAreas[i].Initialize(playerId, character.abilities[i]);
                 }
             }
@@ -101,76 +105,74 @@ public class CharacterSheetController : ComponentController
         }
     }
 
-    void OnDeterminationEvent(string eventType, int playerId, int amount) {
-        if (playerId == DeterminationEvent.FirstPlayer) {
-            StartCoroutine(HandleFirstPlayerDeterminationEvent(eventType, amount));
+    void OnSetDeterminationTokensEvent(int playerId, int determination)
+    {
+        if (playerId != this.playerId)
+        {
             return;
         }
-        if (playerId != this.playerId && playerId != DeterminationEvent.AllPlayers) {
-            return;
+        int currentDetermination = 0;
+        foreach (Transform position in positions)
+        {
+            if (position.childCount > 0 && position.GetChild(0) != null)
+            {
+                TokenController token = position.GetChild(0).GetComponent<TokenController>();
+                if (token != null && token.tokenType == TokenType.Determination)
+                {
+                    currentDetermination++;
+                }
+            }
         }
-        if (eventType == DeterminationEvent.GainDetermination) {
-            SpawnTokens(TokenType.Determination, amount);
-        } else if (eventType == DeterminationEvent.LoseDetermination) {
-            DestroyTokens(TokenType.Determination, amount);
+        int determinationChange = determination - currentDetermination;
+        if (determinationChange > 0)
+        {
+            SpawnTokens(TokenType.Determination, determinationChange);
+        }
+        else if (determinationChange < 0)
+        {
+            DestroyTokens(TokenType.Determination, -determinationChange);
         }
     }
 
-    void OnGetFirstPlayerEvent(string eventType, int playerId) {
-        if (waitingOnFirstPlayerQuery) {
-            firstPlayer = playerId;
-            waitingOnFirstPlayerQuery = false;
-        }
-    }
-
-    void OnSpawnWoundTokenEvent(int playerId, WoundType woundType, TokenType tokenType) {
-        if (playerId != this.playerId) {
+    void OnSpawnWoundTokenEvent(int playerId, WoundType woundType, TokenType tokenType)
+    {
+        if (playerId != this.playerId)
+        {
             return;
         }
         SpawnWoundToken(woundType, tokenType);
     }
 
-    void OnDestroyWoundTokenEvent(int playerId, WoundType woundType, TokenType tokenType) {
-        if (playerId != this.playerId) {
+    void OnDestroyWoundTokenEvent(int playerId, WoundType woundType, TokenType tokenType)
+    {
+        if (playerId != this.playerId)
+        {
             return;
         }
         DestroyWoundToken(woundType, tokenType);
     }
 
-    // Co-routine that queries for the first player, pauses until it recieves an answer, and then spawns determination if appropriate
-
-    IEnumerator HandleFirstPlayerDeterminationEvent(string eventType, int amount) {
-        waitingOnFirstPlayerQuery = true;
-        EventGenerator.Singleton.RaiseGetFirstPlayerEvent();
-        while (waitingOnFirstPlayerQuery) {
-            yield return null;
-        }
-        if (firstPlayer != this.playerId) {
-            yield break;
-        }
-        if (eventType == DeterminationEvent.GainDetermination) {
-            SpawnTokens(TokenType.Determination, amount);
-        } else if (eventType == DeterminationEvent.LoseDetermination) {
-            DestroyTokens(TokenType.Determination, amount);
-        }
-    }
-
     // Methods for spawning and destroying tokens
 
-    void SpawnTokens(TokenType tokenType, int amount) {
-        for (int i = 0; i < amount; i++) {
+    void SpawnTokens(TokenType tokenType, int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
             SpawnToken(tokenType);
         }
     }
 
-    void SpawnToken(TokenType tokenType) {
+    void SpawnToken(TokenType tokenType)
+    {
         Transform parentTransform = AssignParentTransform(tokenType);
-        if (parentTransform == null) {
+        if (parentTransform == null)
+        {
             Debug.LogError($"No position available to spawn {tokenType} token on {GameSettings.PlayerNames[playerId]}'s character sheet.");
             return;
         }
         TokenController prefab = PrefabLoader.Singleton.GetPrefab(tokenType);
-        if (prefab == null) {
+        if (prefab == null)
+        {
             Debug.LogError($"{tokenType} token prefab does not exist.");
             return;
         }
@@ -178,15 +180,20 @@ public class CharacterSheetController : ComponentController
         tokens.Add(spawnedToken);
     }
 
-    void DestroyTokens(TokenType tokenType, int amount) {
-        for (int i = 0; i < amount; i++) {
+    void DestroyTokens(TokenType tokenType, int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
             DestroyToken(tokenType);
         }
     }
 
-    void DestroyToken(TokenType tokenType) {
-        foreach(TokenController token in tokens) {
-            if (token.tokenType == tokenType) {
+    void DestroyToken(TokenType tokenType)
+    {
+        foreach (TokenController token in tokens)
+        {
+            if (token.tokenType == tokenType)
+            {
                 tokens.Remove(token);
                 Destroy(token.gameObject);
                 return;
@@ -197,14 +204,17 @@ public class CharacterSheetController : ComponentController
 
     // Method for spawning and destroying wound tokens
 
-    void SpawnWoundToken(WoundType woundType, TokenType tokenType) {
+    void SpawnWoundToken(WoundType woundType, TokenType tokenType)
+    {
         Transform parentTransform = AssignParentTransform(woundType, tokenType);
-        if (parentTransform == null) {
+        if (parentTransform == null)
+        {
             Debug.LogError($"No position available to spawn {tokenType} token on {GameSettings.PlayerNames[playerId]}'s character sheet.");
             return;
         }
         TokenController prefab = PrefabLoader.Singleton.GetPrefab(tokenType);
-        if (prefab == null) {
+        if (prefab == null)
+        {
             Debug.LogError($"{tokenType} token prefab does not exist.");
             return;
         }
@@ -213,26 +223,38 @@ public class CharacterSheetController : ComponentController
         spawnedToken.transform.eulerAngles = new Vector3(0, 0, Random.Range(0, 180f));
     }
 
-    void DestroyWoundToken(WoundType woundType, TokenType tokenType) {
+    void DestroyWoundToken(WoundType woundType, TokenType tokenType)
+    {
         Transform grandparentTransform;
-        if (woundType == WoundType.Head) {
+        if (woundType == WoundType.Head)
+        {
             grandparentTransform = headWoundPosition;
-        } else if (woundType == WoundType.Belly) {
+        }
+        else if (woundType == WoundType.Belly)
+        {
             grandparentTransform = bellyWoundPosition;
-        } else if (woundType == WoundType.Leg) {
+        }
+        else if (woundType == WoundType.Leg)
+        {
             grandparentTransform = legWoundPosition;
-        } else {
+        }
+        else
+        {
             grandparentTransform = armWoundPosition;
         }
-        if (grandparentTransform == null) {
+        if (grandparentTransform == null)
+        {
             Debug.LogError("grandparentTransform is null.");
             return;
         }
-        for (int i = 0; i < grandparentTransform.childCount; i++) {
+        for (int i = 0; i < grandparentTransform.childCount; i++)
+        {
             Transform parentTransform = grandparentTransform.GetChild(i);
-            for (int j =0; j < parentTransform.childCount; j++) {
+            for (int j = 0; j < parentTransform.childCount; j++)
+            {
                 TokenController token = parentTransform.GetChild(j).GetComponent<TokenController>();
-                if (token != null && token.tokenType == tokenType) {
+                if (token != null && token.tokenType == tokenType)
+                {
                     Destroy(token.gameObject);
                     return;
                 }
@@ -243,51 +265,70 @@ public class CharacterSheetController : ComponentController
 
     // Helper methods
 
-    Transform AssignParentTransform(TokenType tokenType) {
+    Transform AssignParentTransform(TokenType tokenType)
+    {
         List<Transform> unoccupiedPositions = new List<Transform>();
-        foreach(Transform position in positions) {
-            if (!PositionIsOccupied(position)) {
+        foreach (Transform position in positions)
+        {
+            if (!PositionIsOccupied(position))
+            {
                 unoccupiedPositions.Add(position);
             }
         }
-        if (unoccupiedPositions.Count == 0) {
+        if (unoccupiedPositions.Count == 0)
+        {
             return null;
         }
         int randomIndex = Random.Range(0, unoccupiedPositions.Count);
         return unoccupiedPositions[randomIndex];
     }
 
-    bool PositionIsOccupied(Transform position) {
-        foreach(TokenController token in tokens) {
-            if (token.transform.parent == position) {
+    bool PositionIsOccupied(Transform position)
+    {
+        foreach (TokenController token in tokens)
+        {
+            if (token.transform.parent == position)
+            {
                 return true;
             }
         }
         return false;
     }
 
-    Transform AssignParentTransform(WoundType woundType, TokenType tokenType) {
-        if (tokenType != TokenType.BuildWound && tokenType != TokenType.GatherWound && tokenType != TokenType.ExploreWound) {
+    Transform AssignParentTransform(WoundType woundType, TokenType tokenType)
+    {
+        if (tokenType != TokenType.BuildWound && tokenType != TokenType.GatherWound && tokenType != TokenType.ExploreWound)
+        {
             Debug.LogError($"{tokenType} is not a valid wound token type.");
             return null;
         }
         Transform grandparentTransform;
-        if (woundType == WoundType.Head) {
+        if (woundType == WoundType.Head)
+        {
             grandparentTransform = headWoundPosition;
-        } else if (woundType == WoundType.Belly) {
+        }
+        else if (woundType == WoundType.Belly)
+        {
             grandparentTransform = bellyWoundPosition;
-        } else if (woundType == WoundType.Leg) {
+        }
+        else if (woundType == WoundType.Leg)
+        {
             grandparentTransform = legWoundPosition;
-        } else {
+        }
+        else
+        {
             grandparentTransform = armWoundPosition;
         }
-        if (grandparentTransform == null) {
+        if (grandparentTransform == null)
+        {
             Debug.LogError("grandparentTransform is null.");
             return null;
         }
-        for (int i = 0; i < grandparentTransform.childCount; i++) {
+        for (int i = 0; i < grandparentTransform.childCount; i++)
+        {
             Transform parentTransform = grandparentTransform.GetChild(i);
-            if (parentTransform != null && parentTransform.childCount == 0) {
+            if (parentTransform != null && parentTransform.childCount == 0)
+            {
                 return parentTransform;
             }
         }
