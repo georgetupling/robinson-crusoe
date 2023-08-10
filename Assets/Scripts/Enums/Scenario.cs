@@ -1,4 +1,5 @@
 public enum Scenario
 {
-    Castaways
+    Castaways,
+    Random
 }

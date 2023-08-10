@@ -55,8 +55,14 @@ public class PrefabLoader : MonoBehaviour
     {
         foreach (CharacterType characterType in Enum.GetValues(typeof(CharacterType)))
         {
+            if (characterType == CharacterType.Random) {
+                continue;
+            }
             foreach (Gender gender in Enum.GetValues(typeof(Gender)))
             {
+                if (gender == Gender.Random) {
+                    continue;
+                }
                 string prefabName = characterType.ToString() + gender.ToString() + "Prefab";
                 CharacterSheetController prefab = Resources.Load<CharacterSheetController>(Path.Combine("Prefabs", prefabName));
                 characterSheetPrefabs.Add(prefab);
