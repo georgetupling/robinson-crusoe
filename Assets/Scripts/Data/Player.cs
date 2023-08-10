@@ -39,7 +39,6 @@ public class Player
 
     public void ModifyDetermination(int amount)
     {
-        Debug.LogWarning("Modifying determination...");
         int newDetermination = determination + amount;
         if (newDetermination < 0)
         {

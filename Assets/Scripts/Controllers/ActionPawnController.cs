@@ -203,8 +203,8 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
                 (pawnType == PawnType.Gather && actionType != ActionType.Gather) ||
                 (pawnType == PawnType.Explore && actionType != ActionType.Explore) ||
                 (pawnType == PawnType.Hunting && actionType != ActionType.Hunting) ||
-                (pawnType == PawnType.GatherOrExplore && !(actionType == ActionType.Gather || actionType == ActionType.Explore))
-                // TODO: Add conditions for assigning dog and Friday!
+                (pawnType == PawnType.GatherOrExplore && !(actionType == ActionType.Gather || actionType == ActionType.Explore)) ||
+                (pawnType == PawnType.Dog && (!(actionType == ActionType.Hunting || actionType == ActionType.Explore) || !IsSupportingAction(nearestActionSpace)))
                 )
             {
                 nearestActionSpace = null;
@@ -366,6 +366,24 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
             }
         }
         return false;
+    }
+    
+    bool IsSupportingAction(Transform actionSpace) {
+        if (actionSpace.childCount < 2) {
+            return false;
+        }
+        Transform position1 = actionSpace.GetChild(1);
+        if (position1.childCount == 0) {
+            // N.B. there is always a pawn in position 0 because the current pawn is temporarily added as a child in the lowest available position
+            // That's why we check position 1 instead
+            return false;
+        }
+        ActionPawnController pawnInPosition0 = actionSpace.GetChild(0).GetChild(0).GetComponent<ActionPawnController>();
+        if (pawnInPosition0 == null || pawnInPosition0.GetPlayerId() == 6) {
+            // Pawns with player ID = 6 are non-player pawns like the map, and you can't send out just dog and a map!
+            return false;
+        }
+        return true;
     }
 
     // Returns the player ID (used for parsing actions)

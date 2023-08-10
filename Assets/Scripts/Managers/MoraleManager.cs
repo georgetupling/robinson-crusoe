@@ -48,12 +48,20 @@ public class MoraleManager : MonoBehaviour
 
     void ModifyMorale(int amount)
     {
+        if (moraleLevel - amount < 0) {
+            int lostHealth = -(moraleLevel - amount);
+            EventGenerator.Singleton.RaiseLoseHealthEvent(HealthEvent.AllPlayers, lostHealth);
+        }
         moraleLevel = Mathf.Clamp(moraleLevel + amount, -3, 3);
         EventGenerator.Singleton.RaiseSetMoraleTrackerEvent(moraleLevel);
     }
 
     IEnumerator ApplyMoralePhase()
     {
+        // In the solo variant, morale increases by 1 at the start of the morale phase
+        if (GameSettings.PlayerCount == 1) {
+            ModifyMorale(1);
+        }
         float waitTime = GameSettings.AnimationDuration;
         yield return new WaitForSeconds(waitTime);
         if (moraleLevel == 3)

@@ -7,6 +7,8 @@ public class CharacterSheetSpawner : MonoBehaviour
     Dictionary<int, Vector3> positions = new Dictionary<int, Vector3>();
 
     [SerializeField] Transform characterSheetArea;
+    [SerializeField] Transform dogPrefab;
+    [SerializeField] Transform fridayPrefab;
 
     // Game Settings
     int playerCount;
@@ -18,6 +20,12 @@ public class CharacterSheetSpawner : MonoBehaviour
 
     void Start() {
         SpawnCharacterSheets();
+        if (GameSettings.PlayerCount == 1) {
+            SpawnFriday();
+            SpawnDog();
+        } else if (GameSettings.PlayerCount == 2) {
+            SpawnFriday();
+        }
     }
 
     void InitializePositions() {
@@ -52,5 +60,18 @@ public class CharacterSheetSpawner : MonoBehaviour
         );
         Character character = CharacterFactory.CreateCharacter(characterType);
         EventGenerator.Singleton.RaiseInitializeCharacterSheetEvent(newCharacterSheet.ComponentId, playerId, character);
+    }
+
+    void SpawnFriday() {
+        Vector3 lowestPlayerPosition = positions[GameSettings.PlayerCount - 1];
+        Vector3 fridayPosition = new Vector3(lowestPlayerPosition.x - 0.5f, lowestPlayerPosition.y - 0.8f, 0f);
+        Transform friday = Instantiate(fridayPrefab, characterSheetArea, false);
+        friday.localPosition = fridayPosition;
+    }
+    void SpawnDog() {
+        Vector3 lowestPlayerPosition = positions[GameSettings.PlayerCount - 1];
+        Vector3 dogPosition = new Vector3(lowestPlayerPosition.x + 0.5f, lowestPlayerPosition.y - 0.8f, 0f);
+        Transform dog = Instantiate(dogPrefab, characterSheetArea, false);
+        dog.localPosition = dogPosition;
     }
 }
