@@ -11,11 +11,9 @@ public class Player
     public int health { get; private set; }
     public int determination { get; private set; }
 
-    public static int mostRecentId = 0;
-
-    public Player(string playerName, Character character)
+    public Player(int playerId, string playerName, Character character)
     {
-        id = mostRecentId++;
+        id = playerId;
         this.playerName = playerName;
         this.character = character;
         health = character.maximumHealth;
@@ -35,12 +33,13 @@ public class Player
         EventGenerator.Singleton.RaiseSetHealthTrackerEvent(id, health);
         if (health <= 0)
         {
-            EventGenerator.Singleton.RaiseEndGameEvent(GameManagementEvent.Defeat);
+            EventGenerator.Singleton.RaiseGameEndEvent(false);
         }
     }
 
     public void ModifyDetermination(int amount)
     {
+        Debug.LogWarning("Modifying determination...");
         int newDetermination = determination + amount;
         if (newDetermination < 0)
         {

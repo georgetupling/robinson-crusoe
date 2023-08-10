@@ -6,7 +6,7 @@ public class PlayerManager : MonoBehaviour
 {
     private static PlayerManager singleton;
 
-    private List<Player> players = new List<Player>();
+    public List<Player> players = new List<Player>();
 
     private int playerCount;
     private int currentFirstPlayer;
@@ -31,8 +31,8 @@ public class PlayerManager : MonoBehaviour
         for (int i = 0; i < playerCount; i++) {
             CharacterType characterType = GameSettings.PlayerCharacters[i];
             Character character = CharacterFactory.CreateCharacter(characterType);
-            string playerName = "Bob";
-            Player newPlayer = new Player(playerName, character);
+            string playerName = GameSettings.PlayerNames[i];
+            Player newPlayer = new Player(i, playerName, character);
             players.Add(newPlayer);
         }
     }

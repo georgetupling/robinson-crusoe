@@ -41,21 +41,18 @@ public class WoodpileManager : MonoBehaviour
         SpawnWoodTokens(amountToAdd);
         if (woodInPile == maximumWoodByStage[currentStage])
         {
-            if (currentStage == 4)
+            currentStage++;
+            woodInPile = 0;
+            if (currentStage == 5)
             {
                 EventGenerator.Singleton.RaiseWoodpileCompletedEvent();
-            }
-            else
-            {
-                currentStage++;
-                woodInPile = 0;
             }
         }
 
     }
     void OnPhaseStartEvent(Phase phaseStarted)
     {
-        if (phaseStarted != Phase.Action || currentStage == 4)
+        if (phaseStarted != Phase.Action || currentStage == 5)
         {
             return;
         }

@@ -75,7 +75,7 @@ public class EventGenerator : MonoBehaviour
 
 
     // Miscellaneous
-    private GameManagementEvent gameManagementEvent = new GameManagementEvent();
+    private UnityEvent<bool> gameEndEvent = new UnityEvent<bool>();
 
     // Turns and Phases
     private EndPhaseEvent endPhaseEvent = new EndPhaseEvent();
@@ -285,17 +285,6 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToGetDeterminationResponseEvent(UnityAction<int, int> listener)
     {
         getDeterminationResponseEvent.AddListener(listener);
-    }
-
-    // GameManagementEvent
-
-    public void RaiseEndGameEvent(bool isVictory)
-    {
-        gameManagementEvent.Invoke(GameManagementEvent.EndGame, isVictory);
-    }
-    public void AddListenerToGameManagementEvent(UnityAction<string, bool> listener)
-    {
-        gameManagementEvent.AddListener(listener);
     }
 
     // ResourceEvent
@@ -758,6 +747,15 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToEnableInventionRequirementMarkersEvent(UnityAction<Invention, bool> listener)
     {
         enableInventionRequirementMarkersEvent.AddListener(listener);
+    }
+
+    // Game end event
+
+    public void RaiseGameEndEvent(bool playersWin) {
+        gameEndEvent.Invoke(playersWin);
+    }
+    public void AddListenerToGameEndEvent(UnityAction<bool> listener) {
+        gameEndEvent.AddListener(listener);
     }
 
     // TrackerTokenEvent
