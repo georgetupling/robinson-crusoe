@@ -1,0 +1,18 @@
+[
+  {
+    "equipment": "Biscuits",
+    "effectsOnActivation": ["GainNonPerishableFood"]
+  },
+  {
+    "equipment": "EmptyBottle",
+    "effectsOnActivation": ["GainWeapon"]
+  },
+  {
+    "equipment": "HammerAndNails",
+    "effectsOnActivation": ["GainSingleUseBuildActionPawn"]
+  },
+  {
+    "equipment": "PipeAndTobacco",
+    "effectsOnActivation": ["Gain2Determination"]
+  }
+]

@@ -24,4 +24,9 @@ public static class ResourceName
         output.Append("Sprite");
         return output.ToString();
     }
+
+    public static string GetMaterialName(string cardName) {
+        string spriteName = GetSpriteName(cardName);
+        return spriteName.Replace("Sprite", "Material");
+    }
 }

@@ -151,6 +151,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<DiscoveryTokenController, DiscoveryTokenController> spawnScoutingPopupEvent = new UnityEvent<DiscoveryTokenController, DiscoveryTokenController>();
     private UnityEvent<BeastCardController, Stack<BeastCardController>> spawnTrackingPopupEvent = new UnityEvent<BeastCardController, Stack<BeastCardController>>();
     private UnityEvent<Invention> spawnItemActivationPopupEvent = new UnityEvent<Invention>();
+    private UnityEvent<EquipmentCard> spawnItemActivationPopupEvent2 = new UnityEvent<EquipmentCard>();
     private UnityEvent spawnShortcutPopupEvent = new UnityEvent();
     private UnityEvent<int> spawnWoodpilePopupEvent = new UnityEvent<int>();
     private UnityEvent<int, int, BeastCard> spawnCombatPopupEvent = new UnityEvent<int, int, BeastCard>();
@@ -179,6 +180,9 @@ public class EventGenerator : MonoBehaviour
     // Weather
     private UnityEvent cancelRainCloudEvent = new UnityEvent();
     private UnityEvent convertSnowToRainEvent = new UnityEvent();
+
+    // Equipment
+    private UnityEvent<Equipment> equipmentActivatedEvent = new UnityEvent<Equipment>();
 
     void Awake()
     {
@@ -751,10 +755,12 @@ public class EventGenerator : MonoBehaviour
 
     // Game end event
 
-    public void RaiseGameEndEvent(bool playersWin) {
+    public void RaiseGameEndEvent(bool playersWin)
+    {
         gameEndEvent.Invoke(playersWin);
     }
-    public void AddListenerToGameEndEvent(UnityAction<bool> listener) {
+    public void AddListenerToGameEndEvent(UnityAction<bool> listener)
+    {
         gameEndEvent.AddListener(listener);
     }
 
@@ -1701,7 +1707,18 @@ public class EventGenerator : MonoBehaviour
         spawnItemActivationPopupEvent.AddListener(listener);
     }
 
-    // Spawn item activation popup event
+    // Spawn item activation popup event 2 (used for equipment)
+
+    public void RaiseSpawnItemActivationPopupEvent(EquipmentCard equipmentCard)
+    {
+        spawnItemActivationPopupEvent2.Invoke(equipmentCard);
+    }
+    public void AddListenerToSpawnItemActivationPopupEvent(UnityAction<EquipmentCard> listener)
+    {
+        spawnItemActivationPopupEvent2.AddListener(listener);
+    }
+
+    // Spawn shortcut popup event
 
     public void RaiseSpawnShortcutPopupEvent()
     {
@@ -1907,6 +1924,16 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToConvertSnowToRainEvent(UnityAction listener)
     {
         convertSnowToRainEvent.AddListener(listener);
+    }
+
+    // Equipment activated event
+    public void RaiseEquipmentActivatedEvent(Equipment equipment)
+    {
+        equipmentActivatedEvent.Invoke(equipment);
+    }
+    public void AddListenerToEquipmentActivatedEvent(UnityAction<Equipment> listener)
+    {
+        equipmentActivatedEvent.AddListener(listener);
     }
 
 }

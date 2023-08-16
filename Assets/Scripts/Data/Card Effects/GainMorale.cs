@@ -4,12 +4,8 @@ using UnityEngine;
 
 public class GainMorale : CardEffect
 {
-    public override void ApplyEffect() {
-        if (hasBeenApplied) {
-            Debug.LogError("GainMorale effect has already been applied.");
-            return;
-        }
+    public override void ApplyEffect()
+    {
         EventGenerator.Singleton.RaiseGainMoraleEvent(1);
-        hasBeenApplied = true;
     }
 }

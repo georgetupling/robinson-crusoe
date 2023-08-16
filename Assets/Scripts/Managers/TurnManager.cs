@@ -22,6 +22,7 @@ public class TurnManager : MonoBehaviour
     private Phase currentPhase = Phase.Event;
 
     private int animationsInProgress;
+    private int lastTurn;
 
     void Awake()
     {
@@ -41,6 +42,10 @@ public class TurnManager : MonoBehaviour
     void Start()
     {
         EventGenerator.Singleton.RaiseGainDeterminationEvent(DeterminationEvent.AllPlayers, 2);
+        switch (GameSettings.CurrentScenario) {
+            case Scenario.Castaways: lastTurn = 11; break;
+            default: Debug.LogError($"No turn limit set for {GameSettings.CurrentScenario} scenario."); break;
+        }
         StartNextPhase();
     }
 
@@ -50,6 +55,9 @@ public class TurnManager : MonoBehaviour
         {
             Debug.LogError("Phase parameter passed to EndPhaseEvent does not match current phase.");
             return;
+        }
+        if (currentTurn == lastTurn && currentPhase == Phase.Night) {
+            EventGenerator.Singleton.RaiseGameEndEvent(false); // The players lose the game
         }
         StartCoroutine(WaitForAnimationsThenEndPhase());
     }

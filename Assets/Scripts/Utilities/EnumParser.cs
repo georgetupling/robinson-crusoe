@@ -9,6 +9,20 @@ using static ResourceCost;
 
 public static class EnumParser
 {
+    public static Equipment ParseEquipment(string equipmentString)
+    {
+        Equipment equipment;
+        if (Enum.TryParse(equipmentString, out equipment))
+        {
+            return equipment;
+        }
+        else
+        {
+            Debug.LogError("Invalid equipment type: " + equipmentString);
+            return Equipment.Biscuits; // Default value
+        }
+    }
+    
     public static Invention ParseInvention(string inventionString)
     {
         Invention invention;

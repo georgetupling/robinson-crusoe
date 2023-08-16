@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GainHide : CardEffect
-{ 
-    public override void ApplyEffect() {
-        if (hasBeenApplied) {
-            Debug.LogError("GainHide effect has already been applied.");
-            return;
-        }
+{
+    public override void ApplyEffect()
+    {
         EventGenerator.Singleton.RaiseGainHideEvent(1);
-        hasBeenApplied = true;
     }
 }

@@ -14,29 +14,40 @@ public class ItemActivationPopupController : MonoBehaviour
     [SerializeField] private TMP_Dropdown playerSelect;
     private int selectedPlayerId;
 
+    // For invention activations
     bool waitingOnInventionCard;
     Invention invention;
     InventionCard inventionCard;
 
-    void Awake() {
+    // For equipment activations
+    EquipmentCard equipmentCard;
+
+    void Awake()
+    {
         EventGenerator.Singleton.RaiseDisableMainUIEvent();
         EventGenerator.Singleton.AddListenerToGetInventionCardEvent(OnGetInventionCardEvent);
-        SetUpButtons();
         SetUpPlayerSelect();
     }
 
-    void OnGetInventionCardEvent(string eventType, Invention invention, InventionCard inventionCard) {
-        if (eventType == GetInventionCardEvent.Response && waitingOnInventionCard && invention == this.invention) {
+    void OnGetInventionCardEvent(string eventType, Invention invention, InventionCard inventionCard)
+    {
+        if (eventType == GetInventionCardEvent.Response && waitingOnInventionCard && invention == this.invention)
+        {
             this.inventionCard = inventionCard;
             waitingOnInventionCard = false;
         }
     }
 
-    void SetUpButtons() {
-        confirmButton.onClick.AddListener(() => {
-            if (inventionCard != null && inventionCard.effectsOnActivation != null) {
-                foreach (CardEffect cardEffect in inventionCard.effectsOnActivation) {
-                    if (cardEffect.targetType == TargetType.Player) {
+    void SetUpButtonsForInvention()
+    {
+        confirmButton.onClick.AddListener(() =>
+        {
+            if (inventionCard != null && inventionCard.effectsOnActivation != null)
+            {
+                foreach (CardEffect cardEffect in inventionCard.effectsOnActivation)
+                {
+                    if (cardEffect.targetType == TargetType.Player)
+                    {
                         cardEffect.SetTarget(selectedPlayerId);
                     }
                     cardEffect.ApplyEffect();
@@ -46,18 +57,49 @@ public class ItemActivationPopupController : MonoBehaviour
             Destroy(gameObject);
         });
 
-        cancelButton.onClick.AddListener(() => {
+        cancelButton.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseEnableMainUIEvent();
             Destroy(gameObject);
         });
     }
 
-    void SetUpPlayerSelect() {
-        if (playerSelect == null) {
+    void SetUpButtonsForEquipment()
+    {
+        confirmButton.onClick.AddListener(() =>
+        {
+            if (equipmentCard != null && equipmentCard.effectsOnActivation != null)
+            {
+                foreach (CardEffect cardEffect in equipmentCard.effectsOnActivation)
+                {
+                    if (cardEffect.targetType == TargetType.Player)
+                    {
+                        cardEffect.SetTarget(selectedPlayerId);
+                    }
+                    cardEffect.ApplyEffect();
+                }
+            }
+            EventGenerator.Singleton.RaiseEquipmentActivatedEvent(equipmentCard.equipment);
+            EventGenerator.Singleton.RaiseEnableMainUIEvent();
+            Destroy(gameObject);
+        });
+
+        cancelButton.onClick.AddListener(() =>
+        {
+            EventGenerator.Singleton.RaiseEnableMainUIEvent();
+            Destroy(gameObject);
+        });
+    }
+
+    void SetUpPlayerSelect()
+    {
+        if (playerSelect == null)
+        {
             return;
         }
         List<string> options = new List<string>();
-        for (int i = 0; i < GameSettings.PlayerCount; i++) {
+        for (int i = 0; i < GameSettings.PlayerCount; i++)
+        {
             options.Add(GameSettings.PlayerNames[i]);
         }
         playerSelect.ClearOptions();
@@ -66,34 +108,69 @@ public class ItemActivationPopupController : MonoBehaviour
         playerSelect.onValueChanged.AddListener(HandleSelectionChange);
     }
 
-    void HandleSelectionChange(int value) {
+    void HandleSelectionChange(int value)
+    {
         selectedPlayerId = value;
     }
 
-    public void SetInvention(Invention invention) {
+    public void SetInvention(Invention invention)
+    {
         this.invention = invention;
         waitingOnInventionCard = true;
         EventGenerator.Singleton.RaiseGetInventionCardEvent(invention);
-        while (waitingOnInventionCard) {
-            // Do nothing
-        }
-        if (inventionCard != null && inventionCard.cardSprite != null) {
+        if (inventionCard != null && inventionCard.cardSprite != null)
+        {
             cardImage.sprite = inventionCard.cardSprite;
         }
         // Hides the player select and shrinks the background if the invention doesn't target a player
-        if (inventionCard != null && inventionCard.effectsOnActivation != null) {
+        if (inventionCard != null && inventionCard.effectsOnActivation != null)
+        {
             bool targetsPlayer = false;
-            foreach (CardEffect activationEffect in inventionCard.effectsOnActivation) {
-                if (activationEffect.targetType == TargetType.Player) {
+            foreach (CardEffect activationEffect in inventionCard.effectsOnActivation)
+            {
+                if (activationEffect.targetType == TargetType.Player)
+                {
                     targetsPlayer = true;
                     break;
                 }
             }
-            if (!targetsPlayer) {
+            if (!targetsPlayer)
+            {
                 float buttonHeightPlusGapBetweenButtons = 50f;
                 background.sizeDelta = new Vector2(background.sizeDelta.x, background.sizeDelta.y - buttonHeightPlusGapBetweenButtons);
                 playerSelect.gameObject.SetActive(false);
             }
         }
+        SetUpButtonsForInvention();
+    }
+
+    public void SetEquipmentCard(EquipmentCard equipmentCard)
+    {
+        this.equipmentCard = equipmentCard;
+        if (equipmentCard != null && equipmentCard.cardSprite != null)
+        {
+            cardImage.sprite = equipmentCard.cardSprite;
+        }
+
+        // Hides the player select and shrinks the background if the equipment doesn't target a player
+        if (equipmentCard != null && equipmentCard.effectsOnActivation != null)
+        {
+            bool targetsPlayer = false;
+            foreach (CardEffect activationEffect in equipmentCard.effectsOnActivation)
+            {
+                if (activationEffect.targetType == TargetType.Player)
+                {
+                    targetsPlayer = true;
+                    break;
+                }
+            }
+            if (!targetsPlayer)
+            {
+                float buttonHeightPlusGapBetweenButtons = 50f;
+                background.sizeDelta = new Vector2(background.sizeDelta.x, background.sizeDelta.y - buttonHeightPlusGapBetweenButtons);
+                playerSelect.gameObject.SetActive(false);
+            }
+        }
+        SetUpButtonsForEquipment();
     }
 }

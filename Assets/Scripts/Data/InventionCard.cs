@@ -32,19 +32,19 @@ public class InventionCard : Card
         isScenarioInvention = data.isScenarioInvention;
         string materialName = data.inventionName + "Material";
         cardMaterial = Resources.Load<Material>(Path.Combine("Materials/Invention Cards", materialName));
-        if (cardMaterial == null)
+        if (cardMaterial == null && !data.isScenarioInvention)
         {
             Debug.LogError($"Failed to load {materialName}.");
         }
         string spriteName = data.inventionName.Replace(" ", "") + "FrontSprite";
         cardSprite = Resources.Load<Sprite>(Path.Combine("Sprites/Invention Cards", spriteName));
-        if (cardSprite == null)
+        if (cardSprite == null && !data.isScenarioInvention)
         {
             Debug.LogError($"Failed to load {spriteName}.");
         }
         string spriteBackName = data.inventionName.Replace(" ", "") + "BackSprite";
         cardBackSprite = Resources.Load<Sprite>(Path.Combine("Sprites/Invention Cards", spriteBackName));
-        if (cardBackSprite == null)
+        if (cardBackSprite == null && !data.isScenarioInvention)
         {
             Debug.LogError($"Failed to load {spriteBackName}.");
         }

@@ -56,6 +56,7 @@ public class PopupManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToSpawnShortcutPopupEvent(OnSpawnShortcutPopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnWoodpilePopupEvent(OnSpawnWoodpilePopupEvent);
         EventGenerator.Singleton.AddListenerToSpawnCombatPopupEvent(OnSpawnCombatPopupEvent);
+        EventGenerator.Singleton.AddListenerToSpawnItemActivationPopupEvent(OnSpawnItemActivationPopupEventEquipmentVersion);
     }
 
     void OnCardRevealedEvent(Deck deckDrawnFrom, Card revealedCard, int componentIdOfRevealedCard)
@@ -152,6 +153,12 @@ public class PopupManager : MonoBehaviour
     {
         ItemActivationPopupController newPopup = Instantiate(itemActivationPopupPrefab, parentTransform, false);
         newPopup.SetInvention(invention);
+    }
+
+    void OnSpawnItemActivationPopupEventEquipmentVersion(EquipmentCard equipmentCard)
+    {
+        ItemActivationPopupController newPopup = Instantiate(itemActivationPopupPrefab, parentTransform, false);
+        newPopup.SetEquipmentCard(equipmentCard);
     }
 
     void OnSpawnShortcutPopupEvent()
