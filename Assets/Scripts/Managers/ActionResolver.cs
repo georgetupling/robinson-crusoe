@@ -8,6 +8,9 @@ public class ActionResolver : MonoBehaviour
 
     public List<ActionAssignment> actionAssignments;
     [SerializeField] Transform popupsArea;
+    [SerializeField] Transform gatherTokenArea;
+    [SerializeField] Transform exploreTokenArea;
+    [SerializeField] Transform buildTokenArea;
 
     const float delayBetweenActions = 0.75f;
     private int animationsInProgress = 0;
@@ -285,6 +288,18 @@ public class ActionResolver : MonoBehaviour
                         buildIsSuccessful = false;
                     }
                 }
+                else
+                {
+                    // Check for an adventure token on the build deck
+                    if (AdventureTokenRemoved(buildTokenArea))
+                    {
+                        EventGenerator.Singleton.RaiseDrawAdventureCardEvent(AdventureType.Build);
+                    }
+                    while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput)
+                    {
+                        yield return null;
+                    }
+                }
                 if (buildIsSuccessful)
                 {
                     switch (actionAssignment.Type)
@@ -362,6 +377,18 @@ public class ActionResolver : MonoBehaviour
                     gatherIsSuccessful = false;
                 }
             }
+            else
+            {
+                // Check for an adventure token on the gather deck
+                if (AdventureTokenRemoved(gatherTokenArea))
+                {
+                    EventGenerator.Singleton.RaiseDrawAdventureCardEvent(AdventureType.Gather);
+                }
+                while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput)
+                {
+                    yield return null;
+                }
+            }
             if (gatherIsSuccessful)
             {
                 EventGenerator.Singleton.RaiseGatherSuccessEvent(actionAssignment.islandTile.Id, actionAssignment.isRightSource);
@@ -411,6 +438,18 @@ public class ActionResolver : MonoBehaviour
                 if (!rolledSuccess)
                 {
                     exploreIsSuccessful = false;
+                }
+            }
+            else
+            {
+                // Check for an adventure token on the build deck
+                if (AdventureTokenRemoved(exploreTokenArea))
+                {
+                    EventGenerator.Singleton.RaiseDrawAdventureCardEvent(AdventureType.Explore);
+                }
+                while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput)
+                {
+                    yield return null;
                 }
             }
             if (exploreIsSuccessful)
@@ -849,6 +888,28 @@ public class ActionResolver : MonoBehaviour
         {
             yield return null;
         }
+    }
+
+    // Helper method that checks whether a particular adventure deck has an adventure token on it
+    // If it finds one, it destroys it
+
+    bool AdventureTokenRemoved(Transform tokenArea)
+    {
+        for (int i = 0; i < tokenArea.childCount; i++)
+        {
+            Transform childTransform = tokenArea.GetChild(i);
+            for (int j = 0; j < childTransform.childCount; j++)
+            {
+                Transform grandchildTransform = childTransform.GetChild(j);
+                TokenController token = grandchildTransform.GetComponent<TokenController>();
+                if (token != null && (token.tokenType == TokenType.BuildAdventure || token.tokenType == TokenType.GatherAdventure || token.tokenType == TokenType.ExploreAdventure))
+                {
+                    EventGenerator.Singleton.RaiseDestroyComponentEvent(token.ComponentId);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

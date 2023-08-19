@@ -33,6 +33,12 @@ public class EquipmentCardManager : MonoBehaviour
         positions = new List<Transform> { position0, position1, position2, position3 };
         LoadEquipmentCards();
         SpawnStartingEquipment();
+        EventGenerator.Singleton.AddListenerToDrawEquipmentCardEvent(OnDrawEquipmentCardEvent);
+    }
+
+    void OnDrawEquipmentCardEvent()
+    {
+        DrawEquipmentCard();
     }
 
     void LoadEquipmentCards()

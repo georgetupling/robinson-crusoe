@@ -183,6 +183,7 @@ public class EventGenerator : MonoBehaviour
 
     // Equipment
     private UnityEvent<Equipment> equipmentActivatedEvent = new UnityEvent<Equipment>();
+    private UnityEvent drawEquipmentCard = new UnityEvent();
 
     void Awake()
     {
@@ -1934,6 +1935,16 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToEquipmentActivatedEvent(UnityAction<Equipment> listener)
     {
         equipmentActivatedEvent.AddListener(listener);
+    }
+
+    // Draw equipment card event
+    public void RaiseDrawEquipmentCardEvent()
+    {
+        drawEquipmentCard.Invoke();
+    }
+    public void AddListenerToDrawEquipmentCardEvent(UnityAction listener)
+    {
+        drawEquipmentCard.AddListener(listener);
     }
 
 }

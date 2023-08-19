@@ -34,37 +34,49 @@ public class DevToolsUIController : MonoBehaviour
     [SerializeField] private Button gainWeapon;
     [SerializeField] private Button spawnWeather;
     [SerializeField] private Button exhaustFish;
+    [SerializeField] private Button drawEquipment;
 
     bool fishExhausted;
-    
-    void Awake() {
-        if (singleton == null) {
+
+    void Awake()
+    {
+        if (singleton == null)
+        {
             singleton = this;
-        } else {
+        }
+        else
+        {
             Destroy(gameObject);
             return;
         }
         SetUpButtons();
     }
 
-    void SetUpButtons() {
-        gainWood.onClick.AddListener(() => {
+    void SetUpButtons()
+    {
+        gainWood.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseGainWoodEvent(1);
         });
-        loseWood.onClick.AddListener(() => {
-           EventGenerator.Singleton.RaiseLoseWoodEvent(1);
+        loseWood.onClick.AddListener(() =>
+        {
+            EventGenerator.Singleton.RaiseLoseWoodEvent(1);
         });
-        moveWood.onClick.AddListener(() => {
+        moveWood.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseMakeResourcesAvailableEvent();
         });
-        gainMorale.onClick.AddListener(() => {
+        gainMorale.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseGainMoraleEvent(1);
         });
-        loseMorale.onClick.AddListener(() => {
+        loseMorale.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseLoseMoraleEvent(1);
         });
 
-        spawnWound.onClick.AddListener(() => {
+        spawnWound.onClick.AddListener(() =>
+        {
             List<TokenType> tokenTypes = new List<TokenType> { TokenType.BuildWound, TokenType.GatherWound, TokenType.ExploreWound };
             List<WoundType> woundTypes = new List<WoundType> { WoundType.Head, WoundType.Belly, WoundType.Leg, WoundType.Arm };
             int randToken = Random.Range(0, 3);
@@ -73,59 +85,77 @@ public class DevToolsUIController : MonoBehaviour
             EventGenerator.Singleton.RaiseSpawnWoundTokenEvent(randPlayer, woundTypes[randWound], tokenTypes[randToken]);
         });
 
-        canOnlyRest.onClick.AddListener(() => {
+        canOnlyRest.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaisePlayerCanOnlyRestThisTurnEvent(0);
         });
 
-        drawTile.onClick.AddListener(() => {
+        drawTile.onClick.AddListener(() =>
+        {
             int rand = Random.Range(0, 10);
             EventGenerator.Singleton.RaiseDrawIslandTileEvent(rand);
         });
 
-        gainHide.onClick.AddListener(() => {
+        gainHide.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseGainHideEvent(1);
         });
 
-        gainRoof.onClick.AddListener(() => {
+        gainRoof.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseGainRoofEvent(1);
         });
-        loseRoof.onClick.AddListener(() => {
+        loseRoof.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseLoseRoofEvent(1);
         });
 
-        drawBeastCard.onClick.AddListener(() => {
+        drawBeastCard.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseDrawCardEvent(Deck.Beast);
         });
 
-        drawEventCard.onClick.AddListener(() => {
+        drawEventCard.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseDrawCardEvent(Deck.Event);
         });
 
-        gainDetermination.onClick.AddListener(() => {
+        gainDetermination.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseGainDeterminationEvent(DeterminationEvent.AllPlayers, 1);
         });
-        loseDetermination.onClick.AddListener(() => {
+        loseDetermination.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseLoseDeterminationEvent(DeterminationEvent.AllPlayers, 1);
         });
 
-        drawDiscoveryToken.onClick.AddListener(() => {
-            int rand = Random.Range(1,4);
+        drawDiscoveryToken.onClick.AddListener(() =>
+        {
+            int rand = Random.Range(1, 4);
             EventGenerator.Singleton.RaiseDrawDiscoveryTokenEvent(rand);
         });
 
-        gainWeapon.onClick.AddListener(() => {
+        gainWeapon.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseGainWeaponEvent(1);
         });
-        spawnWeather.onClick.AddListener(() => {
-            List<TokenType> weatherTokens = new List<TokenType> { TokenType.Storm, TokenType.SnowCloud, TokenType.RainCloud, 
+        spawnWeather.onClick.AddListener(() =>
+        {
+            List<TokenType> weatherTokens = new List<TokenType> { TokenType.Storm, TokenType.SnowCloud, TokenType.RainCloud,
                 TokenType.OrangeWeatherDie, TokenType.WhiteWeatherDie, TokenType.RedWeatherDie };
             int randomIndex = Random.Range(0, weatherTokens.Count);
             EventGenerator.Singleton.RaiseSpawnTokenInWeatherAreaEvent(weatherTokens[randomIndex]);
         });
 
-        exhaustFish.onClick.AddListener(() => {
+        exhaustFish.onClick.AddListener(() =>
+        {
             EventGenerator.Singleton.RaiseExhaustSourceByIslandTileIdEvent(8, Source.Fish, !fishExhausted);
             fishExhausted = !fishExhausted;
+        });
+
+        drawEquipment.onClick.AddListener(() =>
+        {
+            EventGenerator.Singleton.RaiseDrawEquipmentCardEvent();
         });
     }
 
