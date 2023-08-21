@@ -38,6 +38,9 @@ public class DevToolsUIController : MonoBehaviour
 
     bool fishExhausted;
 
+    [SerializeField] private Button damageFriday;
+    [SerializeField] private Button healFriday;
+
     void Awake()
     {
         if (singleton == null)
@@ -156,6 +159,15 @@ public class DevToolsUIController : MonoBehaviour
         drawEquipment.onClick.AddListener(() =>
         {
             EventGenerator.Singleton.RaiseDrawEquipmentCardEvent();
+        });
+
+        damageFriday.onClick.AddListener(() =>
+        {
+            EventGenerator.Singleton.RaiseLoseHealthEvent(HealthEvent.Friday, 1);
+        });
+        healFriday.onClick.AddListener(() =>
+        {
+            EventGenerator.Singleton.RaiseGainHealthEvent(HealthEvent.Friday, 1);
         });
     }
 

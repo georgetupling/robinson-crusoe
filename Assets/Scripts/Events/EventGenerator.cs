@@ -17,6 +17,7 @@ public class EventGenerator : MonoBehaviour
     private GetFirstPlayerEvent getFirstPlayerEvent = new GetFirstPlayerEvent();
     private UnityEvent<int> getDeterminationEvent = new UnityEvent<int>();
     private UnityEvent<int, int> getDeterminationResponseEvent = new UnityEvent<int, int>();
+    private UnityEvent fridayDiesEvent = new UnityEvent();
 
     // Resources
     private ResourceEvent resourceEvent = new ResourceEvent();
@@ -132,6 +133,7 @@ public class EventGenerator : MonoBehaviour
 
     // Night Phase
     private UnityEvent<List<int>> playersEatingEvent = new UnityEvent<List<int>>(); // Used by the night phase popup to communicate which players are eating
+    private UnityEvent<int> sleepingOutsideEvent = new UnityEvent<int>();
 
     // UI Events
     private EnableMainUIEvent enableMainUIEvent = new EnableMainUIEvent();
@@ -291,6 +293,18 @@ public class EventGenerator : MonoBehaviour
     {
         getDeterminationResponseEvent.AddListener(listener);
     }
+
+    // Friday dies event
+
+    public void RaiseFridayDiesEvent()
+    {
+        fridayDiesEvent.Invoke();
+    }
+    public void AddListenerToFridayDiesEvent(UnityAction listener)
+    {
+        fridayDiesEvent.AddListener(listener);
+    }
+
 
     // ResourceEvent
 
@@ -791,6 +805,7 @@ public class EventGenerator : MonoBehaviour
             case 1: trackerTokenEvent.Invoke(TrackerTokenEvent.SetPlayer1HealthTracker, newValue); break;
             case 2: trackerTokenEvent.Invoke(TrackerTokenEvent.SetPlayer2HealthTracker, newValue); break;
             case 3: trackerTokenEvent.Invoke(TrackerTokenEvent.SetPlayer3HealthTracker, newValue); break;
+            case 4: trackerTokenEvent.Invoke(TrackerTokenEvent.SetFridayHealthTracker, newValue); break;
             default: Debug.LogError("Invalid player ID passed to RaiseSetHealthTrackerEvent(int playerId, int newValue)."); break;
         }
     }
@@ -1207,6 +1222,16 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToPlayersEatingEvent(UnityAction<List<int>> listener)
     {
         playersEatingEvent.AddListener(listener);
+    }
+
+    // Sleeping outside
+    public void RaiseSleepingOutsideEvent(int playerId)
+    {
+        sleepingOutsideEvent.Invoke(playerId);
+    }
+    public void AddListenerToSleepingOutsideEvent(UnityAction<int> listener)
+    {
+        sleepingOutsideEvent.AddListener(listener);
     }
 
     // GetDistanceFromCampEvent

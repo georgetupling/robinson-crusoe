@@ -34,5 +34,6 @@ public enum TokenType
     RedWeatherDie,
     WhiteWeatherDie,
     OrangeWeatherDie,
-    TurnTracker
+    TurnTracker,
+    FridayHealthTracker
 }

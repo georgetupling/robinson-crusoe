@@ -11,18 +11,37 @@ public class Player
     public int health { get; private set; }
     public int determination { get; private set; }
 
+
+    const int FridaysPlayerId = 4;
+
     public Player(int playerId, string playerName, Character character)
     {
         id = playerId;
         this.playerName = playerName;
         this.character = character;
-        health = character.maximumHealth;
+        if (playerId != FridaysPlayerId)
+        {
+            health = character.maximumHealth;
+        }
+        else
+        {
+            health = 4;
+        }
         determination = 0;
     }
 
     public void ModifyHealth(int amount)
     {
-        int maximumHealth = character.maximumHealth;
+        int maximumHealth;
+        if (id != FridaysPlayerId)
+        {
+            maximumHealth = character.maximumHealth;
+        }
+        else
+        {
+            maximumHealth = 4;
+        }
+
         int newHealth = health + amount > maximumHealth ? maximumHealth : health + amount;
         int moraleThresholdsPassed = MoraleThresholdsPassed(newHealth);
         if (moraleThresholdsPassed > 0)
@@ -33,7 +52,15 @@ public class Player
         EventGenerator.Singleton.RaiseSetHealthTrackerEvent(id, health);
         if (health <= 0)
         {
-            EventGenerator.Singleton.RaiseGameEndEvent(false);
+            if (id != FridaysPlayerId)
+            {
+                EventGenerator.Singleton.RaiseGameEndEvent(false);
+            }
+            else
+            {
+                EventGenerator.Singleton.RaiseFridayDiesEvent();
+            }
+
         }
     }
 
@@ -51,6 +78,10 @@ public class Player
 
     private int MoraleThresholdsPassed(int newHealth)
     {
+        if (id == FridaysPlayerId)
+        {
+            return 0;
+        }
         List<int> thresholds = character.moraleThresholds;
         int counter = 0;
         foreach (int threshold in thresholds)

@@ -14,4 +14,5 @@ public class TrackerTokenEvent : UnityEvent<string, int>
     public const string SetPlayer1HealthTracker = "SetPlayer1HealthTracker";
     public const string SetPlayer2HealthTracker = "SetPlayer2HealthTracker";
     public const string SetPlayer3HealthTracker = "SetPlayer3HealthTracker";
+    public const string SetFridayHealthTracker = "SetFridayHealthTracker";
 }

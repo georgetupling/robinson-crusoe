@@ -11,6 +11,7 @@ public class DeterminationEvent : UnityEvent<string, int, int>
     public const int Player2 = 1;
     public const int Player3 = 2;
     public const int Player4 = 3;
+    public const int Friday = 4;
     public const int AllPlayers = 5;
     public const int FirstPlayer = 6;
 }

@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class FridayInitializer : MonoBehaviour
 {
-    void Start() {
+    void Start()
+    {
         ActionPawnController actionPawn = GetComponent<ActionPawnController>();
-        if (actionPawn == null) {
+        if (actionPawn == null)
+        {
             Debug.LogError("Friday action pawn is null.");
             return;
         }
-        actionPawn.InitializeNonPlayerPawn(7, false, PawnType.Friday);
+        actionPawn.InitializeNonPlayerPawn(4, false, PawnType.Friday);
     }
 }

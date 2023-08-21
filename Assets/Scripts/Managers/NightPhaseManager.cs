@@ -19,6 +19,7 @@ public class NightPhaseManager : MonoBehaviour
     int nonPerishableFoodAvailable;
 
     List<int> playersEating;
+    List<int> playerSleepingOutside;
 
     bool campIsMoving;
     int locationId; // Where the camp is moving to
@@ -47,6 +48,7 @@ public class NightPhaseManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToCampHasNaturalShelterResponseEvent(OnCampHasNaturalShelterResponseEvent);
         EventGenerator.Singleton.AddListenerToShelterIsBuiltResponseEvent(OnShelterIsBuiltResponseEvent);
         EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventions);
+        EventGenerator.Singleton.AddListenerToSleepingOutsideEvent(OnSleepingOutsideEvent);
     }
 
     // Listeners
@@ -118,6 +120,11 @@ public class NightPhaseManager : MonoBehaviour
         {
             fireplaceBuilt = isBuilt;
         }
+    }
+
+    void OnSleepingOutsideEvent(int playerId)
+    {
+        playerSleepingOutside.Add(playerId);
     }
 
     // The main night phase method
@@ -244,8 +251,15 @@ public class NightPhaseManager : MonoBehaviour
         {
             EventGenerator.Singleton.RaiseLoseHealthEvent(HealthEvent.AllPlayers, 1);
         }
-
-        // TODO: check for effects that make a player sleep outside camp
+        else
+        {
+            // Otherwise, only players sleeping outside take the damage
+            foreach (int playerId in playerSleepingOutside)
+            {
+                EventGenerator.Singleton.RaiseLoseHealthEvent(playerId, 1);
+            }
+        }
+        playerSleepingOutside.Clear();
 
         yield return new WaitForSeconds(1f);
         EventGenerator.Singleton.RaiseEndPhaseEvent(Phase.Night);

@@ -11,10 +11,16 @@ public class PlayerManager : MonoBehaviour
     private int playerCount;
     private int currentFirstPlayer;
 
-    void Awake() {
-        if (singleton == null) {
+    private const int FridaysPlayerId = 4;
+
+    void Awake()
+    {
+        if (singleton == null)
+        {
             singleton = this;
-        } else {
+        }
+        else
+        {
             Destroy(gameObject);
             return;
         }
@@ -27,81 +33,116 @@ public class PlayerManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToGetDeterminationEvent(OnGetDeterminationEvent);
     }
 
-    void InitializePlayers() {
-        for (int i = 0; i < playerCount; i++) {
+    void InitializePlayers()
+    {
+        for (int i = 0; i < playerCount; i++)
+        {
             CharacterType characterType = GameSettings.PlayerCharacters[i];
             Character character = CharacterFactory.CreateCharacter(characterType);
             string playerName = GameSettings.PlayerNames[i];
             Player newPlayer = new Player(i, playerName, character);
             players.Add(newPlayer);
         }
+        // Then initialize Friday!
+        if (GameSettings.PlayerCount <= 2)
+        {
+            Player friday = new Player(FridaysPlayerId, "Friday", null);
+            players.Add(friday);
+        }
     }
 
-    void OnHealthEvent(string eventType, int playerId, int amount) {
-        if (eventType == HealthEvent.LoseHealth) {
+    void OnHealthEvent(string eventType, int playerId, int amount)
+    {
+        if (eventType == HealthEvent.LoseHealth)
+        {
             amount *= -1;
         }
-        if (playerId == HealthEvent.AllPlayers) {
-            for (int i = 0; i < playerCount; i++) {
+        if (playerId == HealthEvent.AllPlayers)
+        {
+            for (int i = 0; i < playerCount; i++)
+            {
                 ModifyHealth(i, amount);
             }
-        } else if (playerId == HealthEvent.FirstPlayer) {
+        }
+        else if (playerId == HealthEvent.FirstPlayer)
+        {
             ModifyHealth(currentFirstPlayer, amount);
-        } else {
+        }
+        else
+        {
             ModifyHealth(playerId, amount);
         }
     }
 
-    void OnDeterminationEvent(string eventType, int playerId, int amount) {
-        if (eventType == DeterminationEvent.LoseDetermination) {
+    void OnDeterminationEvent(string eventType, int playerId, int amount)
+    {
+        if (eventType == DeterminationEvent.LoseDetermination)
+        {
             amount *= -1;
         }
-        if (playerId == DeterminationEvent.AllPlayers) {
-            for (int i = 0; i < playerCount; i++) {
+        if (playerId == DeterminationEvent.AllPlayers)
+        {
+            for (int i = 0; i < playerCount; i++)
+            {
                 ModifyDetermination(i, amount);
             }
-        } else if (playerId == DeterminationEvent.FirstPlayer) {
+        }
+        else if (playerId == DeterminationEvent.FirstPlayer)
+        {
             ModifyDetermination(currentFirstPlayer, amount);
-        } else {
+        }
+        else
+        {
             ModifyDetermination(playerId, amount);
         }
     }
 
-    void OnTurnStartEvent(int turnNumber) {
+    void OnTurnStartEvent(int turnNumber)
+    {
         currentFirstPlayer = (currentFirstPlayer + 1) % playerCount;
     }
 
-    void OnGetFirstPlayerEvent(string eventType, int playerId) {
-        if (eventType == GetFirstPlayerEvent.Query) {
+    void OnGetFirstPlayerEvent(string eventType, int playerId)
+    {
+        if (eventType == GetFirstPlayerEvent.Query)
+        {
             EventGenerator.Singleton.RaiseGetFirstPlayerResponseEvent(currentFirstPlayer);
         }
     }
 
-    void OnGetDeterminationEvent(int playerId) {
+    void OnGetDeterminationEvent(int playerId)
+    {
         Player foundPlayer = players.Find(x => x.id == playerId);
-        if (foundPlayer != null) {
+        if (foundPlayer != null)
+        {
             EventGenerator.Singleton.RaiseGetDeterminationResponseEvent(playerId, foundPlayer.determination);
         }
     }
 
-    Player GetPlayer(int playerId) {
-        if (playerId < 0 || playerId >= playerCount) {
+    Player GetPlayer(int playerId)
+    {
+        if (playerId < 0 || (playerId >= playerCount && playerId != FridaysPlayerId))
+        {
             Debug.LogError("Invalid player ID.");
             return null;
         }
         return players.Find(player => player.id == playerId);
     }
 
-    void ModifyDetermination(int playerId, int amount) {
+    void ModifyDetermination(int playerId, int amount)
+    {
         Player player = GetPlayer(playerId);
-        if (player != null) {
+        if (player != null)
+        {
             player.ModifyDetermination(amount);
         }
     }
 
-    void ModifyHealth(int playerId, int amount) {
+    void ModifyHealth(int playerId, int amount)
+    {
         Player player = GetPlayer(playerId);
-        if (player != null) {
+        if (player != null)
+        {
             player.ModifyHealth(amount);
         }
     }
