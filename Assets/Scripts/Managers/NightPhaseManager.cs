@@ -19,7 +19,7 @@ public class NightPhaseManager : MonoBehaviour
     int nonPerishableFoodAvailable;
 
     List<int> playersEating;
-    List<int> playerSleepingOutside;
+    List<int> playerSleepingOutside = new List<int>();
 
     bool campIsMoving;
     int locationId; // Where the camp is moving to

@@ -169,7 +169,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: b3d32c75025d01949ad728d1bb40e069, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2100000, guid: ec2d8f2a650e8094f8bb2d68f171faf1, type: 2}
     - target: {fileID: 919132149155446097, guid: b3d32c75025d01949ad728d1bb40e069, type: 3}
       propertyPath: m_Name
       value: SmallCard

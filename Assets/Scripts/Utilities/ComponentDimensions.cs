@@ -15,7 +15,10 @@ public static class ComponentDimensions
         { TokenType.WhiteWeatherDie, 0.15f },
         { TokenType.Camp, 0.01f },
         { TokenType.Shortcut, 0.01f },
-        { TokenType.Wood, 0.03f }
+        { TokenType.Wood, 0.03f },
+        { TokenType.Food, 0.0175f },
+        { TokenType.NonPerishableFood, 0.03f },
+        { TokenType.Hide, 0.03f }
     };
 
     public static float GetHeight(TokenType tokenType)

@@ -167,7 +167,8 @@ public class ResourceManager : MonoBehaviour
         float randX = Random.Range(-0.3f, 0.3f);
         float randY = Random.Range(-0.2f, 0.2f);
         float randRotation = Random.Range(0, 360);
-        newToken.transform.localPosition = new Vector3(randX, randY, 0);
+        float ZPosition = -ComponentDimensions.GetHeight(prefab.tokenType) / 2f;
+        newToken.transform.localPosition = new Vector3(randX, randY, ZPosition);
         newToken.transform.rotation = Quaternion.Euler(0, 0, randRotation);
         TokenPositioner.PositionTokens(resourcesArea);
         listOfTokens.Add(newToken);
