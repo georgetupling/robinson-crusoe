@@ -40,6 +40,8 @@ public class DevToolsUIController : MonoBehaviour
 
     [SerializeField] private Button damageFriday;
     [SerializeField] private Button healFriday;
+    [SerializeField] private Button fridayGainsDetermination;
+    [SerializeField] private Button fridayLosesDetermination;
 
     void Awake()
     {
@@ -168,6 +170,14 @@ public class DevToolsUIController : MonoBehaviour
         healFriday.onClick.AddListener(() =>
         {
             EventGenerator.Singleton.RaiseGainHealthEvent(HealthEvent.Friday, 1);
+        });
+        fridayGainsDetermination.onClick.AddListener(() =>
+        {
+            EventGenerator.Singleton.RaiseGainDeterminationEvent(DeterminationEvent.Friday, 1);
+        });
+        fridayLosesDetermination.onClick.AddListener(() =>
+        {
+            EventGenerator.Singleton.RaiseLoseDeterminationEvent(DeterminationEvent.Friday, 1);
         });
     }
 
