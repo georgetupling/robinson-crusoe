@@ -12,6 +12,7 @@ public class Player
     public int determination { get; private set; }
 
 
+
     const int FridaysPlayerId = 4;
 
     public Player(int playerId, string playerName, Character character)
@@ -60,7 +61,7 @@ public class Player
             {
                 EventGenerator.Singleton.RaiseFridayDiesEvent();
             }
-
+            health = 0;
         }
     }
 
