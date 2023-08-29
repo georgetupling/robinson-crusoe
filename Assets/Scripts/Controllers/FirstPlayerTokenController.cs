@@ -22,4 +22,5 @@ public class FirstPlayerTokenController : ComponentController
         Transform nextPosition = positions[turnStarted % GameSettings.PlayerCount];
         MoveToTransform(nextPosition, MoveStyle.Default);
     }
+
 }

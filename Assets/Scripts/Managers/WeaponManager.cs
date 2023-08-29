@@ -10,27 +10,48 @@ public class WeaponManager : MonoBehaviour
     private const int minimumWeapon = 0;
     private const int maximumWeapon = 10;
 
-    void Awake() {
-        if (singleton == null) {
+    void Awake()
+    {
+        if (singleton == null)
+        {
             singleton = this;
-        } else {
+        }
+        else
+        {
             return;
         }
         EventGenerator.Singleton.AddListenerToGainWeaponEvent(OnGainWeaponEvent);
         EventGenerator.Singleton.AddListenerToGetWeaponLevelEvent(OnGetWeaponLevelEvent);
+        EventGenerator.Singleton.AddListenerToIfPossibleLoseWeaponEvent(OnIfPossibleLoseWeaponEvent);
     }
 
-    void OnGainWeaponEvent(int amount) {
-        if (weaponLevel + amount < 0) {
+    void OnGainWeaponEvent(int amount)
+    {
+        if (weaponLevel + amount < 0)
+        {
             EventGenerator.Singleton.RaiseAllGainHealthEvent(weaponLevel + amount);
         }
         weaponLevel = Mathf.Clamp(weaponLevel + amount, minimumWeapon, maximumWeapon);
         EventGenerator.Singleton.RaiseSetWeaponTrackerEvent(weaponLevel);
     }
 
-    void OnGetWeaponLevelEvent(string eventType, int response) {
-        if (eventType == GetWeaponLevelEvent.Query) {
+    void OnGetWeaponLevelEvent(string eventType, int response)
+    {
+        if (eventType == GetWeaponLevelEvent.Query)
+        {
             EventGenerator.Singleton.RaiseGetWeaponLevelResponseEvent(weaponLevel);
+        }
+    }
+
+    void OnIfPossibleLoseWeaponEvent(int amount)
+    {
+        if (amount <= weaponLevel)
+        {
+            OnGainWeaponEvent(-amount);
+        }
+        else
+        {
+            OnGainWeaponEvent(-weaponLevel);
         }
     }
 }

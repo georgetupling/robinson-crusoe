@@ -9,6 +9,7 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
     int playerId;
     bool isActionPhase;
     bool actionsSubmitted;
+    int firstPlayer;
 
     Transform originalTransform;
     Transform playArea;
@@ -36,6 +37,7 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
         EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
         EventGenerator.Singleton.AddListenerToPlayerCanOnlyRestBuildOrMakeCampThisTurnEvent(OnPlayerCanOnlyRestBuildOrMakeCampThisTurnEvent);
         EventGenerator.Singleton.AddListenerToGetPhaseResponseEvent(OnGetPhaseResponseEvent);
+        EventGenerator.Singleton.AddListenerToGetFirstPlayerEvent(OnGetFirstPlayerEvent);
     }
 
     void UpdateActionSpaces()
@@ -139,16 +141,28 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
 
     void OnPlayerCanOnlyRestBuildOrMakeCampThisTurnEvent(int playerId)
     {
-        if (playerId != this.playerId)
+        // player Id 6 is the first player
+        if (playerId == 6)
         {
-            return;
+            EventGenerator.Singleton.RaiseGetFirstPlayerEvent();
         }
-        canOnlyRestBuildOrMakeCampThisTurn = true;
+        if (playerId == this.playerId || (playerId == 6 && firstPlayer == this.playerId))
+        {
+            canOnlyRestBuildOrMakeCampThisTurn = true;
+        }
     }
 
     void OnGetPhaseResponseEvent(Phase currentPhase)
     {
         isActionPhase = currentPhase == Phase.Action;
+    }
+
+    void OnGetFirstPlayerEvent(string eventType, int firstPlayer)
+    {
+        if (eventType == GetFirstPlayerEvent.Response)
+        {
+            this.firstPlayer = firstPlayer;
+        }
     }
 
     // Methods for dragging and dropping
@@ -367,19 +381,23 @@ public class ActionPawnController : ComponentController, IBeginDragHandler, IDra
         }
         return false;
     }
-    
-    bool IsSupportingAction(Transform actionSpace) {
-        if (actionSpace.childCount < 2) {
+
+    bool IsSupportingAction(Transform actionSpace)
+    {
+        if (actionSpace.childCount < 2)
+        {
             return false;
         }
         Transform position1 = actionSpace.GetChild(1);
-        if (position1.childCount == 0) {
+        if (position1.childCount == 0)
+        {
             // N.B. there is always a pawn in position 0 because the current pawn is temporarily added as a child in the lowest available position
             // That's why we check position 1 instead
             return false;
         }
         ActionPawnController pawnInPosition0 = actionSpace.GetChild(0).GetChild(0).GetComponent<ActionPawnController>();
-        if (pawnInPosition0 == null || pawnInPosition0.GetPlayerId() == 6) {
+        if (pawnInPosition0 == null || pawnInPosition0.GetPlayerId() == 6)
+        {
             // Pawns with player ID = 6 are non-player pawns like the map, and you can't send out just dog and a map!
             return false;
         }

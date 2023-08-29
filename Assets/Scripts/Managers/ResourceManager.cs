@@ -21,6 +21,8 @@ public class ResourceManager : MonoBehaviour
     private bool isActionPhase;
     private bool cellarIsBuilt;
 
+    List<ResourceType> resourcesToGainInProductionPhase = new List<ResourceType>();
+
     void Awake()
     {
         if (singleton == null)
@@ -38,6 +40,9 @@ public class ResourceManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToPhaseStartEvent(OnPhaseStartEvent);
         EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
         EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
+        EventGenerator.Singleton.AddListenerToIfPossibleLoseResourceEvent(OnIfPossibleLoseResourceEvent);
+        EventGenerator.Singleton.AddListenerToGainResourceInProductionPhaseEvent(OnGainResourceInProductionPhaseEvent);
+        EventGenerator.Singleton.AddListenerToLoseAllResourcesEvent(OnLoseAllResourcesEvent);
     }
 
     void InitializeResources()
@@ -69,6 +74,26 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
+    void OnIfPossibleLoseResourceEvent(ResourceType resourceType, int amount)
+    {
+        if (availableResources[resourceType] >= amount)
+        {
+            LoseResource(resourceType, amount);
+        }
+        else
+        {
+            LoseResource(resourceType, availableResources[resourceType]);
+        }
+    }
+
+    void OnGainResourceInProductionPhaseEvent(ResourceType resourceType, int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            resourcesToGainInProductionPhase.Add(resourceType);
+        }
+    }
+
     void OnGetResourceEvent(string eventType, int amount)
     {
         switch (eventType)
@@ -83,6 +108,17 @@ public class ResourceManager : MonoBehaviour
     void OnPhaseStartEvent(Phase phase)
     {
         isActionPhase = phase == Phase.Action;
+
+        // During the production phase, apply "gain during production phase" effects
+        if (phase == Phase.Production)
+        {
+            foreach (ResourceType resourceType in resourcesToGainInProductionPhase)
+            {
+                GainResource(resourceType, 1);
+            }
+            resourcesToGainInProductionPhase.Clear();
+        }
+
     }
     void OnTurnStartEvent(int turnStarted)
     {
@@ -98,6 +134,14 @@ public class ResourceManager : MonoBehaviour
         {
             cellarIsBuilt = isBuilt;
         }
+    }
+
+    void OnLoseAllResourcesEvent()
+    {
+        LoseResource(ResourceType.Hide, availableResources[ResourceType.Hide]);
+        LoseResource(ResourceType.Food, availableResources[ResourceType.Food]);
+        LoseResource(ResourceType.NonPerishableFood, availableResources[ResourceType.NonPerishableFood]);
+        LoseResource(ResourceType.Wood, availableResources[ResourceType.Wood]);
     }
     void GainResource(ResourceType resourceType, int amount)
     {

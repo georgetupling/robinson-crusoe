@@ -24,6 +24,8 @@ public class TurnManager : MonoBehaviour
     private int animationsInProgress;
     private int lastTurn;
 
+    private bool skipProductionPhase;
+
     void Awake()
     {
         if (singleton == null)
@@ -37,12 +39,14 @@ public class TurnManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToEndPhaseEvent(OnEndPhaseEvent);
         EventGenerator.Singleton.AddListenerToAnimationInProgressEvent(OnAnimationInProgressEvent);
         EventGenerator.Singleton.AddListenerToGetPhaseEvent(OnGetPhaseEvent);
+        EventGenerator.Singleton.AddListenerToSkipProductionPhaseEvent(OnSkipProductionPhaseEvent);
     }
 
     void Start()
     {
         EventGenerator.Singleton.RaiseGainDeterminationEvent(DeterminationEvent.AllPlayers, 2);
-        switch (GameSettings.CurrentScenario) {
+        switch (GameSettings.CurrentScenario)
+        {
             case Scenario.Castaways: lastTurn = 11; break;
             default: Debug.LogError($"No turn limit set for {GameSettings.CurrentScenario} scenario."); break;
         }
@@ -56,7 +60,8 @@ public class TurnManager : MonoBehaviour
             Debug.LogError("Phase parameter passed to EndPhaseEvent does not match current phase.");
             return;
         }
-        if (currentTurn == lastTurn && currentPhase == Phase.Night) {
+        if (currentTurn == lastTurn && currentPhase == Phase.Night)
+        {
             EventGenerator.Singleton.RaiseGameEndEvent(false); // The players lose the game
         }
         StartCoroutine(WaitForAnimationsThenEndPhase());
@@ -79,6 +84,11 @@ public class TurnManager : MonoBehaviour
         EventGenerator.Singleton.RaiseGetPhaseResponseEvent(currentPhase);
     }
 
+    void OnSkipProductionPhaseEvent()
+    {
+        skipProductionPhase = true;
+    }
+
     IEnumerator WaitForAnimationsThenEndPhase()
     {
         while (animationsInProgress > 0)
@@ -91,6 +101,11 @@ public class TurnManager : MonoBehaviour
     void StartNextPhase()
     {
         currentPhase = GetNextPhase();
+        if (currentPhase == Phase.Production && skipProductionPhase)
+        {
+            currentPhase = GetNextPhase();
+            skipProductionPhase = false;
+        }
         EventGenerator.Singleton.RaisePhaseStartEvent(currentPhase);
         if (currentPhase == Phase.Event)
         {

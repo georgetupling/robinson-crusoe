@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LoseFood : CardEffect
+public class LoseAllResources : CardEffect
 {
     public override void ApplyEffect()
     {
-        EventGenerator.Singleton.RaiseLoseFoodEvent(1);
+        EventGenerator.Singleton.RaiseLoseAllResourcesEvent();
     }
 }

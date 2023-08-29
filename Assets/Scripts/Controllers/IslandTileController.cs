@@ -46,6 +46,10 @@ public class IslandTileController : ComponentController
     private bool basketUsedThisRound;
     private int additionalResource = 0;
     private bool shortcutIsBuilt;
+    private bool noWoodInProductionPhase;
+    private bool noFoodInProductionPhase;
+    private bool halfWoodInProductionPhase;
+    private bool halfFoodInProductionPhase;
 
     // E.g. if you have 2 effects both giving you additional food tokens, the first will be spawned, the second will go in the list
     // Then if you lose one of those effects, DestroyToken will check the list before destroying the token
@@ -86,6 +90,8 @@ public class IslandTileController : ComponentController
         EventGenerator.Singleton.AddListenerToAdditionalResourceFromGatherEvent(OnAdditionalResourceFromGatherEvent);
         EventGenerator.Singleton.AddListenerToExhaustSourceByIslandTileIdEvent(OnExhaustSourceByIslandTileIdEvent);
         EventGenerator.Singleton.AddListenerToAdjacentTileChosenEvent(OnAdjacentTileChosenEvent);
+        EventGenerator.Singleton.AddListenerToNoResourceInProductionPhaseEvent(OnNoResourceInProductionPhaseEvent);
+        EventGenerator.Singleton.AddListenerToHalfResourceInProductionPhaseEvent(OnHalfResourceInProductionPhaseEvent);
     }
 
     void OnCampHasNaturalShelterEvent()
@@ -470,6 +476,38 @@ public class IslandTileController : ComponentController
             campTileLocation = locationId;
         }
     }
+
+    void OnNoResourceInProductionPhaseEvent(ResourceType resourceType)
+    {
+        if (resourceType == ResourceType.Wood)
+        {
+            noWoodInProductionPhase = true;
+        }
+        else if (resourceType == ResourceType.Food)
+        {
+            noFoodInProductionPhase = true;
+        }
+        else
+        {
+            Debug.LogError("Invalid resource type.");
+        }
+    }
+
+    void OnHalfResourceInProductionPhaseEvent(ResourceType resourceType)
+    {
+        if (resourceType == ResourceType.Wood)
+        {
+            halfWoodInProductionPhase = true;
+        }
+        else if (resourceType == ResourceType.Food)
+        {
+            halfFoodInProductionPhase = true;
+        }
+        else
+        {
+            Debug.LogError("Invalid resource type.");
+        }
+    }
     IEnumerator ApplyProductionPhase()
     {
         int foodSources = 0;
@@ -508,8 +546,38 @@ public class IslandTileController : ComponentController
             yield return null;
         }
 
-        EventGenerator.Singleton.RaiseGainFoodEvent(foodSources + additionalFood);
-        EventGenerator.Singleton.RaiseGainWoodEvent(woodSources + additionalWood);
+        // Gain Food
+        if (noFoodInProductionPhase)
+        {
+            noFoodInProductionPhase = false;
+
+        }
+        else if (halfFoodInProductionPhase)
+        {
+            EventGenerator.Singleton.RaiseGainFoodEvent((foodSources + additionalFood) / 2);
+            halfFoodInProductionPhase = false;
+        }
+        else
+        {
+            EventGenerator.Singleton.RaiseGainFoodEvent(foodSources + additionalFood);
+        }
+
+        // Gain Wood
+        if (noWoodInProductionPhase)
+        {
+            noWoodInProductionPhase = false;
+
+        }
+        else if (halfWoodInProductionPhase)
+        {
+            EventGenerator.Singleton.RaiseGainWoodEvent((woodSources + additionalWood) / 2);
+            halfWoodInProductionPhase = false;
+        }
+        else
+        {
+            EventGenerator.Singleton.RaiseGainWoodEvent(woodSources + additionalWood);
+        }
+
         yield return new WaitForSeconds(2f * GameSettings.AnimationDuration);
         EventGenerator.Singleton.RaiseEndPhaseEvent(Phase.Production);
     }

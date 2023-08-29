@@ -22,6 +22,9 @@ public class EventGenerator : MonoBehaviour
     // Resources
     private ResourceEvent resourceEvent = new ResourceEvent();
     private GetResourceEvent getResourceEvent = new GetResourceEvent();
+    private UnityEvent<ResourceType, int> ifPossibleLoseResourceEvent = new UnityEvent<ResourceType, int>();
+    private UnityEvent loseAllResourcesEvent = new UnityEvent();
+    private UnityEvent<ResourceType> halfResourceInProductionPhaseEvent = new UnityEvent<ResourceType>();
 
     // Island Tiles
     private SpawnIslandTileTokenEvent spawnIslandTileTokenEvent = new SpawnIslandTileTokenEvent();
@@ -62,6 +65,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<bool> shelterIsBuiltResponseEvent = new UnityEvent<bool>();
     private UnityEvent<int> addWoodToPileEvent = new UnityEvent<int>();
     private UnityEvent woodpileCompletedEvent = new UnityEvent();
+    private UnityEvent<int> ifPossibleLoseWeaponEvent = new UnityEvent<int>();
 
     // Inventions
     private UnityEvent<Invention> buildInventionSuccessEvent = new UnityEvent<Invention>();
@@ -106,6 +110,8 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<int, WoundType, TokenType> destroyWoundTokenEvent = new UnityEvent<int, WoundType, TokenType>();
     private UnityEvent<TokenType> spawnTokenOnCampEvent = new UnityEvent<TokenType>();
     private UnityEvent<int, int> setDeterminationTokensEvent = new UnityEvent<int, int>();
+    private UnityEvent ifPossibleDiscardBeastCardFromHuntingDeckEvent = new UnityEvent();
+    private UnityEvent firstPlayerToNextPlayerEvent = new UnityEvent();
 
     // Discovery Tokens
     private InitializeDiscoveryTokenEvent initializeDiscoveryTokenEvent = new InitializeDiscoveryTokenEvent();
@@ -134,6 +140,12 @@ public class EventGenerator : MonoBehaviour
     // Night Phase
     private UnityEvent<List<int>> playersEatingEvent = new UnityEvent<List<int>>(); // Used by the night phase popup to communicate which players are eating
     private UnityEvent<int> sleepingOutsideEvent = new UnityEvent<int>();
+
+    // Production phase
+
+    private UnityEvent<ResourceType, int> gainResourceInProductionPhaseEvent = new UnityEvent<ResourceType, int>();
+    private UnityEvent<ResourceType> noResourceInProductionPhaseEvent = new UnityEvent<ResourceType>();
+    private UnityEvent skipProductionPhaseEvent = new UnityEvent();
 
     // UI Events
     private EnableMainUIEvent enableMainUIEvent = new EnableMainUIEvent();
@@ -393,6 +405,39 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToGetResourceEvent(UnityAction<string, int> listener)
     {
         getResourceEvent.AddListener(listener);
+    }
+
+    // If possible lose wood event
+
+    public void RaiseIfPossibleLoseResourceEvent(ResourceType resourceType, int amount)
+    {
+        ifPossibleLoseResourceEvent.Invoke(resourceType, amount);
+    }
+
+    public void AddListenerToIfPossibleLoseResourceEvent(UnityAction<ResourceType, int> listener)
+    {
+        ifPossibleLoseResourceEvent.AddListener(listener);
+    }
+
+    // Lose all resources event
+
+    public void RaiseLoseAllResourcesEvent()
+    {
+        loseAllResourcesEvent.Invoke();
+    }
+    public void AddListenerToLoseAllResourcesEvent(UnityAction listener)
+    {
+        loseAllResourcesEvent.AddListener(listener);
+    }
+
+    // Half resource in production phase
+    public void RaiseHalfResourceInProductionPhaseEvent(ResourceType resourceType)
+    {
+        halfResourceInProductionPhaseEvent.Invoke(resourceType);
+    }
+    public void AddListenerToHalfResourceInProductionPhaseEvent(UnityAction<ResourceType> listener)
+    {
+        halfResourceInProductionPhaseEvent.AddListener(listener);
     }
 
     // SpawnIslandTileTokenEvent
@@ -988,6 +1033,28 @@ public class EventGenerator : MonoBehaviour
         setDeterminationTokensEvent.AddListener(listener);
     }
 
+    // If possible discard beast card from hunting deck event
+
+    public void RaiseIfPossibleDiscardBeastCardFromHuntingDeckEvent()
+    {
+        ifPossibleDiscardBeastCardFromHuntingDeckEvent.Invoke();
+    }
+    public void AddListenerToIfPossibleDiscardBeastCardFromHuntingDeckEvent(UnityAction listener)
+    {
+        ifPossibleDiscardBeastCardFromHuntingDeckEvent.AddListener(listener);
+    }
+
+    // First player to next player event
+
+    public void RaiseFirstPlayerToNextPlayerEvent()
+    {
+        firstPlayerToNextPlayerEvent.Invoke();
+    }
+    public void AddListenerToFirstPlayerToNextPlayerEvent(UnityAction listener)
+    {
+        firstPlayerToNextPlayerEvent.AddListener(listener);
+    }
+
     // InitializeDiscoveryTokenEvent
 
     public void RaiseInitializeDiscoveryTokenEvent(int componentId, DiscoveryToken discoveryToken)
@@ -1234,6 +1301,39 @@ public class EventGenerator : MonoBehaviour
         sleepingOutsideEvent.AddListener(listener);
     }
 
+    // Gain resource in production phase
+
+    public void RaiseGainResourceInProductionPhaseEvent(ResourceType resourceType, int amount)
+    {
+        gainResourceInProductionPhaseEvent.Invoke(resourceType, amount);
+    }
+    public void AddListenerToGainResourceInProductionPhaseEvent(UnityAction<ResourceType, int> listener)
+    {
+        gainResourceInProductionPhaseEvent.AddListener(listener);
+    }
+
+    // No resource in production phase
+
+    public void RaiseNoResourceInProductionPhaseEvent(ResourceType resourceType)
+    {
+        noResourceInProductionPhaseEvent.Invoke(resourceType);
+    }
+    public void AddListenerToNoResourceInProductionPhaseEvent(UnityAction<ResourceType> listener)
+    {
+        noResourceInProductionPhaseEvent.AddListener(listener);
+    }
+
+    // Skip production phase event
+
+    public void RaiseSkipProductionPhaseEvent()
+    {
+        skipProductionPhaseEvent.Invoke();
+    }
+    public void AddListenerToSkipProductionPhaseEvent(UnityAction listener)
+    {
+        skipProductionPhaseEvent.AddListener(listener);
+    }
+
     // GetDistanceFromCampEvent
 
     public void RaiseGetDistanceFromCampEvent(int islandTileId)
@@ -1424,6 +1524,17 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToWoodpileCompletedEvent(UnityAction listener)
     {
         woodpileCompletedEvent.AddListener(listener);
+    }
+
+    // If possible lose weapon event
+
+    public void RaiseIfPossibleLoseWeaponEvent(int amount)
+    {
+        ifPossibleLoseWeaponEvent.Invoke(amount);
+    }
+    public void AddListenerToIfPossibleLoseWeaponEvent(UnityAction<int> listener)
+    {
+        ifPossibleLoseWeaponEvent.AddListener(listener);
     }
 
     // EndPhaseEvent

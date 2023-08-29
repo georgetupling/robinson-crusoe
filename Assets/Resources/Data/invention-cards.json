@@ -136,8 +136,8 @@
         "itemRequirements": ["Shovel"],
         "resourceCosts": [],
         "terrainTypeRequirement": "None",
-        "effectsOnBuild": ["CellarEffect"],
-        "effectsOnLoss": ["EndCellarEffect"],
+        "effectsOnBuild": [],
+        "effectsOnLoss": [],
         "isDefaultInvention": false,
         "isPersonalInvention": false
     },

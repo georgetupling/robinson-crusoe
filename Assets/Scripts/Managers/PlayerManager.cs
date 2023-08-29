@@ -100,6 +100,7 @@ public class PlayerManager : MonoBehaviour
     void OnTurnStartEvent(int turnNumber)
     {
         currentFirstPlayer = (currentFirstPlayer + 1) % playerCount;
+        EventGenerator.Singleton.RaiseGetFirstPlayerResponseEvent(currentFirstPlayer);
     }
 
     void OnGetFirstPlayerEvent(string eventType, int playerId)

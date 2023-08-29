@@ -36,6 +36,7 @@ public class BeastCardManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToDrawCardEvent(OnDrawCardEvent);
         EventGenerator.Singleton.AddListenerToTrackingEvent(OnTrackingEvent);
         EventGenerator.Singleton.AddListenerToResolveHuntingActionEvent(OnResolveHuntingActionEvent);
+        EventGenerator.Singleton.AddListenerToIfPossibleDiscardBeastCardFromHuntingDeckEvent(OnIfPossibleDiscardBeastCardFromHuntingDeckEvent);
     }
 
     // Listeners
@@ -81,6 +82,14 @@ public class BeastCardManager : MonoBehaviour
                         EventGenerator.Singleton.RaiseSpawnCombatPopupEvent(playerId, drawnCard.ComponentId, drawnCard.data);
                     });
             });
+    }
+
+    void OnIfPossibleDiscardBeastCardFromHuntingDeckEvent()
+    {
+        if (huntingDeck.Count > 0)
+        {
+            DiscardCardFromHuntingDeck();
+        }
     }
 
     // Methods for initializing beast cards and spawning the beast deck
@@ -140,5 +149,11 @@ public class BeastCardManager : MonoBehaviour
                             DeckShuffler.Singleton.ShuffleDeck(huntingDeck, CardThickness);
                         });
                 });
+    }
+
+    void DiscardCardFromHuntingDeck()
+    {
+        BeastCardController cardToDiscard = huntingDeck.Pop();
+        Destroy(cardToDiscard);
     }
 }
