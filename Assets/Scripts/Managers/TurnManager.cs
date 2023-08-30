@@ -112,6 +112,8 @@ public class TurnManager : MonoBehaviour
             currentTurn++;
             EventGenerator.Singleton.RaiseTurnStartEvent(currentTurn);
             EventGenerator.Singleton.RaiseSetTurnTrackerEvent(currentTurn);
+            EventGenerator.Singleton.RaiseApplyEffectTriggerEvent(Trigger.EndTurn);
+            EventGenerator.Singleton.RaiseApplyEffectTriggerEvent(Trigger.StartTurn);
         }
     }
 

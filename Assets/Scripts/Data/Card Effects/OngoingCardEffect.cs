@@ -6,9 +6,6 @@ public class OngoingCardEffect : CardEffect, IEffectEndable
     public Trigger effectTrigger { get; protected set; }
     public bool hasEnded { get; protected set; }
 
-    // Used by wound-related ongoing effects
-    protected bool medicineBuilt;
-
     protected override void Initialize()
     {
         base.Initialize();
@@ -44,8 +41,4 @@ public class OngoingCardEffect : CardEffect, IEffectEndable
         // This method exists to be overridden by child classes
     }
 
-    public void SetMedicineBuilt(bool medicineBuilt)
-    {
-        this.medicineBuilt = medicineBuilt;
-    }
 }

@@ -42,6 +42,7 @@ public class InventionCardManager : MonoBehaviour
         EventGenerator.Singleton.AddListenerToDrawInventionCardsAndChooseOneEvent(OnDrawInventionCardsAndChooseOneEvent);
         EventGenerator.Singleton.AddListenerToInventionCardChosenFromSelectionEvent(OnInventionCardChosenFromSelectonEvent);
         EventGenerator.Singleton.AddListenerToUpdateBuiltInventionsEvent(OnUpdateBuiltInventionsEvent);
+        EventGenerator.Singleton.AddListenerToDrawCardEvent(OnDrawCardEvent);
     }
     void InitializeInventionCards()
     {
@@ -160,6 +161,16 @@ public class InventionCardManager : MonoBehaviour
             }
         }
         DeckShuffler.Singleton.ShuffleDeck(inventionCardDeck);
+    }
+
+    void OnDrawCardEvent(Deck deck)
+    {
+        if (deck != Deck.Invention)
+        {
+            return;
+        }
+        InventionCard drawnCard = inventionCardDeck.Pop();
+        SpawnInventionCard(drawnCard, inventionCardArea);
     }
 
 

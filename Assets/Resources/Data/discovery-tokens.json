@@ -108,15 +108,6 @@
         "effectsOnActivation": []
     },
     {
-        "discovery": "Treasure",
-        "activationMessage": "Open treasure?",
-        "effectsOnDraw": [],
-        "canBeActivated": true,
-        "activationRequiresWeapon": false,
-        "activationRequiresPot": false,
-        "effectsOnActivation": ["GainTreasure"]
-    },
-    {
         "discovery": "Goat",
         "activationMessage": "Slaughter goat?",
         "effectsOnDraw": [],
@@ -142,15 +133,6 @@
         "activationRequiresWeapon": true,
         "activationRequiresPot": false,
         "effectsOnActivation": ["GainFood", "GainHide"]
-    },
-    {
-        "discovery": "Treasure",
-        "activationMessage": "Open treasure?",
-        "effectsOnDraw": [],
-        "canBeActivated": true,
-        "activationRequiresWeapon": false,
-        "activationRequiresPot": false,
-        "effectsOnActivation": ["GainTreasure"]
     },
     {
         "discovery": "TwoLinesSymbol",

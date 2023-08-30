@@ -12,6 +12,7 @@ public class MainUIController : MonoBehaviour
 
     // Controls
     [SerializeField] Button devToolsToggle;
+    [SerializeField] Button menuToggle;
     [SerializeField] Button resetActions;
     [SerializeField] Button submitActions;
     [SerializeField] Button continueButton;
@@ -22,6 +23,7 @@ public class MainUIController : MonoBehaviour
 
     // Panels
     [SerializeField] DevToolsUIController devToolsPanel;
+    [SerializeField] MenuUIController menuPanel;
 
     // Stored info
     List<ActionAssignment> actionAssignments;
@@ -53,6 +55,10 @@ public class MainUIController : MonoBehaviour
         devToolsToggle.onClick.AddListener(() =>
         {
             devToolsPanel.gameObject.SetActive(!devToolsPanel.gameObject.activeSelf);
+        });
+        menuToggle.onClick.AddListener(() =>
+        {
+            menuPanel.gameObject.SetActive(!menuPanel.gameObject.activeSelf);
         });
         submitActions.onClick.AddListener(() =>
         {

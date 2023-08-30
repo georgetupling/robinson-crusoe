@@ -8,7 +8,8 @@ public class MoraleManager : MonoBehaviour
 
     [SerializeField] private Transform popupArea;
 
-    private int moraleLevel;
+    private int moraleLevel = 0;
+    private int moraleToGainAtStartOfRound = 0;
 
     void Awake()
     {
@@ -21,9 +22,10 @@ public class MoraleManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        moraleLevel = 0;
         EventGenerator.Singleton.AddListenerToMoraleEvent(OnMoraleEvent);
         EventGenerator.Singleton.AddListenerToPhaseStartEvent(OnPhaseStartEvent);
+        EventGenerator.Singleton.AddListenerToTurnStartEvent(OnTurnStartEvent);
+        EventGenerator.Singleton.AddListenerToAtStartOfNextRoundGainMoraleEvent(OnAtStartOfNextRoundGainMoraleEvent);
     }
 
     void OnMoraleEvent(string eventType, int amount)
@@ -46,9 +48,21 @@ public class MoraleManager : MonoBehaviour
         }
     }
 
+    void OnTurnStartEvent(int turnStarted)
+    {
+        ModifyMorale(moraleToGainAtStartOfRound);
+        moraleToGainAtStartOfRound = 0;
+    }
+
+    void OnAtStartOfNextRoundGainMoraleEvent()
+    {
+        moraleToGainAtStartOfRound++;
+    }
+
     void ModifyMorale(int amount)
     {
-        if (moraleLevel - amount < 0) {
+        if (moraleLevel - amount < 0)
+        {
             int lostHealth = -(moraleLevel - amount);
             EventGenerator.Singleton.RaiseLoseHealthEvent(HealthEvent.AllPlayers, lostHealth);
         }
@@ -59,7 +73,8 @@ public class MoraleManager : MonoBehaviour
     IEnumerator ApplyMoralePhase()
     {
         // In the solo variant, morale increases by 1 at the start of the morale phase
-        if (GameSettings.PlayerCount == 1) {
+        if (GameSettings.PlayerCount == 1)
+        {
             ModifyMorale(1);
         }
         float waitTime = GameSettings.AnimationDuration;

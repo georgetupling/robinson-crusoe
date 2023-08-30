@@ -30,36 +30,6 @@
     "materialName": "TheresSomethingInTheAirMaterial"
   },
   {
-    "adventureName": "Shrine",
-    "adventureType": "Explore",
-    "adventureDescription": "Down in the valley you spot a shrine in the woods.",
-    "adventureEffects": ["DecideDiscardOrDrawMysteryResolveTreasure"],
-    "adventureHasDecision": true,
-    "adventureOptions": ["Discard", "Draw mystery card"],
-    "hasEvent": true,
-    "eventName": "Nightmares",
-    "eventDescription": "All night you had nightmares about pagan gods and didn't sleep very well.",
-    "eventEffects": ["RerollOnBuildGatherAndExploreActions"],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "materialName": "ShrineMaterial"
-  },
-  {
-    "adventureName": "Flu",
-    "adventureType": "Explore",
-    "adventureDescription": "During your trip, a cold rain leaves you soaking wet. You feel like you are getting the flu.",
-    "adventureEffects": ["DecideDiscardFoodOrShuffleIntoEventDeck"],
-    "adventureHasDecision": true,
-    "adventureOptions": ["Discard 1 food", "Shuffle into event deck"],
-    "hasEvent": true,
-    "eventName": "Sore Throat",
-    "eventDescription": "You have infected the whole group.",
-    "eventEffects": ["SoreThroatEffect"],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "materialName": "FluMaterial"
-  },
-  {
     "adventureName": "Wild Dog",
     "adventureType": "Explore",
     "adventureDescription": "You see a wild dog in a glad. First, it stares at you, then it bites you, and then it runs away.",
@@ -120,53 +90,6 @@
     "materialName": "OldGraveMaterial"
   },
   {
-    "adventureName": "Tiger!",
-    "adventureType": "Explore",
-    "adventureDescription": "You find a tiger and hide. If you go back to the camp now, it will track you.",
-    "adventureEffects": ["ExecuteNightPhaseOutside"],
-    "adventureHasDecision": true,
-    "adventureOptions": ["Discard", "Shuffle into event deck"],
-    "hasEvent": true,
-    "eventName": "The Tiger Finds You!",
-    "eventDescription": "The tiger found your camp and attacks you!",
-    "eventEffects": ["FightATiger"],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "materialName": "TigerMaterial"
-  },
-  {
-    "adventureName": "Surprising Discovery",
-    "adventureType": "Explore",
-    "adventureDescription": "You have found a skeleton in the jungle. It's holding... a pistol!",
-    "adventureEffects": [],
-    "adventureHasDecision": false,
-    "adventureOptions": [],
-    "hasEvent": false,
-    "eventName": "",
-    "eventDescription": "",
-    "eventEffects": [],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "hasActivatedAbility": true,
-    "activatedEffects": ["Gain3TemporaryWeapon"],
-    "materialName": "SurprisingDiscoveryMaterial"
-  },
-  {
-    "adventureName": "Empty Forest",
-    "adventureType": "Explore",
-    "adventureDescription": "The animals are hungry and are fighting for their survival.",
-    "adventureEffects": [],
-    "adventureHasDecision": false,
-    "adventureOptions": [],
-    "hasEvent": true,
-    "eventName": "Hungry Predators",
-    "eventDescription": "These predators are hungry and dangerous.",
-    "eventEffects": ["GreaterDangerOnHuntingAction"],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "materialName": "EmptyForestMaterial"
-  },
-  {
     "adventureName": "It's Going To Rain",
     "adventureType": "Explore",
     "adventureDescription": "Dark rainy clouds are gathering above the island.",
@@ -176,7 +99,7 @@
     "hasEvent": true,
     "eventName": "Heavy Rain",
     "eventDescription": "It looks like it is going to rain the whole day.",
-    "eventEffects": ["SnowOnWeatherSpace"],
+    "eventEffects": ["RainInWeatherSpace"],
     "eventHasDecision": false,
     "eventOptions": [],
     "materialName": "ItsGoingToRainMaterial"
@@ -200,40 +123,6 @@
     "materialName": "LostMaterial"
   },
   {
-    "adventureName": "Secret Cave",
-    "adventureType": "Explore",
-    "adventureDescription": "Deep in the bushes you find a mysterious cave.",
-    "adventureEffects": [
-      "DecideDiscardOrDraw3MysteryCardsResolve1MonsterOrTrapAndUpTo2Treasure"
-    ],
-    "adventureHasDecision": true,
-    "adventureOptions": ["Discard", "Draw mystery cards"],
-    "hasEvent": true,
-    "eventName": "The Beast Awakens",
-    "eventDescription": "The secret cave is the lair of a beast. The beast attacks you!",
-    "eventEffects": ["FightABeast"],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "materialName": "SecretCaveMaterial"
-  },
-  {
-    "adventureName": "Remains of a Settlement",
-    "adventureType": "Explore",
-    "adventureDescription": "Deep in the forest, you discover a ruined settlement.",
-    "adventureEffects": [
-      "DecideDiscardOrDraw3MysteryCardsResolveTrapAnd2Treasure"
-    ],
-    "adventureHasDecision": true,
-    "adventureOptions": ["Discard", "Draw mystery cards"],
-    "hasEvent": true,
-    "eventName": "Epidemic",
-    "eventDescription": "You suffer from the disease that killed the village inhabitants.",
-    "eventEffects": ["AllLoseHealth"],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "materialName": "RemainsOfASettlementMaterial"
-  },
-  {
     "adventureName": "Cold Wind",
     "adventureType": "Explore",
     "adventureDescription": "During your walk, you feel a cold winter wind blowing on your back.",
@@ -243,7 +132,7 @@
     "hasEvent": true,
     "eventName": "Snow",
     "eventDescription": "In the morning, it starts to snow. It will be a cold night.",
-    "eventEffects": ["SnowOnWeatherSpace"],
+    "eventEffects": ["SnowInWeatherSpace"],
     "eventHasDecision": false,
     "eventOptions": [],
     "materialName": "ColdWindMaterial"
@@ -277,21 +166,6 @@
     "eventHasDecision": false,
     "eventOptions": [],
     "materialName": "StormOnTheHorizonMaterial"
-  },
-  {
-    "adventureName": "Signs of Fire",
-    "adventureType": "Explore",
-    "adventureDescription": "The whole area is wasted after a massive fire.",
-    "adventureEffects": ["CoverSourceOnIslandTileExploring"],
-    "adventureHasDecision": false,
-    "adventureOptions": [],
-    "hasEvent": false,
-    "eventName": "",
-    "eventDescription": "",
-    "eventEffects": [],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "materialName": "SignsOfFireMaterial"
   },
   {
     "adventureName": "Ruined Hut",
@@ -330,21 +204,6 @@
     "materialName": "LostInTheWoodsMaterial"
   },
   {
-    "adventureName": "Swamp",
-    "adventureType": "Explore",
-    "adventureDescription": "The area you are exploring is barely accessible. It's difficult to walk here.",
-    "adventureEffects": ["TimeConsumingActionOnIslandTileExploring"],
-    "adventureHasDecision": false,
-    "adventureOptions": [],
-    "hasEvent": false,
-    "eventName": "",
-    "eventDescription": "",
-    "eventEffects": [],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "materialName": "SwampMaterial"
-  },
-  {
     "adventureName": "Vipers!",
     "adventureType": "Explore",
     "adventureDescription": "As you take your next step, you get bitten by a viper.",
@@ -358,21 +217,6 @@
     "eventHasDecision": false,
     "eventOptions": [],
     "materialName": "VipersMaterial"
-  },
-  {
-    "adventureName": "Dangerous Terrain",
-    "adventureType": "Explore",
-    "adventureDescription": "During your trip through the woods you see a lot of predators.",
-    "adventureEffects": ["GreaterDangerOnIslandTileExploring"],
-    "adventureHasDecision": false,
-    "adventureOptions": [],
-    "hasEvent": false,
-    "eventName": "",
-    "eventDescription": "",
-    "eventEffects": [],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "materialName": "DangerousTerrainMaterial"
   },
   {
     "adventureName": "Wrong Track",
@@ -393,38 +237,6 @@
     "materialName": "WrongTrackMaterial"
   },
   {
-    "adventureName": "Old Hut",
-    "adventureType": "Explore",
-    "adventureDescription": "While wandering through the forest, you come across an old hut.",
-    "adventureEffects": [
-      "DecideDiscardThisCardOrDraw2MysteryCardsResolveMonsterAndTreasure"
-    ],
-    "adventureHasDecision": true,
-    "adventureOptions": ["Discard", "Draw mystery cards"],
-    "hasEvent": true,
-    "eventName": "Robinson's Ghost",
-    "eventDescription": "Last night, you had nightmares about Robinson's death.",
-    "eventEffects": ["AllLoseDetermination"],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "materialName": "OldHutMaterial"
-  },
-  {
-    "adventureName": "Signs of Fire",
-    "adventureType": "Explore",
-    "adventureDescription": "The whole area is wasted after a massive fire.",
-    "adventureEffects": ["CoverSourceOnIslandTileExploring"],
-    "adventureHasDecision": false,
-    "adventureOptions": [],
-    "hasEvent": false,
-    "eventName": "",
-    "eventDescription": "",
-    "eventEffects": [],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "materialName": "SignsOfFireMaterial"
-  },
-  {
     "adventureName": "Lost in the Thicket",
     "adventureType": "Explore",
     "adventureDescription": "You don't come back to the camp for the night. At the beginning of the next day you return with something useful.",
@@ -441,21 +253,6 @@
     "eventHasDecision": false,
     "eventOptions": [],
     "materialName": "LostInTheThicketMaterial"
-  },
-  {
-    "adventureName": "Puma!",
-    "adventureType": "Explore",
-    "adventureDescription": "You spot a puma in the bushes. If you go back to the camp now, you will bring death with you.",
-    "adventureEffects": ["ExecuteNightPhaseOutside"],
-    "adventureHasDecision": true,
-    "adventureOptions": ["Discard", "Shuffle into event deck"],
-    "hasEvent": true,
-    "eventName": "The Puma Attacks!",
-    "eventDescription": "The puma found your camp and attacks you!",
-    "eventEffects": ["FightABeast"],
-    "eventHasDecision": false,
-    "eventOptions": [],
-    "materialName": "PumaMaterial"
   },
   {
     "adventureName": "Bamboo",

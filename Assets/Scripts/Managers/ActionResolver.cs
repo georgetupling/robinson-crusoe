@@ -358,15 +358,24 @@ public class ActionResolver : MonoBehaviour
             bool gatherIsSuccessful = true;
             if (actionAssignment.mustRoll)
             {
+                Source sourceGatheredFrom;
+                if (actionAssignment.isRightSource && actionAssignment.islandTile.Sources.Count > 1)
+                {
+                    sourceGatheredFrom = actionAssignment.islandTile.Sources[1];
+                }
+                else
+                {
+                    sourceGatheredFrom = actionAssignment.islandTile.Sources[0];
+                }
                 // The only time the ID of the second pawn is used is when the first one is a neutral pawn (e.g. the Map pawn)
                 // These pawns have playerId 6 since they're "owned" by the first player
                 if (actionAssignment.playerIds[0] == 6 && actionAssignment.playerIds.Count > 1)
                 {
-                    DiceRoller.Singleton.RollGatherDice(actionAssignment.playerIds[1], actionAssignment.islandTile.Id);
+                    DiceRoller.Singleton.RollGatherDice(actionAssignment.playerIds[1], actionAssignment.islandTile.Id, sourceGatheredFrom);
                 }
                 else
                 {
-                    DiceRoller.Singleton.RollGatherDice(actionAssignment.playerIds[0], actionAssignment.islandTile.Id);
+                    DiceRoller.Singleton.RollGatherDice(actionAssignment.playerIds[0], actionAssignment.islandTile.Id, sourceGatheredFrom);
                 }
                 while (popupsArea.childCount > 0 || animationsInProgress > 0 || gettingIslandTileInput)
                 {

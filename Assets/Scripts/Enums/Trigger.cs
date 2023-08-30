@@ -2,5 +2,6 @@ public enum Trigger
 {
     None,
     MoralePhase,
-    EndTurn
+    EndTurn,
+    StartTurn
 }

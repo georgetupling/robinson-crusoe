@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DecideDiscardOrGain2Wood : CardEffect
-{   
-    public override void ApplyEffect() {
-        if (hasBeenApplied) {
-            Debug.LogError("DecideDiscardOrGain2Wood effect has already been applied.");
-            return;
-        }
-        if (optionChosen == -1) {
+{
+    public override void ApplyEffect()
+    {
+        if (optionChosen == -1)
+        {
             Debug.LogError("DecideDiscardOrGain2Wood optionChosen not set.");
             return;
         }
         // 0 = discard card, 1 = gain 2 wood
-        if (optionChosen == 1) {
+        if (optionChosen == 1)
+        {
             EventGenerator.Singleton.RaiseGainWoodEvent(2);
         }
         hasBeenApplied = true;

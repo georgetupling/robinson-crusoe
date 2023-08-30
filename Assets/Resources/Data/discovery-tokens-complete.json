@@ -1,0 +1,200 @@
+[
+    {
+        "discovery": "LargeLeaves",
+        "activationMessage": "Use large leaves?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": ["CancelRainCloud"]
+    },
+    {
+        "discovery": "Tobacco",
+        "activationMessage": "",
+        "effectsOnDraw": ["GainMorale"],
+        "canBeActivated": false,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": []
+    },
+    {
+        "discovery": "Candles",
+        "activationMessage": "Use candles?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": ["GainSingleUseBuildActionPawn"]
+    },
+    {
+        "discovery": "Herbs",
+        "activationMessage": "Use herbs?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": true,
+        "effectsOnActivation": ["GainMorale"]
+    },
+    {
+        "discovery": "NourishingLarvae",
+        "activationMessage": "",
+        "effectsOnDraw": ["Gain2Food"],
+        "canBeActivated": false,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": []
+    },
+    {
+        "discovery": "OldMachete",
+        "activationMessage": "",
+        "effectsOnDraw": ["GainWeapon"],
+        "canBeActivated": false,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": []
+    },
+    {
+        "discovery": "CrossSymbol",
+        "activationMessage": "Use discovery?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": ["CrossSymbolEffect"]
+    },
+    {
+        "discovery": "ThornyBushes",
+        "activationMessage": "",
+        "effectsOnDraw": ["GainPalisade"],
+        "canBeActivated": false,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": []
+    },
+    {
+        "discovery": "FallenTree",
+        "activationMessage": "",
+        "effectsOnDraw": ["GainWood"],
+        "canBeActivated": false,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": []
+    },
+    {
+        "discovery": "SaltireSymbol",
+        "activationMessage": "Use discovery?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": ["SaltireSymbolEffect"]
+    },
+    {
+        "discovery": "Poison",
+        "activationMessage": "Use poison?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": true,
+        "effectsOnActivation": ["Gain2Weapon"]
+    },
+    {
+        "discovery": "NourishingLarvae",
+        "activationMessage": "",
+        "effectsOnDraw": ["Gain2Food"],
+        "canBeActivated": false,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": []
+    },
+    {
+        "discovery": "Treasure",
+        "activationMessage": "Open treasure?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": ["GainTreasure"]
+    },
+    {
+        "discovery": "Goat",
+        "activationMessage": "Slaughter goat?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": true,
+        "activationRequiresPot": false,
+        "effectsOnActivation": ["GainFood", "GainHide"]
+    },
+    {
+        "discovery": "FallenTree",
+        "activationMessage": "",
+        "effectsOnDraw": ["GainWood"],
+        "canBeActivated": false,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": []
+    },
+    {
+        "discovery": "Goat",
+        "activationMessage": "Slaughter goat?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": true,
+        "activationRequiresPot": false,
+        "effectsOnActivation": ["GainFood", "GainHide"]
+    },
+    {
+        "discovery": "Treasure",
+        "activationMessage": "Open treasure?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": ["GainTreasure"]
+    },
+    {
+        "discovery": "TwoLinesSymbol",
+        "activationMessage": "Use discovery?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": ["TwoLinesSymbolEffect"]
+    },
+    {
+        "discovery": "Vegetables",
+        "activationMessage": "Cook vegetables?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": true,
+        "effectsOnActivation": ["Gain2Health"]
+    },
+    {
+        "discovery": "HealingHerbs",
+        "activationMessage": "Use healing herbs?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": true,
+        "effectsOnActivation": ["GainMedicine"]
+    },
+    {
+        "discovery": "Candles",
+        "activationMessage": "Use candles?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": ["GainSingleUseBuildActionPawn"]
+    },
+    {
+        "discovery": "LineSymbol",
+        "activationMessage": "Use discovery?",
+        "effectsOnDraw": [],
+        "canBeActivated": true,
+        "activationRequiresWeapon": false,
+        "activationRequiresPot": false,
+        "effectsOnActivation": ["LineSymbolEffect"]
+    }
+]

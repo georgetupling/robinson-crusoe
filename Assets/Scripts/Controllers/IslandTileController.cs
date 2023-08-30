@@ -39,6 +39,7 @@ public class IslandTileController : ComponentController
     // Fields for resolving certain effects
     private bool shelterIsBuilt;
     private bool snareIsBuilt;
+    private bool hatchetIsBuilt;
     private bool pitIsBuilt;
     private bool sackIsBuilt;
     private bool sackUsedThisRound;
@@ -50,6 +51,8 @@ public class IslandTileController : ComponentController
     private bool noFoodInProductionPhase;
     private bool halfWoodInProductionPhase;
     private bool halfFoodInProductionPhase;
+    private int ifPossibleLessFoodInProductionPhase = 0;
+    private int ifPossibleLessWoodInProductionPhase = 0;
 
     // E.g. if you have 2 effects both giving you additional food tokens, the first will be spawned, the second will go in the list
     // Then if you lose one of those effects, DestroyToken will check the list before destroying the token
@@ -92,6 +95,7 @@ public class IslandTileController : ComponentController
         EventGenerator.Singleton.AddListenerToAdjacentTileChosenEvent(OnAdjacentTileChosenEvent);
         EventGenerator.Singleton.AddListenerToNoResourceInProductionPhaseEvent(OnNoResourceInProductionPhaseEvent);
         EventGenerator.Singleton.AddListenerToHalfResourceInProductionPhaseEvent(OnHalfResourceInProductionPhaseEvent);
+        EventGenerator.Singleton.AddListenerToIfPossibleLessResourceInProductionPhaseEvent(OnIfPossibleLessResourceInProductionPhaseEvent);
     }
 
     void OnCampHasNaturalShelterEvent()
@@ -180,6 +184,10 @@ public class IslandTileController : ComponentController
                 {
                     SpawnToken(TokenType.AdditionalFood, misc1);
                 }
+                if (hatchetIsBuilt)
+                {
+                    SpawnToken(TokenType.AdditionalWood, misc1);
+                }
                 if (shortcutIsBuilt)
                 {
                     SpawnToken(TokenType.Shortcut, misc1);
@@ -194,6 +202,10 @@ public class IslandTileController : ComponentController
                 if (snareIsBuilt)
                 {
                     DestroyToken(TokenType.AdditionalFood);
+                }
+                if (hatchetIsBuilt)
+                {
+                    DestroyToken(TokenType.AdditionalWood);
                 }
                 IsCampTile = false;
             }
@@ -377,6 +389,15 @@ public class IslandTileController : ComponentController
             }
             snareIsBuilt = isBuilt;
         }
+        if (invention == Invention.Hatchet)
+        {
+            if (hatchetIsBuilt && IsCampTile && !isBuilt)
+            {
+                // Removes the hatchet's additional food token if the hatchet is destroyed
+                DestroyToken(TokenType.AdditionalWood);
+            }
+            hatchetIsBuilt = isBuilt;
+        }
         else if (invention == Invention.Pit)
         {
             pitIsBuilt = isBuilt;
@@ -508,6 +529,18 @@ public class IslandTileController : ComponentController
             Debug.LogError("Invalid resource type.");
         }
     }
+
+    void OnIfPossibleLessResourceInProductionPhaseEvent(ResourceType resourceType, int amount)
+    {
+        if (resourceType == ResourceType.Food)
+        {
+            ifPossibleLessFoodInProductionPhase += amount;
+        }
+        else if (resourceType == ResourceType.Wood)
+        {
+            ifPossibleLessWoodInProductionPhase += amount;
+        }
+    }
     IEnumerator ApplyProductionPhase()
     {
         int foodSources = 0;
@@ -546,36 +579,50 @@ public class IslandTileController : ComponentController
             yield return null;
         }
 
+        // Apply "if possible less food/wood in production phase" effects
+        int foodToGain = foodSources + additionalFood;
+        foodToGain -= ifPossibleLessFoodInProductionPhase;
+        if (foodToGain < 0)
+        {
+            foodToGain = 0;
+        }
+        ifPossibleLessFoodInProductionPhase = 0;
+        int woodToGain = woodSources + additionalWood;
+        woodToGain -= ifPossibleLessWoodInProductionPhase;
+        if (woodToGain < 0)
+        {
+            woodToGain = 0;
+        }
+        ifPossibleLessWoodInProductionPhase = 0;
+
         // Gain Food
         if (noFoodInProductionPhase)
         {
             noFoodInProductionPhase = false;
-
         }
         else if (halfFoodInProductionPhase)
         {
-            EventGenerator.Singleton.RaiseGainFoodEvent((foodSources + additionalFood) / 2);
+            EventGenerator.Singleton.RaiseGainFoodEvent(foodToGain / 2);
             halfFoodInProductionPhase = false;
         }
         else
         {
-            EventGenerator.Singleton.RaiseGainFoodEvent(foodSources + additionalFood);
+            EventGenerator.Singleton.RaiseGainFoodEvent(foodToGain);
         }
 
         // Gain Wood
         if (noWoodInProductionPhase)
         {
             noWoodInProductionPhase = false;
-
         }
         else if (halfWoodInProductionPhase)
         {
-            EventGenerator.Singleton.RaiseGainWoodEvent((woodSources + additionalWood) / 2);
+            EventGenerator.Singleton.RaiseGainWoodEvent(woodToGain / 2);
             halfWoodInProductionPhase = false;
         }
         else
         {
-            EventGenerator.Singleton.RaiseGainWoodEvent(woodSources + additionalWood);
+            EventGenerator.Singleton.RaiseGainWoodEvent(woodToGain);
         }
 
         yield return new WaitForSeconds(2f * GameSettings.AnimationDuration);

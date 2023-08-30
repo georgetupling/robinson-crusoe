@@ -106,7 +106,7 @@
         "resourceCosts": [],
         "terrainTypeRequirement": "None",
         "effectsOnBuild": ["AdditionalFoodOnCamp"],
-        "effectsOnLoss": ["EndAdditionalFoodOnCamp"],
+        "effectsOnLoss": [],
         "isDefaultInvention": false,
         "isPersonalInvention": true
     },
@@ -309,7 +309,7 @@
         "resourceCosts": ["Wood"],
         "terrainTypeRequirement": "Mountains",
         "effectsOnBuild": ["AdditionalWoodOnCamp"],
-        "effectsOnLoss": ["EndAdditionalWoodOnCamp"],
+        "effectsOnLoss": [],
         "isDefaultInvention": false,
         "isPersonalInvention": false,
         "isScenarioInvention": true

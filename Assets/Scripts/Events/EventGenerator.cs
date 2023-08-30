@@ -18,13 +18,13 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<int> getDeterminationEvent = new UnityEvent<int>();
     private UnityEvent<int, int> getDeterminationResponseEvent = new UnityEvent<int, int>();
     private UnityEvent fridayDiesEvent = new UnityEvent();
+    private UnityEvent atStartOfNextRoundGainMoraleEvent = new UnityEvent();
 
     // Resources
     private ResourceEvent resourceEvent = new ResourceEvent();
     private GetResourceEvent getResourceEvent = new GetResourceEvent();
     private UnityEvent<ResourceType, int> ifPossibleLoseResourceEvent = new UnityEvent<ResourceType, int>();
     private UnityEvent loseAllResourcesEvent = new UnityEvent();
-    private UnityEvent<ResourceType> halfResourceInProductionPhaseEvent = new UnityEvent<ResourceType>();
 
     // Island Tiles
     private SpawnIslandTileTokenEvent spawnIslandTileTokenEvent = new SpawnIslandTileTokenEvent();
@@ -77,6 +77,7 @@ public class EventGenerator : MonoBehaviour
     private UnityEvent<int> drawInventionCardsAndChooseOneEvent = new UnityEvent<int>();
     private UnityEvent<List<InventionCard>, int> inventionCardChosenFromSelectionEvent = new UnityEvent<List<InventionCard>, int>();
     private UnityEvent<Invention, bool> enableInventionRequirementMarkersEvent = new UnityEvent<Invention, bool>();
+
 
 
     // Miscellaneous
@@ -145,7 +146,9 @@ public class EventGenerator : MonoBehaviour
 
     private UnityEvent<ResourceType, int> gainResourceInProductionPhaseEvent = new UnityEvent<ResourceType, int>();
     private UnityEvent<ResourceType> noResourceInProductionPhaseEvent = new UnityEvent<ResourceType>();
+    private UnityEvent<ResourceType> halfResourceInProductionPhaseEvent = new UnityEvent<ResourceType>();
     private UnityEvent skipProductionPhaseEvent = new UnityEvent();
+    private UnityEvent<ResourceType, int> ifPossibleLessResourceInProductionPhaseEvent = new UnityEvent<ResourceType, int>();
 
     // UI Events
     private EnableMainUIEvent enableMainUIEvent = new EnableMainUIEvent();
@@ -315,6 +318,17 @@ public class EventGenerator : MonoBehaviour
     public void AddListenerToFridayDiesEvent(UnityAction listener)
     {
         fridayDiesEvent.AddListener(listener);
+    }
+
+    // At start of next round gain morale event
+
+    public void RaiseAtStartOfNextRoundGainMoraleEvent()
+    {
+        atStartOfNextRoundGainMoraleEvent.Invoke();
+    }
+    public void AddListenerToAtStartOfNextRoundGainMoraleEvent(UnityAction listener)
+    {
+        atStartOfNextRoundGainMoraleEvent.AddListener(listener);
     }
 
 
@@ -1333,6 +1347,18 @@ public class EventGenerator : MonoBehaviour
     {
         skipProductionPhaseEvent.AddListener(listener);
     }
+
+    // If Possible less resource in production phase event
+
+    public void RaiseIfPossibleLessResourceInProductionPhaseEvent(ResourceType resourceType, int amount)
+    {
+        ifPossibleLessResourceInProductionPhaseEvent.Invoke(resourceType, amount);
+    }
+    public void AddListenerToIfPossibleLessResourceInProductionPhaseEvent(UnityAction<ResourceType, int> listener)
+    {
+        ifPossibleLessResourceInProductionPhaseEvent.AddListener(listener);
+    }
+
 
     // GetDistanceFromCampEvent
 

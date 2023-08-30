@@ -54,7 +54,7 @@
         "hasEvent": true,
         "eventName": "Ground Frost",
         "eventDescription": "The night is going to be extremely cold.",
-        "eventEffects": ["SnowOnWeatherSpace"],
+        "eventEffects": ["SnowInWeatherSpace"],
         "eventHasDecision": false,
         "eventOptions": [],
         "materialName": "WinterIsComingMaterial"
@@ -73,21 +73,6 @@
         "eventHasDecision": false,
         "eventOptions": [],
         "materialName": "PathOfAPredatorMaterial"
-    },
-    {
-        "adventureName": "Signs of a Predator",
-        "adventureType": "Gather",
-        "adventureDescription": "Leaving the camp, you spot signs of a predator nearby.",
-        "adventureEffects": [],
-        "adventureHasDecision": false,
-        "adventureOptions": [],
-        "hasEvent": true,
-        "eventName": "Hungry Predator Attacks!",
-        "eventDescription": "You're scared.",
-        "eventEffects": ["HungryPredatorAttacksEffect"],
-        "eventHasDecision": false,
-        "eventOptions": [],
-        "materialName": "SignsOfAPredatorMaterial"
     },
     {
         "adventureName": "New Flock",
@@ -165,21 +150,6 @@
         "materialName": "EndOfSourceMaterial"
     },
     {
-        "adventureName": "Unexpected Troubles",
-        "adventureType": "Gather",
-        "adventureDescription": "You went to bring some resources, but you also brough something else: bad news.",
-        "adventureEffects": ["CoverTerrainOnTileGatheredFrom"],
-        "adventureHasDecision": false,
-        "adventureOptions": [],
-        "hasEvent": false,
-        "eventName": "",
-        "eventDescription": "",
-        "eventEffects": [],
-        "eventHasDecision": false,
-        "eventOptions": [],
-        "materialName": "UnexpectedTroublesMaterial"
-    },
-    {
         "adventureName": "Unbelievable Effort",
         "adventureType": "Gather",
         "adventureDescription": "You wanted to impress your fellows. you have gathered more wood than you can carry.",
@@ -193,21 +163,6 @@
         "eventHasDecision": false,
         "eventOptions": [],
         "materialName": "UnbelievableEffortMaterial"
-    },
-    {
-        "adventureName": "Winter Freezing",
-        "adventureType": "Gather",
-        "adventureDescription": "Winter is reducing the amount of sources on the island.",
-        "adventureEffects": ["ExhaustSourceOnTileGatheredFrom"],
-        "adventureHasDecision": false,
-        "adventureOptions": [],
-        "hasEvent": false,
-        "eventName": "",
-        "eventDescription": "",
-        "eventEffects": [],
-        "eventHasDecision": false,
-        "eventOptions": [],
-        "materialName": "WinterFreezingMaterial"
     },
     {
         "adventureName": "Eyes in the Bushes",
@@ -234,7 +189,7 @@
         "hasEvent": true,
         "eventName": "Curse",
         "eventDescription": "The gold was cursed",
-        "eventEffects": ["RerollOnBuildGatherAndExploreActions"],
+        "eventEffects": ["RerollOnBuildAction", "RerollOnGatherAction", "RerollOnExploreAction"],
         "eventHasDecision": false,
         "eventOptions": [],
         "materialName": "GoldCoinMaterial"
@@ -253,21 +208,6 @@
         "eventHasDecision": false,
         "eventOptions": [],
         "materialName": "SpiderMaterial"
-    },
-    {
-        "adventureName": "After the Hurricane",
-        "adventureType": "Gather",
-        "adventureDescription": "The area is devastated and the trees are demolished.",
-        "adventureEffects": ["Gain2Wood", "TimeConsumingActionOnTileGatheredFrom"],
-        "adventureHasDecision": false,
-        "adventureOptions": [],
-        "hasEvent": true,
-        "eventName": "It Was Stormy Again",
-        "eventDescription": "A dreadful storm destroyed this whole area.",
-        "eventEffects": ["TurnFaceDownTileWithTimeConsumingAction"],
-        "eventHasDecision": false,
-        "eventOptions": [],
-        "materialName": "AfterTheHurricaneMaterial"
     },
     {
         "adventureName": "Surprise in the Bushes",
@@ -373,21 +313,6 @@
         "eventHasDecision": false,
         "eventOptions": [],
         "materialName": "FursMaterial"
-    },
-    {
-        "adventureName": "Pirate's Chest",
-        "adventureType": "Gather",
-        "adventureDescription": "After a windy night, you find a new path on the island. It leads you to a pirate's hideout.",
-        "adventureEffects": ["DecideDiscardOrDraw2MysteryCardsResolveTreasure"],
-        "adventureHasDecision": true,
-        "adventureOptions": ["Discard", "Draw 2 mystery cards"],
-        "hasEvent": true,
-        "eventName": "Bad Luck!",
-        "eventDescription": "The pirate's chest was cursed.",
-        "eventEffects": ["AllPlayersOnly1Action"],
-        "eventHasDecision": false,
-        "eventOptions": [],
-        "materialName": "PiratesChestMaterial"
     },
     {
         "adventureName": "Twisted Ankle",
